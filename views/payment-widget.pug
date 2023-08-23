@@ -1,0 +1,133 @@
+script.
+  async function postTicketData(data, signature){
+    const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets";
+    const result = await bookingHelpersInstance.makeRequest(`${url}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({data, signature})
+    });
+    return result;
+  };
+  async function generateTicket(data, signature){
+    const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets/generate";
+    const result = await bookingHelpersInstance.makeRequest(`${url}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({data, signature})
+    });
+    return result;
+  };
+  function downdloadTicket(result){
+    const a = document.createElement("a");
+    const link = window.URL.createObjectURL(result);
+    a.href = link;
+    a.download = "ticket.pdf";
+    document.body.append(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(link);
+  }
+script.
+  window.LiqPayCheckoutCallback = function() {
+  LiqPayCheckout.init({
+  data: "#{data}",
+  signature: "#{signature}",
+  embedTo: "#payment-container",
+  language: "uk",
+  mode: "embed" // embed || popup
+  }).on("liqpay.callback", async function(data){
+  const btn = "<a href=\"/\" class=\"base-button base-button--primary no-flights-found-button\" type=\"button\">#{translations.buttonText}</a>"
+  $('#payment-container').append(btn);
+  //- console.log(data.status);
+  //- console.log(data);
+  if(data.status === "success") {
+    try {
+      $('#search-change-button').attr("disabled", true);
+      await postTicketData(data?.data, data?.signature);
+      const ticket = await generateTicket(data?.data, data?.signature);
+      Swal.fire({
+        title: "!{translations.thanksText}",
+        customClass: {
+          container: "booking-payment-popup"
+        },
+        icon: "success",
+        html: ticket, 
+        text: "#{translations.successText}", 
+        showCloseButton: true,
+        showConfirmButton: false
+      });
+
+      async function generateTicketPDF(){
+        bookingHelpersInstance.showLoadSpinner('#generate-ticket-pdf');
+        const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets/generate-pdf";
+        const clone = $(".ticket-bus-container").clone();
+        $(clone).find(".cta").remove();
+        const html = $(clone).html();
+        try {
+          const result = await fetch(`${url}`, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify({signature: data?.signature, html: html})
+          });
+          const blob = await result.blob();
+          downdloadTicket(blob);
+          bookingHelpersInstance.hideLoadSpinner('#generate-ticket-pdf');
+          return;
+        } catch (err) {
+          console.error("[API Error]", `Error: ${err?.message}`);
+          if(Swal.isVisible()) {
+            Swal.close();
+          }
+          Swal.fire({
+            icon: "error",
+            title: "#{translations.oopsText}",
+            text: "#{translations.errorText1}",
+            showCloseButton: true,
+            showConfirmButton: false
+          });
+          return;
+        }
+      }
+
+      $(document).on("click", "#generate-ticket-pdf", generateTicketPDF);
+      return;
+    } catch(err) {
+        const errObj = JSON.parse(err.message);
+        console.error("[API Error]", `Error: ${errObj?.status}`);
+        if(Swal.isVisible()) {
+          Swal.close();
+        }
+        Swal.fire({
+          icon: "error",
+          title: "#{translations.oopsText}",
+          text: "#{translations.errorText1}",
+          showCloseButton: true,
+          showConfirmButton: false
+        });
+        return;
+    }
+    return;
+  } 
+
+  Swal.fire({
+    icon: "error",
+    title: "#{translations.oopsText}",
+    text: "#{translations.errorText2}",
+    showCloseButton: true,
+    showConfirmButton: false
+  });
+  return;
+  
+  }).on("liqpay.ready", function(data){
+  }).on("liqpay.close", function(data){
+  });
+  };
+script(src="//static.liqpay.ua/libjs/checkout.js" async="")
