@@ -12,11 +12,12 @@ const path = require("path");
 const validate = require("validate.js");
 
 const app = express();
-const keyCertPath = path.resolve(__dirname, "../../localhost-key.pem");
-const certPath = path.resolve(__dirname, "../../localhost.pem");
-const key = fs.readFileSync(keyCertPath, "utf-8");
-const cert = fs.readFileSync(certPath, "utf-8");
-const server = https.createServer({key: key, cert: cert }, app);
+
+const keyCertPath = process.env.NODE_ENV === "development" ? path.resolve(__dirname, "../../localhost-key.pem") : null;
+const certPath = process.env.NODE_ENV === "development" ? path.resolve(__dirname, "../../localhost.pem") : null;
+const key = process.env.NODE_ENV === "development" ? fs.readFileSync(keyCertPath, "utf-8") : null;
+const cert = process.env.NODE_ENV === "development" ? fs.readFileSync(certPath, "utf-8") : null;
+const server = process.env.NODE_ENV === "development" ? https.createServer({key: key, cert: cert }, app) : null;
 
 
 const authRoute = require("./routes/auth");
