@@ -92,9 +92,9 @@ const sessionOptions = {
     // maxAge: 15 * 60 * 1000,
     rolling: true,
     cookie: {
-        secure: true,
+        secure: process.env.NODE_ENV === "development" ?  true : false,
         httpOnly: true,
-        sameSite: "none",
+        sameSite: process.env.NODE_ENV === "development" ?  "none" : false,
         maxAge: 3 * 60 * 1000,
         path: '/'
     }
@@ -267,9 +267,15 @@ app.use("/api/insert-values", async function(req, res, next) {
 
 
 async function start(){
-    server.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
+    if(process.env.NODE_ENV === "development") {
+        server.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    } else {
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    }
 }
 
 
