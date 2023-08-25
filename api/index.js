@@ -116,7 +116,7 @@ validate.extend(validate.validators.datetime, {
 app.set("views", path.resolve("views"));
 app.set("view engine", "pug");
 // app.set("view cache", true);
-// app.set('trust proxy', 1);
+app.set('trust proxy', 1);
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
