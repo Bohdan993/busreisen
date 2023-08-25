@@ -42,7 +42,7 @@ script.
   language: "#{language}",
   mode: "embed" // embed || popup
   }).on("liqpay.callback", async function(data){
-  const btn = "<a href=\"/\" class=\"base-button base-button--primary\" style=\" max-width:180px;margin:0 auto; margin-top: 35px;\"type=\"button\">#{translations.buttonText}</a>"
+  const btn = "<a href=\"#{linkToMain}\" class=\"base-button base-button--primary\" style=\" max-width:180px;margin:0 auto; margin-top: 35px;\"type=\"button\">#{translations.buttonText}</a>"
   $('#payment-container').append(btn);
   if(data.status === "success") {
     try {

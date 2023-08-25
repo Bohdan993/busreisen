@@ -81,7 +81,7 @@ const redisStore = new RedisStore({
 });
 const corsOptions = {
     // origin: "https://tg-bot-kod-git-working-bohdan993.vercel.app",
-    origin: "https://bus.loc",
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };

@@ -62,7 +62,8 @@ router.post("/", checkIfSessionIsStarted, async (req, res) => {
                 data, 
                 signature, 
                 translations: loadLanguageFile("payment-widget.js", languageCode),
-                language: languageCode === "de_DE" ? "en" : languageCode.split("_")[0]
+                language: languageCode === "de_DE" ? "en" : languageCode.split("_")[0],
+                linkToMain: languageCode === "ru_RU" ? "/" : languageCode === "uk_UA" ? "/ua" : languageCode.split("_")[0],
             }
         );
 
