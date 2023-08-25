@@ -4,6 +4,7 @@ const {
 const router = Router();
 const TicketsModel = require("../../models/ticket");
 const UsersModel = require("../../models/user");
+const BusFlightsModel = require("../../models/busFlight");
 const { Op } = require("sequelize");
 const { isSpecialDate, transformDate } = require("../../helpers");
 const { checkCallbackSignature } = require("../../middlewares/paymentMiddlewares");
@@ -19,6 +20,12 @@ router.post("/", [checkIfSessionIsStarted, checkCallbackSignature], async (req, 
             signature,
             data
         } = req?.body;
+
+        const {
+            selectedBusFlight,
+            children: numOfChildren,
+            adults: numOfAdults
+        } =  req.session;
 
         const decodedData = Buffer.from(data, "base64").toString("utf-8");
         
@@ -39,6 +46,24 @@ router.post("/", [checkIfSessionIsStarted, checkCallbackSignature], async (req, 
             "destinationId": parseInt(destinationId),
             "children": JSON.stringify(children.reduce((acc, curr) =>{acc[curr[0]] = curr[1]; return acc;}, {})),
             "signature": signature
+        });
+
+
+        const busFlights = await BusFlightsModel.findAll({
+            attributes: ["id", "freeSeats"],
+            where: {
+                [Op.or]: [
+                    {dateOfDeparture: startDate, routeId: selectedBusFlight?.places?.from?.routeId || null},
+                    {dateOfDeparture: isSpecialDate(endDate) ? null : endDate, routeId: selectedBusFlight?.places?.to?.routeId || null}
+                ]  
+            }
+        });
+
+        busFlights.forEach(async busFlight => {
+            await busFlight.update({
+                freeSeats: parseInt(busFlight.freeSeats) - (parseInt(numOfChildren) + parseInt(numOfAdults))
+            });
+            await busFlight.save();
         });
 
         const getUserIds = async () => {
@@ -79,7 +104,6 @@ router.post("/", [checkIfSessionIsStarted, checkCallbackSignature], async (req, 
             return userIds;
         }
 
-
         function saveEmailToSession(ind, email){
             if(ind === 0) req.session.email = email;
         }
@@ -87,7 +111,6 @@ router.post("/", [checkIfSessionIsStarted, checkCallbackSignature], async (req, 
         const userIds = await getUserIds();
         await ticket.addUsers(userIds.filter(Boolean));
 
-        
         req.session.save(function (err) {
             if (err) return next(err);
 
@@ -107,6 +130,10 @@ router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], asyn
     try {
 
         const {
+            languageCode = 'uk_UA'
+        } = req?.query;
+
+        const {
             signature,
             data
         } = req?.body;
@@ -118,7 +145,7 @@ router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], asyn
         const passangersInfoData = Object.entries(passangersInfo);
 
         const html = await generateHTMLTicket({
-            language: "uk_UA",
+            languageCode,
             cities,
             signature,
             price,
@@ -128,8 +155,12 @@ router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], asyn
             places
         });
 
-        return res.send(html);
+        req.session.destroy(function (err) {
+            if (err) return next(err);
 
+            return res.send(html);
+        });
+        
     } catch (err) {
         console.log(err);
         res.status(500).json({status: "fail", error: "Server error"});

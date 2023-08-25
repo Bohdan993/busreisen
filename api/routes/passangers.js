@@ -19,11 +19,12 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
         let discounts = [];
 
         const {
+            languageCode = "uk_UA",
             mode = "html"
         } = req?.query;
 
         const {
-            language = "uk_UA", 
+             
             adults = 1, 
             children = 0
         } = req.session;
@@ -31,7 +32,7 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
         const lang = await LanguagesModel.findOne({
             where: {
                 code: {
-                    [Op.eq]: language
+                    [Op.eq]: languageCode
                 }
             }
         });

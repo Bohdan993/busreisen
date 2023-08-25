@@ -8,7 +8,6 @@ const fs = require("fs");
 
 
 router.get("/", async (req, res) => {
-    // console.log("SESS ID", req.session.id);
     try {
 
         const {

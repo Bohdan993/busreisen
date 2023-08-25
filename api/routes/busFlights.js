@@ -170,7 +170,6 @@ router.get("/", validateDates, async (req, res, next) => {
             if (err) next(err);
 
             req.session.busFlights = transformedBusFlights;
-            req.session.language = lang?.code;
             req.session.startDate = startDate;
             req.session.endDate = endDate;
             req.session.currencyAbbr = currency?.abbr;
@@ -184,7 +183,7 @@ router.get("/", validateDates, async (req, res, next) => {
 
             req.session.save(function (err) {
                 if (err) return next(err);
-
+                
                 if(mode?.toLowerCase() === "json") {
                     return res.json({status: "ok", data: transformedBusFlights});
                 }

@@ -3,8 +3,7 @@ const path = require("path");
 const HTMLToPDF = require("html-pdf-node");
 const QRCode = require("qrcode");
 const pug = require("pug");
-const { loadLanguageFile, /*transformTimestampToDate*/ } = require("../helpers");
-// const constants = require("../helpers/constants");
+const { loadLanguageFile } = require("../helpers");
 
 async function generatePDFTicket(signature, html){
     const pdfHash = crypto.createHash("sha256").update(signature).digest("hex");
@@ -35,7 +34,7 @@ async function generatePDFTicket(signature, html){
 
 async function generateHTMLTicket(
     {
-        language = "uk_UA",
+        languageCode = "uk_UA",
         cities,
         signature,
         price,
@@ -62,7 +61,7 @@ async function generateHTMLTicket(
                     const html = pug.renderFile(ticketTemplate, 
                         {
                             qr: url,
-                            translations: loadLanguageFile("ticket.js", language),
+                            translations: loadLanguageFile("ticket.js", languageCode),
                             data: {
                                 price, 
                                 passangersInfo: passangersInfoData, 

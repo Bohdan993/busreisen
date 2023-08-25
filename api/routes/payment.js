@@ -17,8 +17,12 @@ const router = Router();
 router.post("/", checkIfSessionIsStarted, async (req, res) => {
     try {
 
+
         const {
-            language = "uk_UA",
+            languageCode = "uk_UA"
+        } = req?.query;
+
+        const {
             currencyAbbr,
             originId,
             destinationId,
@@ -44,8 +48,8 @@ router.post("/", checkIfSessionIsStarted, async (req, res) => {
             "order_id"       : uuidv4(),
             "version"        : "3",
             "paytypes"       : "card, liqpay, qr",
-            "language"       : language === "de_DE" ? "en" : language.split("_")[0],
-            "info"           : JSON.stringify({passangersInfo, cities, places, dates, startDate, endDate, destinationId, originId, email}),
+            "language"       : languageCode === "de_DE" ? "en" : languageCode.split("_")[0],
+            "info"           : JSON.stringify({passangersInfo, cities, places, dates, startDate, endDate, destinationId, originId, email, languageCode}),
             "server_url"     : process.env.LIQPAY_CALLBACK_URL
         };
 
@@ -57,7 +61,8 @@ router.post("/", checkIfSessionIsStarted, async (req, res) => {
             { 
                 data, 
                 signature, 
-                translations: loadLanguageFile("payment-widget.js", language) 
+                translations: loadLanguageFile("payment-widget.js", languageCode),
+                language: languageCode === "de_DE" ? "en" : languageCode.split("_")[0]
             }
         );
 
@@ -78,7 +83,7 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
 
         const decodedData = Buffer.from(data, "base64").toString("utf-8");
         const { currency_credit: currencyAbbr, amount: price, info} = JSON.parse(decodedData);
-        const { passangersInfo, cities, places, dates, email} = JSON.parse(info);
+        const { passangersInfo, cities, places, dates, email, languageCode} = JSON.parse(info);
         const passangersInfoData = Object.entries(passangersInfo);
         const pdfHash = crypto.createHash("sha256").update(signature).digest("hex");
         const pdfName = pdfHash + ".pdf";
@@ -90,7 +95,7 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
                 try {
                     if (err) {
                         const html = await generateHTMLTicket({
-                            language: "uk_UA",
+                            languageCode,
                             cities,
                             signature,
                             price,

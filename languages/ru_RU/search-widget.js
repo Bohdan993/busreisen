@@ -11,3 +11,6 @@ const translations = {
     "openDateText": "Открытая дата",
     "noFoundText": "К сожалению ничего не найдено"
 }
+
+
+module.exports = translations;

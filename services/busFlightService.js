@@ -143,6 +143,7 @@ function transformBusFlights({busFlights, cities, price, currency, originId, des
                     },
                     "places": {
                         "from": {
+                            "routeId": el?.route?.id,
                             "routeName": el?.route?.routePath?.name,
                             "onBoardingPlace": onp?.PlaceAttributes?.[0]?.name,
                             "outBoardingPlace": outp?.PlaceAttributes?.[0]?.name,
@@ -150,6 +151,7 @@ function transformBusFlights({busFlights, cities, price, currency, originId, des
                             "outBoardingTime": el?.route?.routePath?.outboarding?.find(el => parseInt(el?.placeId) === parseInt(outp?.id))?.time,
                         },
                         "to": {
+                            "routeId": busFlights?.resultTo?.[ind]?.route.id,
                             "routeName": busFlights?.resultTo?.[ind]?.route?.routePath?.name,
                             "onBoardingPlace": outp?.PlaceAttributes?.[0]?.name,
                             "outBoardingPlace": onp?.PlaceAttributes?.[0]?.name,

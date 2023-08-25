@@ -96,13 +96,11 @@ const sessionOptions = {
         secure: process.env.NODE_ENV === "development" ?  true : false,
         httpOnly: true,
         sameSite: process.env.NODE_ENV === "development" ?  "none" : false,
-        maxAge: 3 * 60 * 1000,
+        maxAge: 15 * 60 * 1000,
         path: '/'
     }
 };
 
-
-console.log(sessionOptions);
 
 validate.extend(validate.validators.datetime, {
     parse: function(value, options) {
@@ -263,8 +261,6 @@ app.use("/api/insert-values", async function(req, res, next) {
         res.status(500).json({status: "fail", error: "Server error"});
     }
 });
-
-
 
 
 async function start(){

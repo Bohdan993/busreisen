@@ -62,7 +62,7 @@ async function createValidateConstraints(data, dataToValidate){
 
         for(let key in data[passangerType]) {
             
-            if(additionalPhoneRegex.test(key)) {
+            if(additionalPhoneRegex.test(key) && dataToValidate[key] !== "") {
                 constraints[key] = {
                     format: {
                         pattern: /^\+380([5-9][0-9]\d{7})$|^\+49(\d{10,11})$/,

@@ -65,7 +65,6 @@ router.post("/register", async (req, res) => {
         });
         return res.json({status: "ok", data: registrationData});
     } catch (err) {
-        // console.log(err);
         console.log(err?.message);
         res.status(500).json({status: "fail", error: "Server error"});
     }
