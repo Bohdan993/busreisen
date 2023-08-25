@@ -93,9 +93,9 @@ const sessionOptions = {
     // maxAge: 15 * 60 * 1000,
     rolling: true,
     cookie: {
-        secure: process.env.NODE_ENV === "development" ?  true : false,
+        secure: true,
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === "development" ?  "none" : false,
+        sameSite: "none",
         maxAge: 15 * 60 * 1000,
         path: '/'
     }
