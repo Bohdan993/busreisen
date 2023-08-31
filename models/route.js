@@ -17,5 +17,3 @@ const Route = sequelize.define("route", {
 
 module.exports = Route;
 
-// Один білет на сім"ю? - Так
-// Для дітей які дані вказувати? - Дата народження, ім"я, прізвище.

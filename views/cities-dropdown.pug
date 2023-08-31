@@ -5,6 +5,6 @@
             .locations-container__group(id=`autocomplete-group-${country.country.id}`)
                 p.locations-container__group__title.title.title--3= country.country.CountryAttributes[0].name
                 each city in country.cities
-                    div.autocomplete-option(aria-label=`${city.CityAttributes[0].name}` role="option" tabindex="-1" id=`autocomplete-option-${city.id}`)
+                    div.autocomplete-option(aria-label=`${city.CityAttributes[0].name}` role="option" id=`autocomplete-option-${city.id}`)
                         label.locations-container__location
                             strong.locations-container__location__name= city.CityAttributes[0].name

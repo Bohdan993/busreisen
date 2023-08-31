@@ -177,7 +177,7 @@ function transformBusFlights({busFlights, cities, price, currency, originId, des
     return result;
 }
 
-function filterBusFlightsAvailableDates(busFlights, originId, destinationId){
+function filterBusFlightsAvailableDates(busFlights, originId, destinationId, isStartDate){
     let result = [];
     busFlights.forEach(busFlight => {
         if(busFlight?.route?.routePath?.onboarding?.find(el => parseInt(el?.cityId) === parseInt(originId))) {
@@ -189,7 +189,9 @@ function filterBusFlightsAvailableDates(busFlights, originId, destinationId){
         }
     });
 
-    return Array.from(new Set(result.map(el => el?.dateOfDeparture)));
+    return isStartDate ? 
+    Array.from(new Set(result.map(el => el?.dateOfDeparture))).slice(1) : 
+    Array.from(new Set(result.map(el => el?.dateOfDeparture)));
 }
 
 

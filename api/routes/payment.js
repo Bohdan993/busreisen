@@ -33,8 +33,7 @@ router.post("/", checkIfSessionIsStarted, async (req, res) => {
             email
         } = req.session;
 
-
-        const {cities, places, dates} = selectedBusFlight;
+        const { cities, places, dates } = selectedBusFlight;
 
         const isOneWay1 = isOneWay(endDate);
         const price = await calculatePrice(passangersInfo, currencyAbbr, originId, destinationId, isOneWay1);
@@ -90,9 +89,9 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
         const pdfName = pdfHash + ".pdf";
         const pdfPath = path.resolve("assets", "tickets", pdfName);
 
-
         const promise = new Promise((res, rej) => {
             fs.readFile(pdfPath, async function (err, fileData) {
+
                 try {
                     if (err) {
                         const html = await generateHTMLTicket({
@@ -103,17 +102,19 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
                             currencyAbbr,
                             passangersInfoData,
                             dates,
-                            places
+                            places,
+                            isPDF: true
                         });
                         const { pdfPath } = await generatePDFTicket(signature, html);
                         await sendFileMail(email, pdfPath);
-                        res();
+                        return res();
+                        
                     }
                     
                     await sendFileMail(email, pdfPath);
-                    res();
+                    return res();
                 } catch(err) {
-                    rej(err);
+                    return rej(err);
                 }
             });
         });

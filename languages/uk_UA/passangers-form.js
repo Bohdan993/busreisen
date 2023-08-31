@@ -7,9 +7,11 @@ const translations = {
     "lastNameText": "Прізвище",
     "phoneText": "Телефон",
     "dateOfBirthText":"Дата народження",
+    "dateOfBirthPlaceholder": "ДД-ММ-РРРР",
     "additionalPhoneText": "Дод. телефон",
     "emailText": "Email",
     "discountText": "Знижка",
+    "noteText": "Зверніть увагу! Ім'я, прізвище та дата народження мають відповідати тим, що вказані у закордонному паспорті.",
     "noDiscountText": "Без знижки",
     "datepicker": {
         "days": ["Недiля", "Понедiлок", "Вiвторок", "Середа", "Четвер", "П\"ятниця", "Субота", "Недiля"],

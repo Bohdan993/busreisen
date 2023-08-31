@@ -125,7 +125,8 @@ script.
   return;
   
   }).on("liqpay.ready", function(data){
+      $("#booking2 .booking-content .loading-area").fadeOut(100); 
   }).on("liqpay.close", function(data){
   });
   };
-script(src="//static.liqpay.ua/libjs/checkout.js" async="")
+script(src="/templates/transcomp/js/plugins/liqpay.checkout.js" async="")

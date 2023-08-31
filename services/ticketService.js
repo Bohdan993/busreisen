@@ -40,7 +40,8 @@ async function generateHTMLTicket(
         price,
         passangersInfoData,
         dates,
-        places
+        places,
+        isPDF = false
     }
     ) {
     
@@ -61,6 +62,7 @@ async function generateHTMLTicket(
                     const html = pug.renderFile(ticketTemplate, 
                         {
                             qr: url,
+                            isPDF,
                             translations: loadLanguageFile("ticket.js", languageCode),
                             data: {
                                 price, 

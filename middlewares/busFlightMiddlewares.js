@@ -25,13 +25,14 @@ async function validateDates(req, res, next){
 
     if((isValidDate(new Date(startDate)) && isValidDate(new Date(endDate)))) {
         
-        if(new Date(startDate) > new Date(endDate)) {
+        if(new Date(startDate) >= new Date(endDate)) {
             return res.status(404).render("error-404", {translations: error404Translations});
         }
 
         if(new Date(startDate) < new Date(new Date().toDateString())) {
             return res.status(404).render("error-404", {translations: error404Translations});
         }
+
         return next();
 
     } else {

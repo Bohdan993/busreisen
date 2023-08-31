@@ -63,10 +63,9 @@ router.get("/", validateDates, async (req, res, next) => {
             attributes: ["id", "allSeats", "freeSeats", "routeId", "dateOfDeparture"],
             where:{
                 freeSeats: {
+                    /** ???????????????????????????????????? */
                     [Op.gte]: parseInt(adults) + parseInt(children)
-                },
-                dateOfDeparture: {
-                    [Op.or]: [startDate, endDate]
+                    /** ???????????????????????????????????? */
                 }
             },
             include: [
@@ -201,15 +200,19 @@ router.get("/", validateDates, async (req, res, next) => {
     
 });
 
+
 router.get("/available-dates", async(req, res) => {
     try{
         const {
             originId = null, 
-            destinationId = null
+            destinationId = null,
+            startDate = null
         } = req?.query;
 
-        let busFlights;
 
+        const startDateInstance = new Date(startDate);
+        let busFlights;
+        
         let query = {
             attributes: ["id", "allSeats", "freeSeats", "routeId", "dateOfDeparture"],
             where:{
@@ -217,7 +220,7 @@ router.get("/available-dates", async(req, res) => {
                     [Op.gte]: 1
                 },
                 dateOfDeparture: {
-                    [Op.gte]: new Date()
+                    [Op.gte]: isValidDate(startDateInstance) ? startDateInstance : new Date()
                 }
             },
             include: [
@@ -234,7 +237,7 @@ router.get("/available-dates", async(req, res) => {
         busFlights = await BusFlight.findAll(query);
         busFlights = busFlights?.map(bf => bf?.toJSON());
 
-        busFlights = filterBusFlightsAvailableDates(busFlights, originId, destinationId);
+        busFlights = filterBusFlightsAvailableDates(busFlights, originId, destinationId, isValidDate(startDateInstance));
         
         return res.json({status: "ok", data: busFlights});
         

@@ -1,5 +1,5 @@
 const translations = {
-    "noFoundFligthsText": "Не знайдено доступних рейсів за вказаними параметрами",
+    "noFoundFligthsText": "Не найдено доступных рейсов по указанным параметрам",
     "errorText": "Извините, произошла ошибка. Попробуйте еще раз.",
     "confirmButtonText": "Начать заново",
     "buttonText": "К поиску",

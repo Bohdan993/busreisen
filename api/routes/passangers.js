@@ -103,7 +103,8 @@ router.post("/validate", checkIfSessionIsStarted, async (req, res, next) => {
         }
 
         req.session.passangersInfo = validData.data;
-        
+        req.session.email = Object.values(validData.data).find((_, ind) => ind === 0)?.["email-1"];
+
         req.session.save(function (err) {
             if (err) next(err);
 

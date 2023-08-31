@@ -47,7 +47,7 @@ form#booking-passangers-form.booking-passangers-form
                 div.input(id=`adult-input-date-of-birth-${i + 1}` data-input=`date-of-birth-${i + 1}`)
                   .input-container
                     label(for=`adult-date-of-birth-${i + 1}`)= translations.dateOfBirthText + "*"
-                    input(type="text" class="date-of-birth" placeholder=`${translations.dateOfBirthText}` id=`adult-date-of-birth-${i + 1}` data-validate=`date-of-birth-${i + 1}` readonly required)
+                    input(type="text" class="date-of-birth" placeholder=`${translations.dateOfBirthPlaceholder}` id=`adult-date-of-birth-${i + 1}` data-validate=`date-of-birth-${i + 1}` required)
                   .input-error= translations.errorText 
         if i === 0
           fieldset
@@ -84,7 +84,7 @@ form#booking-passangers-form.booking-passangers-form
                     .select-dropdown
         .booking-flow__passengers__info
           p
-            |Зверніть увагу! Ім"я, прізвище та дата народження мають відповідати тим, що вказані у закордонному паспорті.
+            = translations.noteText
       span.passanger-block-open-arrow
         svg(height="512px" style="enable-background:new 0 0 512 512;" version="1.1" viewbox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink")
           path(d="M98.9,184.7l1.8,2.1l136,156.5c4.6,5.3,11.5,8.6,19.2,8.6c7.7,0,14.6-3.4,19.2-8.6L411,187.1l2.3-2.6  c1.7-2.5,2.7-5.5,2.7-8.7c0-8.7-7.4-15.8-16.6-15.8v0H112.6v0c-9.2,0-16.6,7.1-16.6,15.8C96,179.1,97.1,182.2,98.9,184.7z")
@@ -119,7 +119,7 @@ form#booking-passangers-form.booking-passangers-form
                 div.input(id=`child-input-date-of-birth-${i + 1}` data-input=`date-of-birth-${i + 1}`)
                   .input-container
                     label(for=`child-date-of-birth-${i + 1}`)= translations.dateOfBirthText + "*"
-                    input(type="text" class="date-of-birth" placeholder=`${translations.dateOfBirthText}` id=`child-date-of-birth-${i + 1}` data-validate=`date-of-birth-${i + 1}` readonly required)
+                    input(type="text" class="date-of-birth" placeholder=`${translations.dateOfBirthPlaceholder}` id=`child-date-of-birth-${i + 1}` data-validate=`date-of-birth-${i + 1}` required)
                   .input-error= translations.errorText 
               div
                 div.select(id=`child-select-discount-${i + 1}` data-input=`discount-${i + 1}`)
@@ -137,7 +137,7 @@ form#booking-passangers-form.booking-passangers-form
                     .select-dropdown
         .booking-flow__passengers__info
           p
-            |Зверніть увагу! Ім"я, прізвище та дата народження мають відповідати тим, що вказані у закордонному паспорті.
+            = translations.noteText
       span.passanger-block-open-arrow
         svg(height="512px" style="enable-background:new 0 0 512 512;" version="1.1" viewbox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink")
           path(d="M98.9,184.7l1.8,2.1l136,156.5c4.6,5.3,11.5,8.6,19.2,8.6c7.7,0,14.6-3.4,19.2-8.6L411,187.1l2.3-2.6  c1.7-2.5,2.7-5.5,2.7-8.7c0-8.7-7.4-15.8-16.6-15.8v0H112.6v0c-9.2,0-16.6,7.1-16.6,15.8C96,179.1,97.1,182.2,98.9,184.7z")

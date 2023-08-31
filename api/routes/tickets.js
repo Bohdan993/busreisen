@@ -49,28 +49,36 @@ router.post("/", [checkIfSessionIsStarted, checkCallbackSignature], async (req, 
         });
 
 
-        const busFlights = await BusFlightsModel.findAll({
-            attributes: ["id", "freeSeats"],
+        // const busFlights = await BusFlightsModel.findAll({
+        //     attributes: ["id", "freeSeats"],
+        //     where: {
+        //         [Op.or]: [
+        //             {dateOfDeparture: startDate, routeId: selectedBusFlight?.places?.from?.routeId || null},
+        //             {dateOfDeparture: isSpecialDate(endDate) ? null : endDate, routeId: selectedBusFlight?.places?.to?.routeId || null}
+        //         ]  
+        //     }
+        // });
+
+        // busFlights.forEach(async busFlight => {
+        //     await busFlight.update({
+        //         freeSeats: parseInt(busFlight.freeSeats) - (parseInt(numOfChildren) + parseInt(numOfAdults))
+        //     });
+        //     await busFlight.save();
+        // });
+
+        await BusFlightsModel.increment({ freeSeats: -(parseInt(numOfChildren) + parseInt(numOfAdults)) }, {
             where: {
                 [Op.or]: [
                     {dateOfDeparture: startDate, routeId: selectedBusFlight?.places?.from?.routeId || null},
                     {dateOfDeparture: isSpecialDate(endDate) ? null : endDate, routeId: selectedBusFlight?.places?.to?.routeId || null}
-                ]  
+                ] 
             }
-        });
-
-        busFlights.forEach(async busFlight => {
-            await busFlight.update({
-                freeSeats: parseInt(busFlight.freeSeats) - (parseInt(numOfChildren) + parseInt(numOfAdults))
-            });
-            await busFlight.save();
         });
 
         const getUserIds = async () => {
             const userIds = await Promise.all(
                 passangersData.map(async (passangerArr, ind) => {
                     if(adultPassangerRegex.test(passangerArr[0])) {
-                        saveEmailToSession(ind, passangerArr[1]?.[`email-${ind + 1}`]);
                         const candidate = await UsersModel.findOne({
                             where: {
                                 [Op.or] : [
@@ -102,10 +110,6 @@ router.post("/", [checkIfSessionIsStarted, checkCallbackSignature], async (req, 
                 })
             );
             return userIds;
-        }
-
-        function saveEmailToSession(ind, email){
-            if(ind === 0) req.session.email = email;
         }
 
         const userIds = await getUserIds();
