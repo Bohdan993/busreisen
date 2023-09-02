@@ -1,7 +1,7 @@
 const { Op } = require("sequelize");
 const validate = require("validate.js");
-const Discount = require("../models/discount");
-const DiscountAttributes = require("../models/discountAttributes");
+const DiscountModel = require("../models/discount");
+const DiscountAttributesModel = require("../models/discountAttributes");
 const { isEmptyObject } = require("../helpers");
 const { mapDiscounts } = require("./discountService");
 const constants = require("../helpers/constants");
@@ -28,18 +28,21 @@ async function createValidateConstraints(data, dataToValidate){
     const dateOfBirthRegex = new RegExp("^date-of-birth-[0-9]+");
     const constraints = {};
 
-    let discounts = await Discount.findAll({
+    let discounts = await DiscountModel.findAll({
         attributes: ["id"],
         order: [
             ["id", "ASC"],
         ],
         include: [
             {
-                model: DiscountAttributes,
+                model: DiscountAttributesModel,
                 attributes: ["group"],
                 where: {
                     languageId: {
                         [Op.eq]: 1
+                    },
+                    group: {
+                        [Op.not]: constants.BUS_FLIGHT
                     }
                 }
             }

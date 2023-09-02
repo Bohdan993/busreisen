@@ -24,7 +24,10 @@ router.get("/", async (req, res) => {
         });
 
         const result = objects.reduce((acc, curr) => {
-            acc[curr] = loadLanguageFile(filesNames.find(el => new RegExp(`^${curr}-[a-z]+\.js`).test(el)), languageCode);
+            acc[curr] = loadLanguageFile(
+                filesNames.find(el => new RegExp(`^${curr}-[a-z]+\.js`).test(el)), 
+                languageCode
+            );
             return acc;
         }, {});
 

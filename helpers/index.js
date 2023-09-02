@@ -10,9 +10,7 @@ function isSpecialDate(str){
 }
 
 function loadLanguageFile(fileName, languageCode) {
-    const p = path.resolve("languages", languageCode, fileName);
-    const translations = require(p);
-    return translations;
+    return require(path.resolve("languages", languageCode, fileName));
 }
 
 function isValidDate(date){

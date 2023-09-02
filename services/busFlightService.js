@@ -1,7 +1,12 @@
 const { isSpecialDate, transformDate, isOneWay } = require("../helpers");
 
+function filterBusFlightsWithFreeSeats({busFlights, numOfPassangers}){
+    return busFlights.filter(bf => {
+        return parseInt(bf.freeSeats) >= parseInt(numOfPassangers);
+    });
+}
 
-function filterBusFlights({busFlights, originId, destinationId, startDate, endDate}){
+function filterBusFlights({busFlights, originId, destinationId, startDate, endDate, customRoutesFilter = (arg) => arg}){
     let resultTo = [];
     let resultFrom = [];
     let result = {};
@@ -96,23 +101,36 @@ function selectBusFlights(data, customRouteFilter = (arg) => arg) {
 }
 
 function customRoutesFilter(originId, destinationId, endDate, res){
-    const drezdenCityID = 12;
-    const routeGroupIdForRemoval = 2;
+    const cityIds = [12];
+    const routeGroupIdsForRemoval = [2];
 
     // Round trip   
-    if((parseInt(originId) === drezdenCityID || parseInt(destinationId) === drezdenCityID) && !isSpecialDate(endDate)) {
-        if(res["resultFrom"].some(el => parseInt(el?.route?.routePath?.routeGroupId) !== routeGroupIdForRemoval)) {
-            res["resultFrom"] = res["resultFrom"].filter(el => parseInt(el?.route?.routePath?.routeGroupId) !== routeGroupIdForRemoval);
-            res["resultTo"] = res["resultTo"].filter(el => parseInt(el?.route?.routePath?.routeGroupId) !== routeGroupIdForRemoval);
+    if((cityIds.includes(parseInt(originId)) || cityIds.includes(parseInt(destinationId))) && !isSpecialDate(endDate)) {
+        /**
+         * If at least one route exists that shouldn't be removed than code inside @if statement executes
+         */
+        if(res["resultFrom"].some(handleCb)) {
+            res["resultFrom"] = res["resultFrom"].filter(handleCb);
+            res["resultTo"] = res["resultTo"].filter(handleCb);
         }
+
+        return res;
     }
     
     // One way trip
-    if((parseInt(originId) === drezdenCityID || parseInt(destinationId) === drezdenCityID) && isSpecialDate(endDate)) {
-        if(res["resultFrom"].some(el => parseInt(el?.route?.routePath?.routeGroupId) !== routeGroupIdForRemoval)) {
-            res["resultFrom"] = res["resultFrom"].filter(el => parseInt(el?.route?.routePath?.routeGroupId) !== routeGroupIdForRemoval);
+    if((cityIds.includes(parseInt(originId)) || cityIds.includes(parseInt(destinationId))) && isSpecialDate(endDate)) {
+        /**
+         * If at least one route exists that shouldn't be removed than code inside @if statement executes
+         */
+        if(res["resultFrom"].some(handleCb)) {
+            res["resultFrom"] = res["resultFrom"].filter(handleCb);
         }
         
+        return res;
+    }
+
+    function handleCb (el){ 
+        return !(routeGroupIdsForRemoval.includes(parseInt(el?.route?.routePath?.routeGroupId)));
     }
 
     return res;  
@@ -196,6 +214,8 @@ function filterBusFlightsAvailableDates(busFlights, originId, destinationId, isS
 
 
 module.exports = {
+    customRoutesFilter,
+    filterBusFlightsWithFreeSeats,
     filterBusFlights,
     transformBusFlights,
     filterBusFlightsAvailableDates

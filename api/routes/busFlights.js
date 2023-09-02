@@ -15,7 +15,13 @@ const BusFlight = require("../../models/busFlight");
 const Route = require("../../models/route");
 const { isSpecialDate, loadLanguageFile, isValidDate } = require("../../helpers");
 const { validateDates } = require("../../middlewares/busFlightMiddlewares");
-const { filterBusFlights, transformBusFlights, filterBusFlightsAvailableDates } = require("../../services/busFlightService");
+const { 
+    filterBusFlights, 
+    transformBusFlights, 
+    filterBusFlightsAvailableDates, 
+    filterBusFlightsWithFreeSeats,
+    customRoutesFilter 
+} = require("../../services/busFlightService");
 const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
 
 
@@ -62,11 +68,6 @@ router.get("/", validateDates, async (req, res, next) => {
         let query = {
             attributes: ["id", "allSeats", "freeSeats", "routeId", "dateOfDeparture"],
             where:{
-                freeSeats: {
-                    /** ???????????????????????????????????? */
-                    [Op.gte]: parseInt(adults) + parseInt(children)
-                    /** ???????????????????????????????????? */
-                }
             },
             include: [
                 {
@@ -84,23 +85,44 @@ router.get("/", validateDates, async (req, res, next) => {
             query.where.dateOfDeparture = isValidDate(new Date(startDate)) ? startDate : null;
         } else {
             query.where.dateOfDeparture = {};
-            query.where.dateOfDeparture[Op.or] = [isValidDate(new Date(startDate)) ? startDate : null, isValidDate(new Date(endDate)) ? endDate : null];
+            query.where.dateOfDeparture[Op.or] = [
+                isValidDate(new Date(startDate)) ? startDate : null, 
+                isValidDate(new Date(endDate)) ? endDate : null
+            ];
         }
     
         busFlights = await BusFlight.findAll(query);
+        busFlights = busFlights?.map(bf => bf?.toJSON());
 
         if(!busFlights?.length) {
             return res.status(404).render("error-404", {translations: error404Translations});
         }
 
-        busFlights = busFlights?.map(bf => bf?.toJSON());
-        const filteredBusFlights = filterBusFlights({busFlights, originId, destinationId, startDate, endDate});
+        const filteredBusFlightsWithFreeSeats = filterBusFlightsWithFreeSeats({busFlights, numOfPassangers: parseInt(adults) + parseInt(children)});
+
+        if(!filteredBusFlightsWithFreeSeats.length) {
+            return res.status(404).render("error-404", {translations: loadLanguageFile("_404-error-no-free-seats.js", lang?.code)});
+        }
+        
+        const filteredBusFlights = filterBusFlights(
+            {
+                busFlights: filteredBusFlightsWithFreeSeats, 
+                originId, 
+                destinationId, 
+                startDate, 
+                endDate, 
+                customRoutesFilter
+            }
+        );
 
         if(!filteredBusFlights?.resultFrom?.length) {
             return res.status(404).render("error-404", {translations: error404Translations});
         }
 
-        let placeIds = [...filteredBusFlights?.resultFrom.map(el => el?.route?.routePath?.onboarding.map(item => item?.placeId)), ...filteredBusFlights?.resultFrom.map(el => el?.route?.routePath?.outboarding.map(item => item?.placeId))];
+        let placeIds = [
+            ...filteredBusFlights?.resultFrom.map(el => el?.route?.routePath?.onboarding.map(item => item?.placeId)), 
+            ...filteredBusFlights?.resultFrom.map(el => el?.route?.routePath?.outboarding.map(item => item?.placeId))
+        ];
 
         let cityQuery = {
             attributes: ["id"],
@@ -162,9 +184,20 @@ router.get("/", validateDates, async (req, res, next) => {
         price = await BusFlightPrices.findOne(priceQuery);
         price = price?.toJSON();
         
-        const transformedBusFlights = transformBusFlights({busFlights: filteredBusFlights, cities, price, currency, originId, destinationId, endDate, startDate, languageCode: lang?.code});
+        const transformedBusFlights = transformBusFlights(
+            {
+                busFlights: filteredBusFlights, 
+                cities, 
+                price, 
+                currency, 
+                originId, 
+                destinationId, 
+                endDate, 
+                startDate, 
+                languageCode: lang?.code
+            }
+        );
 
-        
         req.session.regenerate(function (err) {
             if (err) next(err);
 
@@ -200,6 +233,54 @@ router.get("/", validateDates, async (req, res, next) => {
     
 });
 
+router.get("/alternatives", [checkIfSessionIsStarted, validateDates], async (req, res, next) => {
+    try {
+        let busFlights = [];
+        let cities = [];
+        let price = "";
+        
+        const {
+            languageCode = "uk_UA", 
+            mode = "html", 
+            startDate = null, 
+            endDate = null, 
+            originId = null, 
+            destinationId = null, 
+            adults = 1,
+            children = 0,
+            currencyAbbr = null
+        } = req?.query;
+
+
+        const lang = await LanguagesModel.findOne({
+            where: {
+                code: {
+                    [Op.eq]: languageCode
+                }
+            }
+        });
+
+        const error404Translations = loadLanguageFile("404-error.js", lang?.code);
+
+        let currency = await Currency.findOne({
+            attributes: ["id", "name", "abbr", "symbol"],
+            where: {
+                abbr: {
+                    [Op.eq]: currencyAbbr
+                }
+            }
+        });
+
+        currency = currency?.toJSON();
+
+        return res.json({status: "ok"});
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({status: "fail", error: "Server error"});
+    }
+    
+})
 
 router.get("/available-dates", async(req, res) => {
     try{
@@ -260,7 +341,7 @@ router.post("/select", checkIfSessionIsStarted, async(req, res, next) => {
         }
 
         req.session.selectedBusFlight = selectedBusFlight;
-        req.session.busFlights = null;
+        // req.session.busFlights = null;
         
         req.session.save(function (err) {
             if (err) next(err);

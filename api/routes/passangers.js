@@ -2,8 +2,8 @@ const {
     Router
 } = require("express");
 const router = Router();
-const Discount = require("../../models/discount");
-const DiscountAttributes = require("../../models/discountAttributes");
+const DiscountModel = require("../../models/discount");
+const DiscountAttributesModel = require("../../models/discountAttributes");
 const LanguagesModel = require("../../models/language");
 const { Op } = require("sequelize");
 const { loadLanguageFile } = require("../../helpers");
@@ -11,7 +11,6 @@ const { mapDiscounts, filterByDateDiscounts } = require("../../services/discount
 const { validatePassangersData } = require("../../services/passangerService");
 const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
 const constants = require("../../helpers/constants");
-
 
 
 router.get("/", checkIfSessionIsStarted, async (req, res) => {
@@ -37,7 +36,7 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
             }
         });
 
-        discounts = await Discount.findAll({
+        discounts = await DiscountModel.findAll({
             attributes: ["id", "coef", "inactivePeriod"],
             include: [
                 {
@@ -53,11 +52,14 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
                     }
                 },
                 {
-                    model: DiscountAttributes,
+                    model: DiscountAttributesModel,
                     attributes: ["name", "group", "languageId"],
                     where: {
                         languageId: {
                             [Op.eq]: lang?.id
+                        },
+                        group: {
+                            [Op.not]: constants.BUS_FLIGHT
                         }
                     }
                 }
@@ -69,6 +71,8 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
         discounts = mapDiscounts(discounts);
         discounts = filterByDateDiscounts(discounts);
 
+        // console.log("SESSION", req.session);
+
         if(mode?.toLowerCase() === "html" || !mode) {
             return res.render("passangers-form", 
                 { 
@@ -76,11 +80,12 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
                     children, 
                     discounts,
                     constants, 
-                    translations: loadLanguageFile("passangers-form.js", lang?.code) 
+                    translations: loadLanguageFile("passangers-form.js", lang?.code),
+                    passangersInfo: req.session?.passangersInfo ? Object.entries(req.session?.passangersInfo) : null
                 }
             );
         }
-        
+
         return res.json({status: "ok", data: { adults, children, discounts }});
 
     } catch (err) {

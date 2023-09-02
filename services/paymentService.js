@@ -1,11 +1,12 @@
 const crypto = require("crypto");
 
 const { Op } = require("sequelize");
-const Discount = require("../models/discount");
-const DiscountAttributes = require("../models/discountAttributes");
+const DiscountModel = require("../models/discount");
+const DiscountAttributesModel = require("../models/discountAttributes");
 const BusFlightPrices = require("../models/busFlightPrices");
 const CurrencyModel = require("../models/currency");
 const { mapDiscounts, filterByDateDiscounts } = require("./discountService");
+const constants = require("../helpers/constants");
 
 
 function strToSign (str) {
@@ -25,18 +26,21 @@ async function calculatePrice(data, currencyAbbr, originId, destinationId, isOne
         }
     });
 
-    let discounts = await Discount.findAll({
+    let discounts = await DiscountModel.findAll({
         attributes: ["id", "coef", "inactivePeriod"],
         order: [
             ["id", "ASC"],
         ],
         include: [
             {
-                model: DiscountAttributes,
+                model: DiscountAttributesModel,
                 attributes: ["group"],
                 where: {
                     languageId: {
                         [Op.eq]: 1
+                    },
+                    group: {
+                        [Op.not]: constants.BUS_FLIGHT
                     }
                 }
             }
