@@ -24,7 +24,7 @@ function filterByDateDiscounts(discounts) {
             if(!discountItem?.["inactivePeriod"]) {
                 pushFilteredItem({filteredDiscounts, ind, discountItem, discountsArr});
             } else {
-               const [startDate, endDate]  = discountItem?.["inactivePeriod"].split("|");
+               const [startDate, endDate] = discountItem?.["inactivePeriod"].split("|");
                const currentDate = transformDateToShortString(new Date());
                if(!(currentDate.localeCompare(startDate) >= 0 && currentDate.localeCompare(endDate) <= 0)) {
                 pushFilteredItem({filteredDiscounts, ind, discountItem, discountsArr});

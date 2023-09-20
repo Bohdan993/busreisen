@@ -3,11 +3,15 @@ const {
 } = require("express");
 const router = Router();
 const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
-const { encodeHTMLEntities, decodeHTMLEntities } = require("../../helpers");
-
+const { encodeHTMLEntities, decodeHTMLEntities, isOneWay } = require("../../helpers");
+const { calculatePrice } = require("../../services/paymentService");
 
 router.get("/", checkIfSessionIsStarted, async (req, res) => {
     try {
+
+        const {
+            type = "standart"
+        } = req?.query;
 
         const {
             adults,
@@ -18,13 +22,30 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
             startDate, 
             endDate,
             bookingPageParams,
-            currencySymbol
+            currency: {
+                symbol: currencySymbol
+            },
+            passangersInfo, 
+            currency,
+            originId,
+            destinationId
         } = req?.session;
 
+        let price;
+
+        if(type === "check") {
+            const isOneWay1 = isOneWay(endDate);
+            price = await calculatePrice({data: passangersInfo, currency, originId, destinationId, isOneWay: isOneWay1});
+        }
+
+        if(type === "standart") {
+            price = parseInt(purePrice) * (parseInt(adults) + parseInt(children));
+        }
+        
         const data = { 
             adults, 
             children, 
-            price: purePrice, 
+            price, 
             startDate, 
             endDate, 
             bookingPageParams, 

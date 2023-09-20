@@ -35,6 +35,5 @@ DiscountAttributes.belongsTo(LanguagesModel);
 DiscountsModel.hasMany(DiscountAttributes);
 DiscountAttributes.belongsTo(DiscountsModel);
 
-
 module.exports = DiscountAttributes;
 

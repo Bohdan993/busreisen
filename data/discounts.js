@@ -49,6 +49,12 @@ const discounts = [
         "coef": 0.15,
         "inactivePeriod": null
     },
+    {
+        "id": 11,
+        "coef": 0.1,
+        "inactivePeriod": null,
+        "busflightId": 20
+    }
 ];
 
 module.exports = discounts;

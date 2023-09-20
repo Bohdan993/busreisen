@@ -5,8 +5,12 @@ function isOneWay(date){
     return (String(date) === constants.ONE_WAY);
 }
 
-function isSpecialDate(str){
-    return (String(str) === constants.ONE_WAY || String(str) === constants.OPEN_DATE);
+function isRound(date){
+    return (String(date) === constants.ROUND);
+}
+
+function isSpecialDate(date){
+    return (String(date) === constants.ONE_WAY || String(date) === constants.OPEN_DATE || String(date) === constants.ROUND);
 }
 
 function loadLanguageFile(fileName, languageCode) {
@@ -70,6 +74,7 @@ function decodeHTMLEntities(rawStr) {
  module.exports = {
     isSpecialDate,
     isOneWay,
+    isRound,
     transformDate,
     loadLanguageFile,
     isValidDate,

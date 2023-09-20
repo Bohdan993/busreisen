@@ -8,7 +8,7 @@ async function validateDates(req, res, next){
     const {
         languageCode = "uk_UA", 
         startDate = null, 
-        endDate = null
+        endDate = null,
     } = req?.query;
     
 
@@ -20,24 +20,34 @@ async function validateDates(req, res, next){
         }
     });
 
-    const error404Translations = loadLanguageFile("404-error.js", lang?.code);
+    const isAlternativesRoute = req.originalUrl.includes("/alternatives");
+    const error404Translations = isAlternativesRoute ? loadLanguageFile("_404-error-no-alternative-tickets.js", lang?.code) :  loadLanguageFile("404-error.js", lang?.code);
 
 
     if((isValidDate(new Date(startDate)) && isValidDate(new Date(endDate)))) {
         
         if(new Date(startDate) >= new Date(endDate)) {
-            return res.status(404).render("error-404", {translations: error404Translations});
+            return res.status(404).render("error-404", {
+                translations: error404Translations,
+                isShowBtn: !isAlternativesRoute
+            });
         }
 
         if(new Date(startDate) < new Date(new Date().toDateString())) {
-            return res.status(404).render("error-404", {translations: error404Translations});
+            return res.status(404).render("error-404", {
+                translations: error404Translations,
+                isShowBtn: !isAlternativesRoute
+            });
         }
 
         return next();
 
     } else {
         if(!isSpecialDate(endDate)) {
-            return res.status(404).render("error-404", {translations: error404Translations});
+            return res.status(404).render("error-404", {
+                translations: error404Translations,
+                isShowBtn: !isAlternativesRoute
+            });
         }
 
         return next();

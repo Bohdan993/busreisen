@@ -17,13 +17,12 @@ const router = Router();
 router.post("/", checkIfSessionIsStarted, async (req, res) => {
     try {
 
-
         const {
             languageCode = "uk_UA"
         } = req?.query;
 
         const {
-            currencyAbbr,
+            currency,
             originId,
             destinationId,
             startDate,
@@ -36,13 +35,13 @@ router.post("/", checkIfSessionIsStarted, async (req, res) => {
         const { cities, places, dates } = selectedBusFlight;
 
         const isOneWay1 = isOneWay(endDate);
-        const price = await calculatePrice(passangersInfo, currencyAbbr, originId, destinationId, isOneWay1);
+        const price = await calculatePrice({data: passangersInfo, currency, originId, destinationId, isOneWay: isOneWay1});
         
         const params =  {
             "public_key"     : process.env.LIQPAY_PUBLIC_KEY,
             "action"         : "pay",
             "amount"         : price,
-            "currency"       : currencyAbbr,
+            "currency"       : currency?.currencyAbbr,
             "description"    : "Оплата за квиток",
             "order_id"       : uuidv4(),
             "version"        : "3",
@@ -82,7 +81,7 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
         } = req?.body;
 
         const decodedData = Buffer.from(data, "base64").toString("utf-8");
-        const { currency_credit: currencyAbbr, amount: price, info} = JSON.parse(decodedData);
+        const { currency: currencyAbbr, amount: price, info} = JSON.parse(decodedData);
         const { passangersInfo, cities, places, dates, email, languageCode} = JSON.parse(info);
         const passangersInfoData = Object.entries(passangersInfo);
         const pdfHash = crypto.createHash("sha256").update(signature).digest("hex");

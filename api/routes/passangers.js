@@ -19,7 +19,8 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
 
         const {
             languageCode = "uk_UA",
-            mode = "html"
+            mode = "html",
+            type = "standart"
         } = req?.query;
 
         const {
@@ -74,7 +75,7 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
         // console.log("SESSION", req.session);
 
         if(mode?.toLowerCase() === "html" || !mode) {
-            return res.render("passangers-form", 
+            return res.render(type === "check" ? "info-check-form" : "passangers-form", 
                 { 
                     adults, 
                     children, 

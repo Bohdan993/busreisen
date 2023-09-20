@@ -1,18 +1,19 @@
 const {
     Router
 } = require("express");
-
 const router = Router();
-const { Op } = require("sequelize");
-const City = require("../../models/city");
-const CityAttributes = require("../../models/cityAttributes");
-const Place = require("../../models/place");
-const PlaceAttributes = require("../../models/placeAttributes");
+const { Op, QueryTypes } = require("sequelize");
+const CityModel = require("../../models/city");
+const CityAttributesModel = require("../../models/cityAttributes");
+const PlaceModel = require("../../models/place");
+const PlaceAttributesModel = require("../../models/placeAttributes");
 const LanguagesModel = require("../../models/language");
-const Currency = require("../../models/currency");
-const BusFlightPrices = require("../../models/busFlightPrices");
-const BusFlight = require("../../models/busFlight");
-const Route = require("../../models/route");
+const CurrencyModel = require("../../models/currency");
+const BusFlightPricesModel = require("../../models/busFlightPrices");
+const BusFlightModel = require("../../models/busFlight");
+const RouteModel = require("../../models/route");
+const DiscountModel = require("../../models/discount");
+const DiscountAttributesModel = require("../../models/discountAttributes");
 const { isSpecialDate, loadLanguageFile, isValidDate } = require("../../helpers");
 const { validateDates } = require("../../middlewares/busFlightMiddlewares");
 const { 
@@ -23,6 +24,9 @@ const {
     customRoutesFilter 
 } = require("../../services/busFlightService");
 const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
+const sequelize = require("../../db");
+const constants = require("../../helpers/constants");
+const { customRoutesFilterMap } = require("../../extra");
 
 
 router.get("/", validateDates, async (req, res, next) => {
@@ -54,7 +58,7 @@ router.get("/", validateDates, async (req, res, next) => {
 
         const error404Translations = loadLanguageFile("404-error.js", lang?.code);
 
-        let currency = await Currency.findOne({
+        let currency = await CurrencyModel.findOne({
             attributes: ["id", "name", "abbr", "symbol"],
             where: {
                 abbr: {
@@ -71,7 +75,25 @@ router.get("/", validateDates, async (req, res, next) => {
             },
             include: [
                 {
-                    model: Route
+                    model: RouteModel
+                },
+                {
+                    model: DiscountModel,
+                    attributes: ["id", "coef", "busFlightId"],
+                    include: [
+                        {
+                            model: DiscountAttributesModel,
+                            attributes: ["group"],
+                            where: {
+                                languageId: {
+                                    [Op.eq]: 1
+                                },
+                                group: {
+                                    [Op.eq]: constants.BUS_FLIGHT
+                                }
+                            }
+                        }
+                    ]
                 }
             ],
             order: [
@@ -91,17 +113,23 @@ router.get("/", validateDates, async (req, res, next) => {
             ];
         }
     
-        busFlights = await BusFlight.findAll(query);
+        busFlights = await BusFlightModel.findAll(query);
         busFlights = busFlights?.map(bf => bf?.toJSON());
 
         if(!busFlights?.length) {
-            return res.status(404).render("error-404", {translations: error404Translations});
+            return res.status(404).render("error-404", {
+                translations: error404Translations,
+                isShowBtn: true
+            });
         }
 
         const filteredBusFlightsWithFreeSeats = filterBusFlightsWithFreeSeats({busFlights, numOfPassangers: parseInt(adults) + parseInt(children)});
 
         if(!filteredBusFlightsWithFreeSeats.length) {
-            return res.status(404).render("error-404", {translations: loadLanguageFile("_404-error-no-free-seats.js", lang?.code)});
+            return res.status(404).render("error-404", {
+                translations: loadLanguageFile("_404-error-no-free-seats.js", lang?.code),
+                isShowBtn: true
+            });
         }
         
         const filteredBusFlights = filterBusFlights(
@@ -116,7 +144,10 @@ router.get("/", validateDates, async (req, res, next) => {
         );
 
         if(!filteredBusFlights?.resultFrom?.length) {
-            return res.status(404).render("error-404", {translations: error404Translations});
+            return res.status(404).render("error-404", {
+                translations: error404Translations,
+                isShowBtn: true
+            });
         }
 
         let placeIds = [
@@ -133,7 +164,7 @@ router.get("/", validateDates, async (req, res, next) => {
             },
             include: [
                 {
-                    model: CityAttributes,
+                    model: CityAttributesModel,
                     attributes: ["name", "cityId", "languageId"],
                     where: {
                         languageId: {
@@ -142,11 +173,11 @@ router.get("/", validateDates, async (req, res, next) => {
                     }
                 },
                 {
-                    model: Place,
+                    model: PlaceModel,
                     attributes: ["id"],
                     include: [
                         {
-                            model: PlaceAttributes,
+                            model: PlaceAttributesModel,
                             attributes: ["name", "placeId", "languageId"],
                             where: {
                                 languageId: {
@@ -162,14 +193,19 @@ router.get("/", validateDates, async (req, res, next) => {
             ]
         }
 
-        cities = await City.findAll(cityQuery);
+        cities = await CityModel.findAll(cityQuery);
 
         if(!cities?.length || cities?.length !== 2) {
-            return res.status(404).render("error-404", {translations: error404Translations});
+            return res.status(404).render("error-404", {
+                translations: error404Translations,
+                isShowBtn: true
+            });
         }
 
         cities = cities?.map(city => city?.toJSON());
 
+
+        ///???????????????
         let priceQuery = {
             attributes: ["currencyId", "firstCityId", "secondCityId", "priceOneWay", "priceRoundTrip"],
             where: {
@@ -181,7 +217,7 @@ router.get("/", validateDates, async (req, res, next) => {
             }
         }
 
-        price = await BusFlightPrices.findOne(priceQuery);
+        price = await BusFlightPricesModel.findOne(priceQuery);
         price = price?.toJSON();
         
         const transformedBusFlights = transformBusFlights(
@@ -198,24 +234,28 @@ router.get("/", validateDates, async (req, res, next) => {
             }
         );
 
+
         req.session.regenerate(function (err) {
             if (err) next(err);
 
             req.session.busFlights = transformedBusFlights;
             req.session.startDate = startDate;
             req.session.endDate = endDate;
-            req.session.currencyAbbr = currency?.abbr;
-            req.session.currencySymbol = currency?.symbol;
+            // req.session.currencyAbbr = currency?.abbr;
+            // req.session.currencySymbol = currency?.symbol;
+            req.session.currency = currency;
             req.session.adults = adults;
             req.session.children = children;
             req.session.originId = originId;
             req.session.destinationId = destinationId;
+            req.session.selectedBusFlight = transformedBusFlights[0];
 
             req.session.isStarted = true;
 
             req.session.save(function (err) {
                 if (err) return next(err);
                 
+                // console.log("SBF", req.session.selectedBusFlight);
                 if(mode?.toLowerCase() === "json") {
                     return res.json({status: "ok", data: transformedBusFlights});
                 }
@@ -233,8 +273,9 @@ router.get("/", validateDates, async (req, res, next) => {
     
 });
 
-router.get("/alternatives", [checkIfSessionIsStarted, validateDates], async (req, res, next) => {
+router.get("/alternatives", [/*checkIfSessionIsStarted,*/ validateDates], async (req, res, next) => {
     try {
+
         let busFlights = [];
         let cities = [];
         let price = "";
@@ -242,13 +283,13 @@ router.get("/alternatives", [checkIfSessionIsStarted, validateDates], async (req
         const {
             languageCode = "uk_UA", 
             mode = "html", 
-            startDate = null, 
-            endDate = null, 
+            startDate = null,
+            endDate = null,
             originId = null, 
             destinationId = null, 
             adults = 1,
             children = 0,
-            currencyAbbr = null
+            direction = constants.FORWARDS
         } = req?.query;
 
 
@@ -260,20 +301,253 @@ router.get("/alternatives", [checkIfSessionIsStarted, validateDates], async (req
             }
         });
 
-        const error404Translations = loadLanguageFile("404-error.js", lang?.code);
+        const error404Translations = loadLanguageFile("_404-error-no-alternative-tickets.js", lang?.code);
 
-        let currency = await Currency.findOne({
-            attributes: ["id", "name", "abbr", "symbol"],
-            where: {
-                abbr: {
-                    [Op.eq]: currencyAbbr
-                }
-            }
+        // let query = {
+        //     attributes: ["id", "allSeats", "freeSeats", "routeId", "dateOfDeparture"],
+        //     where:{
+        //         dateOfDeparture: {
+        //             [Op.gt]: isValidDate(new Date(startDate)) ? startDate : null
+        //         }
+        //     },
+        //     include: [
+        //         {
+        //             model: Route,
+        //             attributes: ["routePath"],
+        //             where:{
+        //                 [Op.and]: [
+        //                     sequelize.where(
+        //                         sequelize.fn(
+        //                             "JSON_CONTAINS", 
+        //                             sequelize.col("routePath"), 
+        //                             sequelize.fn("JSON_OBJECT", "cityId", 1),
+        //                             `\$.onboarding`
+        //                             ), 
+        //                         1)
+        //                         ,
+        //                     sequelize.where(
+        //                         sequelize.fn(
+        //                             "JSON_CONTAINS", 
+        //                             sequelize.col("routePath"), 
+        //                             sequelize.fn("JSON_OBJECT", "cityId", 8),
+        //                             `\$.outboarding`
+        //                             ), 
+        //                         1)
+        //                 ]
+        //             }
+        //         }
+        //     ],
+        //     order: [
+        //         ["dateOfDeparture", "ASC"],
+        //         ["routeId", "ASC"],
+        //     ],
+        //     limit: 3
+        // };
+        // busFlights = await BusFlight.findAll(query);
+
+        let limit = 3;
+        if(customRoutesFilterMap.hasOwnProperty(parseInt(originId)) || customRoutesFilterMap.hasOwnProperty(parseInt(destinationId))) {
+            const key = customRoutesFilterMap.hasOwnProperty(parseInt(originId)) ? parseInt(originId) : parseInt(destinationId);
+            limit = limit * (customRoutesFilterMap[key].length + 1);
+        }
+
+        busFlights = await sequelize.query(/*"SELECT `busflight`.`id`, `busflight`.`allSeats`, `busflight`.`freeSeats`, `busflight`.`routeId`, `busflight`.`dateOfDeparture`, `route`.`id` AS `route.id`, `route`.`routePath` AS `route.routePath`, `route`.`createdAt` AS `route.createdAt`, `route`.`updatedAt` AS `route.updatedAt` FROM `busflights` AS `busflight` INNER JOIN `routes` AS `route` ON `busflight`.`routeId` = `route`.`id` AND (JSON_CONTAINS(`routePath`, JSON_OBJECT('cityId', :originId), '$.onboarding') = 1 AND JSON_CONTAINS(`routePath`, JSON_OBJECT('cityId', :destinationId), '$.outboarding') = 1) WHERE `busflight`.`dateOfDeparture` > :dateOfDeparture ORDER BY `busflight`.`dateOfDeparture` ASC, `busflight`.`routeId` ASC LIMIT :limit"*/ "SELECT `busflight`.`id`, `busflight`.`allSeats`, `busflight`.`freeSeats`, `busflight`.`routeId`, `busflight`.`dateOfDeparture`, `route`.`id` AS `route.id`, `route`.`routePath` AS `route.routePath`, `route`.`createdAt` AS `route.createdAt`, `route`.`updatedAt` AS `route.updatedAt`,`discount`.`id` AS `discount.id`, `discount`.`coef` AS `discount.coef`, `discount`.`busFlightId` AS `discount.busFlightId`, `discount->DiscountAttributes`.`languageId` AS `discount.DiscountAttributes.languageId`, `discount->DiscountAttributes`.`discountId` AS `discount.DiscountAttributes.discountId`, `discount->DiscountAttributes`.`group` AS `discount.DiscountAttributes.group` FROM `busflights` AS `busflight` INNER JOIN `routes` AS `route` ON `busflight`.`routeId` = `route`.`id` AND (JSON_CONTAINS(`routePath`, JSON_OBJECT('cityId', :originId), '$.onboarding') = 1 AND JSON_CONTAINS(`routePath`, JSON_OBJECT('cityId', :destinationId), '$.outboarding') = 1) LEFT OUTER JOIN ( `discounts` AS `discount` INNER JOIN `DiscountAttributes` AS `discount->DiscountAttributes` ON `discount`.`id` = `discount->DiscountAttributes`.`discountId` AND `discount->DiscountAttributes`.`languageId` = :languageId AND `discount->DiscountAttributes`.`group` = :group ) ON `busflight`.`id` = `discount`.`busflightId` WHERE `busflight`.`dateOfDeparture` > :dateOfDeparture ORDER BY `busflight`.`dateOfDeparture` ASC, `busflight`.`routeId` ASC LIMIT :limit", {
+            type: QueryTypes.SELECT,
+            nest: true,
+            replacements: { 
+                dateOfDeparture: isValidDate(new Date(startDate)) ? startDate : null,
+                originId: parseInt(originId),
+                destinationId: parseInt(destinationId),
+                limit: limit,
+                languageId: 1,
+                group: constants.BUS_FLIGHT
+            },
         });
 
-        currency = currency?.toJSON();
+        
+        busFlights = busFlights.map((bf) => BusFlightModel.build(bf, {
+            include: [
+                {
+                    model: RouteModel,
+                    attributes: ["id", "routePath"]
+                },
+                {
+                    model: DiscountModel,
+                    attributes: ["id", "coef", "busFlightId"],
+                    include: [
+                        {
+                            model: DiscountAttributesModel,
+                            attributes: ["group"]
+                        }
+                    ]
+                }
+            ]
+        }));
+        
+        busFlights = busFlights?.map(bf => bf?.toJSON());
 
-        return res.json({status: "ok"});
+
+
+
+        if(!busFlights?.length) {
+            return res.status(404).render("error-404", {
+                translations: error404Translations,
+                isShowBtn: false
+            });
+        }
+
+        const filteredBusFlightsWithFreeSeats = filterBusFlightsWithFreeSeats({busFlights, numOfPassangers: parseInt(adults) + parseInt(children)});
+
+
+        if(!filteredBusFlightsWithFreeSeats.length) {
+            return res.status(404).render("error-404", {
+                translations: loadLanguageFile("_404-error-no-free-seats.js", lang?.code),
+                isShowBtn: false
+            });
+        }
+        
+        const filteredBusFlights = filterBusFlights(
+            {
+                busFlights: filteredBusFlightsWithFreeSeats, 
+                originId, 
+                destinationId, 
+                startDate, 
+                endDate, 
+                customRoutesFilter,
+                isAlternativeBusFlights: true
+            }
+        );
+
+
+
+
+        if(!filteredBusFlights?.resultFrom?.length) {
+            return res.status(404).render("error-404", {
+                translations: error404Translations,
+                isShowBtn: false
+            });
+        }
+
+        let placeIds = [
+            ...filteredBusFlights?.resultFrom.map(el => el?.route?.routePath?.onboarding.map(item => item?.placeId)), 
+            ...filteredBusFlights?.resultFrom.map(el => el?.route?.routePath?.outboarding.map(item => item?.placeId))
+        ];
+
+        let cityQuery = {
+            attributes: ["id"],
+            where:{
+                id: {
+                    [Op.or]: [originId, destinationId]
+                }
+            },
+            include: [
+                {
+                    model: CityAttributesModel,
+                    attributes: ["name", "cityId", "languageId"],
+                    where: {
+                        languageId: {
+                            [Op.eq]: lang?.id
+                        }
+                    }
+                },
+                {
+                    model: PlaceModel,
+                    attributes: ["id"],
+                    include: [
+                        {
+                            model: PlaceAttributesModel,
+                            attributes: ["name", "placeId", "languageId"],
+                            where: {
+                                languageId: {
+                                    [Op.eq]: lang?.id
+                                },
+                                placeId: {
+                                    [Op.or]: Array.from(new Set(placeIds))
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+
+        cities = await CityModel.findAll(cityQuery);
+
+        if(!cities?.length || cities?.length !== 2) {
+            return res.status(404).render("error-404", {
+                translations: error404Translations,
+                isShowBtn: false
+            });
+        }
+
+        cities = cities?.map(city => city?.toJSON());
+
+        ///??????????????? Find prices for forwards and backwards direction
+        let priceQuery = {
+            attributes: ["currencyId", "firstCityId", "secondCityId", "priceOneWay", "priceRoundTrip"],
+            where: {
+                [Op.and]: [
+                    { firstCityId: originId },
+                    { secondCityId: destinationId },
+                    { currencyId: req.session?.currency?.id },
+                  ]
+            }
+        }
+
+        price = await BusFlightPricesModel.findOne(priceQuery);
+        price = price?.toJSON();
+        
+        let transformedBusFlights = transformBusFlights(
+            {
+                busFlights: filteredBusFlights, 
+                cities, 
+                price, 
+                currency: req.session?.currency, 
+                originId, 
+                destinationId, 
+                endDate, 
+                startDate, 
+                languageCode: lang?.code,
+                isAlternativeBusFlights: true,
+                direction
+            }
+        );
+        
+        transformedBusFlights = transformedBusFlights.reduce((acc, curr) => {
+            if(!acc[curr?.dates?.departure]) {
+                acc[curr?.dates?.departure] = [curr];
+            } else {
+                acc[curr?.dates?.departure].push(curr);
+            }
+
+            return acc;
+        }, {});
+        
+        transformedBusFlights = Object.entries(transformedBusFlights);
+
+        if(!req.session.alternativeBusFlightsFrom || direction === constants.FORWARDS) {
+            req.session.alternativeBusFlightsFrom = transformedBusFlights;
+        } else if(req.session.alternativeBusFlightsFrom || direction === constants.BACKWARDS) {
+            req.session.alternativeBusFlightsTo = transformedBusFlights;
+        }
+
+        req.session.save(function (err) {
+            if (err) return next(err);
+
+            if(mode?.toLowerCase() === "json") {
+                return res.json({status: "ok", data: transformedBusFlights});
+            }
+    
+            if(mode?.toLowerCase() === "html" || !mode) {
+                return res.render("alternative-tickets", { 
+                    isForwards: direction === constants.FORWARDS,
+                    cityFrom: cities?.filter(city => city?.CityAttributes.find(el => String(el?.cityId) === String(originId)))?.[0]?.CityAttributes?.[0]?.name,
+                    cityTo: cities?.filter(city => city?.CityAttributes.find(el => String(el?.cityId) === String(destinationId)))?.[0]?.CityAttributes?.[0]?.name,
+                    flightsData: transformedBusFlights, 
+                    translations: loadLanguageFile("ticket-list.js", lang?.code)
+                });
+            }
+        });
 
     } catch (err) {
         console.log(err);
@@ -306,7 +580,7 @@ router.get("/available-dates", async(req, res) => {
             },
             include: [
                 {
-                    model: Route
+                    model: RouteModel
                 }
             ],
             order: [
@@ -315,7 +589,7 @@ router.get("/available-dates", async(req, res) => {
             ]
         };
     
-        busFlights = await BusFlight.findAll(query);
+        busFlights = await BusFlightModel.findAll(query);
         busFlights = busFlights?.map(bf => bf?.toJSON());
 
         busFlights = filterBusFlightsAvailableDates(busFlights, originId, destinationId, isValidDate(startDateInstance));
@@ -331,10 +605,40 @@ router.get("/available-dates", async(req, res) => {
 router.post("/select", checkIfSessionIsStarted, async(req, res, next) => {
     try{
         const {
-            id
+            id,
+            isMain = true,
+            direction = constants.FORWARDS
         } = req?.body;
 
-        const selectedBusFlight = req.session?.busFlights?.find(el => {return String(el?.id) === String(id)});
+        let selectedBusFlight = null;
+
+        if(isMain) {
+            selectedBusFlight = req.session?.busFlights?.find(el => { return String(el?.id) === String(id) });
+        } else {
+            switch(direction) {
+                case constants.FORWARDS: {
+                    selectedBusFlight = req.session?.alternativeBusFlightsFrom?.find(el => {
+                        return el?.[1].find(elem => {
+                            return String(elem?.id) === String(id); 
+                        });            
+                    })?.[1].find(el => { return String(el?.id) === String(id) });
+                    break;
+                }
+
+                case constants.BACKWARDS: {
+                    console.log("BACKWARDS", req.session.selectedBusFlight);
+                    selectedBusFlight = req.session.selectedBusFlight;
+                    break;
+                }
+
+                default: {
+                    throw new Error();
+                }
+            }
+
+        }
+        
+        console.log("FBF", selectedBusFlight);
 
         if(!selectedBusFlight) {
             throw new Error();
@@ -355,5 +659,4 @@ router.post("/select", checkIfSessionIsStarted, async(req, res, next) => {
     }
 })
 
-
-module.exports = router
+module.exports = router;

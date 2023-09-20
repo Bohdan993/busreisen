@@ -3,28 +3,28 @@ const busFlights = [
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 1,
-        "dateOfDeparture": "2023-08-26"
+        "dateOfDeparture": "2023-09-16"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 2,
-        "dateOfDeparture": "2023-08-26"
+        "dateOfDeparture": "2023-09-16"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 3,
-        "dateOfDeparture": "2023-08-26"
+        "dateOfDeparture": "2023-09-16"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 4,
-        "dateOfDeparture": "2023-08-26"
+        "dateOfDeparture": "2023-09-16"
 
     },
 
@@ -34,28 +34,28 @@ const busFlights = [
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 1,
-        "dateOfDeparture": "2023-08-29"
+        "dateOfDeparture": "2023-09-19"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 2,
-        "dateOfDeparture": "2023-08-29"
+        "dateOfDeparture": "2023-09-19"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 3,
-        "dateOfDeparture": "2023-08-29"
+        "dateOfDeparture": "2023-09-19"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 4,
-        "dateOfDeparture": "2023-08-29"
+        "dateOfDeparture": "2023-09-19"
 
     },
     ///////////////////////////////////////
@@ -64,28 +64,28 @@ const busFlights = [
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 1,
-        "dateOfDeparture": "2023-08-31"
+        "dateOfDeparture": "2023-09-21"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 2,
-        "dateOfDeparture": "2023-08-31"
+        "dateOfDeparture": "2023-09-21"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 3,
-        "dateOfDeparture": "2023-08-31"
+        "dateOfDeparture": "2023-09-21"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 4,
-        "dateOfDeparture": "2023-08-31"
+        "dateOfDeparture": "2023-09-21"
 
     },
     ////////////////////////////////////////////
@@ -94,28 +94,28 @@ const busFlights = [
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 1,
-        "dateOfDeparture": "2023-09-02"
+        "dateOfDeparture": "2023-09-23"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 2,
-        "dateOfDeparture": "2023-09-02"
+        "dateOfDeparture": "2023-09-23"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 3,
-        "dateOfDeparture": "2023-09-02"
+        "dateOfDeparture": "2023-09-23"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 4,
-        "dateOfDeparture": "2023-09-02"
+        "dateOfDeparture": "2023-09-23"
 
     },
     ////////////////////////////////////////////////
@@ -124,28 +124,28 @@ const busFlights = [
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 1,
-        "dateOfDeparture": "2023-09-05"
+        "dateOfDeparture": "2023-09-26"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 2,
-        "dateOfDeparture": "2023-09-05"
+        "dateOfDeparture": "2023-09-26"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 3,
-        "dateOfDeparture": "2023-09-05"
+        "dateOfDeparture": "2023-09-26"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 4,
-        "dateOfDeparture": "2023-09-05"
+        "dateOfDeparture": "2023-09-26"
 
     },
     //////////////////////////////////////////////////
@@ -154,28 +154,28 @@ const busFlights = [
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 1,
-        "dateOfDeparture": "2023-09-07"
+        "dateOfDeparture": "2023-09-28"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 2,
-        "dateOfDeparture": "2023-09-07"
+        "dateOfDeparture": "2023-09-28"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 3,
-        "dateOfDeparture": "2023-09-07"
+        "dateOfDeparture": "2023-09-28"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 4,
-        "dateOfDeparture": "2023-09-07"
+        "dateOfDeparture": "2023-09-28"
 
     },
     //////////////////////////////////////////////////
@@ -184,28 +184,28 @@ const busFlights = [
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 1,
-        "dateOfDeparture": "2023-09-09"
+        "dateOfDeparture": "2023-09-30"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 2,
-        "dateOfDeparture": "2023-09-09"
+        "dateOfDeparture": "2023-09-30"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 3,
-        "dateOfDeparture": "2023-09-09"
+        "dateOfDeparture": "2023-09-30"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 4,
-        "dateOfDeparture": "2023-09-09"
+        "dateOfDeparture": "2023-09-30"
 
     },
     //////////////////////////////////////////////////
@@ -214,28 +214,118 @@ const busFlights = [
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 1,
-        "dateOfDeparture": "2023-09-12"
+        "dateOfDeparture": "2023-10-03"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 2,
-        "dateOfDeparture": "2023-09-12"
+        "dateOfDeparture": "2023-10-03"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 3,
-        "dateOfDeparture": "2023-09-12"
+        "dateOfDeparture": "2023-10-03"
 
     },
     {
         "allSeats": 38,
         "freeSeats": 17,
         "routeId": 4,
-        "dateOfDeparture": "2023-09-12"
+        "dateOfDeparture": "2023-10-03"
+
+    },
+    //////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 1,
+        "dateOfDeparture": "2023-10-05"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 2,
+        "dateOfDeparture": "2023-10-05"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 3,
+        "dateOfDeparture": "2023-10-05"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 4,
+        "dateOfDeparture": "2023-10-05"
+
+    },
+    //////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 1,
+        "dateOfDeparture": "2023-10-07"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 2,
+        "dateOfDeparture": "2023-10-07"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 3,
+        "dateOfDeparture": "2023-10-07"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 4,
+        "dateOfDeparture": "2023-10-07"
+
+    },
+    //////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 1,
+        "dateOfDeparture": "2023-10-10"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 2,
+        "dateOfDeparture": "2023-10-10"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 3,
+        "dateOfDeparture": "2023-10-10"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 4,
+        "dateOfDeparture": "2023-10-10"
 
     },
     //////////////////////////////////////////////////

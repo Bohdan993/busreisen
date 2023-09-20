@@ -4,7 +4,6 @@ const { Op } = require("sequelize");
 const DiscountModel = require("../models/discount");
 const DiscountAttributesModel = require("../models/discountAttributes");
 const BusFlightPrices = require("../models/busFlightPrices");
-const CurrencyModel = require("../models/currency");
 const { mapDiscounts, filterByDateDiscounts } = require("./discountService");
 const constants = require("../helpers/constants");
 
@@ -15,16 +14,16 @@ function strToSign (str) {
     return sha1.digest("base64");
 };
 
-async function calculatePrice(data, currencyAbbr, originId, destinationId, isOneWay = null) {
+async function calculatePrice(
+    {
+        data, 
+        currency, 
+        originId, 
+        destinationId, 
+        isOneWay = null
+    } = {}
+    ) {
     const passangersData = Object.entries(data || []);
-    let currency = await CurrencyModel.findOne({
-        attributes: ["id", "name", "abbr", "symbol"],
-        where: {
-            abbr: {
-                [Op.eq]: currencyAbbr
-            }
-        }
-    });
 
     let discounts = await DiscountModel.findAll({
         attributes: ["id", "coef", "inactivePeriod"],
@@ -67,7 +66,6 @@ async function calculatePrice(data, currencyAbbr, originId, destinationId, isOne
     } else {
         price = price?.priceRoundTrip;
     }
-
 
     const calculatedPrice = passangersData.reduce(priceReducer, 0);
 

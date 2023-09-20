@@ -7,7 +7,9 @@ const constants = {
     CHILD: "child",
     ADULT: "adult",
     BOTH: "both",
-    BUS_FLIGHT: "bus-flights"
+    BUS_FLIGHT: "bus-flights",
+    FORWARDS: "forwards",
+    BACKWARDS: "backwards"
 }
 
 module.exports = constants;

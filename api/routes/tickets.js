@@ -29,7 +29,7 @@ router.post("/", [checkIfSessionIsStarted, checkCallbackSignature], async (req, 
 
         const decodedData = Buffer.from(data, "base64").toString("utf-8");
         
-        const { currency_credit: currencyAbbr, amount: price, info } = JSON.parse(decodedData);
+        const { currency: currencyAbbr, amount: price, info } = JSON.parse(decodedData);
         const { passangersInfo, originId, destinationId, startDate, endDate } = JSON.parse(info);
         const adultPassangerRegex = new RegExp("^adult-passanger-[0-9]+");
         const childPassangerRegex = new RegExp("^child-passanger-[0-9]+");
@@ -144,7 +144,7 @@ router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], asyn
 
         const decodedData = Buffer.from(data, "base64").toString("utf-8");
 
-        const {currency_credit: currencyAbbr, amount: price, info} = JSON.parse(decodedData);
+        const {currency: currencyAbbr, amount: price, info} = JSON.parse(decodedData);
         const {passangersInfo, cities, places, dates} = JSON.parse(info);
         const passangersInfoData = Object.entries(passangersInfo);
 

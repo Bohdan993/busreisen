@@ -30,14 +30,14 @@ const Ticket = sequelize.define("ticket", {
         }
     },
     children: {
-        type: DataTypes.TEXT, 
+        type: DataTypes.JSON, 
         allowNull: true,
-        get: function () {
-            return JSON.parse(this.getDataValue(constants.CHILDREN));
-        },
-        set: function (value) {
-            this.setDataValue(constants.CHILDREN, JSON.stringify(value));
-        }
+        // get: function () {
+        //     return JSON.parse(this.getDataValue(constants.CHILDREN));
+        // },
+        // set: function (value) {
+        //     this.setDataValue(constants.CHILDREN, JSON.stringify(value));
+        // }
     }
 });
 

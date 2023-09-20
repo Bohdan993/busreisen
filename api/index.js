@@ -96,7 +96,7 @@ const sessionOptions = {
         secure: true,
         httpOnly: true,
         sameSite: "none",
-        maxAge: 15 * 60 * 1000,
+        maxAge: 60 * 60 * 1000,
         path: '/'
     }
 };
@@ -242,7 +242,8 @@ app.use("/api/insert-values", async function(req, res, next) {
                 await Discount.create({
                     "id": discount?.id,
                     "coef": discount?.coef,
-                    "inactivePeriod": discount?.inactivePeriod
+                    "inactivePeriod": discount?.inactivePeriod,
+                    "busflightId": discount?.busflightId
                 });
             }
 
@@ -258,6 +259,7 @@ app.use("/api/insert-values", async function(req, res, next) {
         await run();
         return res.json({status: "ok", data: "ok"});
     } catch (err) {
+        console.log("ERR", err);
         res.status(500).json({status: "fail", error: "Server error"});
     }
 });
