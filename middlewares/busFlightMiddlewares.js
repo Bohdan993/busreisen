@@ -54,7 +54,22 @@ async function validateDates(req, res, next){
     }
 }
 
+function checkIfBusFlightSelected(req, res, next){
+
+    const {
+        languageCode = "uk_UA", 
+    } = req.query;
+
+    if(req.session?.selectedBusFlight?.isSelected) {
+        return next();
+    }
+
+    const error401Translations = loadLanguageFile("401-error.js", languageCode);
+    return res.status(401).render("error-401", {translations: error401Translations});  
+}
+
 
 module.exports = {
-    validateDates
+    validateDates,
+    checkIfBusFlightSelected
 }

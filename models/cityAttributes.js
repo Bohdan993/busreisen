@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
 const LanguagesModel = require("./language");
-const City = require("./city");
+const CityModel = require("./city");
 
 const CityAttributes = sequelize.define("CityAttributes", {
     name: {type: DataTypes.STRING(30), allowNull: false},
@@ -10,7 +10,7 @@ const CityAttributes = sequelize.define("CityAttributes", {
         allowNull: false,
         primaryKey: true,
         references: {
-            model: City, 
+            model: CityModel, 
             key: "id",
         }
     },
@@ -26,13 +26,13 @@ const CityAttributes = sequelize.define("CityAttributes", {
 });
 
 
-LanguagesModel.belongsToMany(City, { through: CityAttributes });
-City.belongsToMany(LanguagesModel, { through: CityAttributes });
+LanguagesModel.belongsToMany(CityModel, { through: CityAttributes });
+CityModel.belongsToMany(LanguagesModel, { through: CityAttributes });
 
 LanguagesModel.hasMany(CityAttributes);
 CityAttributes.belongsTo(LanguagesModel);
-City.hasMany(CityAttributes);
-CityAttributes.belongsTo(City);
+CityModel.hasMany(CityAttributes);
+CityAttributes.belongsTo(CityModel);
 
 
 module.exports = CityAttributes;

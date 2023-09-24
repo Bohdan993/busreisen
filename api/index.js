@@ -69,6 +69,9 @@ const discounts = require("../data/discounts");
 
 const DiscountAttributes = require("../models/discountAttributes");
 const discountAttributes = require("../data/discountAttributes");
+
+const UserTicket = require("../models/userTicket");
+
 const { sendTestMail } = require("../services/mailService");
 
 
@@ -96,7 +99,7 @@ const sessionOptions = {
         secure: true,
         httpOnly: true,
         sameSite: "none",
-        maxAge: 60 * 60 * 1000,
+        maxAge: 180 * 60 * 1000,
         path: '/'
     }
 };

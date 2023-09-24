@@ -11,10 +11,12 @@ const { checkCallbackSignature } = require("../../middlewares/paymentMiddlewares
 const { generatePDFTicket, generateHTMLTicket } = require("../../services/ticketService");
 const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
 const { sendFileMail } = require("../../services/mailService");
+const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
 const router = Router();
 
 
-router.post("/", checkIfSessionIsStarted, async (req, res) => {
+
+router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req, res) => {
     try {
 
         const {

@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
-const UsersModel = require("./user");
+// const UsersModel = require("./user");
 const CitiesModel = require("./city");
 const constants = require("../helpers/constants");
 
@@ -40,8 +40,5 @@ const Ticket = sequelize.define("ticket", {
         // }
     }
 });
-
-UsersModel.belongsToMany(Ticket, { through: "UserTicket" });
-Ticket.belongsToMany(UsersModel, { through: "UserTicket" });
 
 module.exports = Ticket;

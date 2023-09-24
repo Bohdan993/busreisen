@@ -1,6 +1,6 @@
 .ticket-list-container
   h2.ticket-list-title
-    |Ваш рейс
+    = translations.ticketsTitle
   each data, ind in flightsData
     .ticket(data-id=`${data.id}` data-start-date=`${data.dates.departurePure}` data-end-date=`${data.dates.returnPure}` data-origin-id=`${data.cities.from.id}` data-destination-id=`${data.cities.to.id}` class=`${ind === 0 ? "selected": ""}`)
       //- div= data.places.from.routeName + (data.places.to.routeName ? (" - " +  data.places.to.routeName) : "")

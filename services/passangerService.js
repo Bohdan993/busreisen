@@ -6,9 +6,9 @@ const { isEmptyObject } = require("../helpers");
 const { mapDiscounts } = require("./discountService");
 const constants = require("../helpers/constants");
 
-async function validatePassangersData(data){
+async function validatePassangersData(data, translations){
     const dataToValidate = Object.values(data).reduce((acc, curr) => acc = {...acc, ...curr} , {});
-    const constraints = await createValidateConstraints(data, dataToValidate);
+    const constraints = await createValidateConstraints(data, dataToValidate, translations);
     const errors = validate(dataToValidate, constraints) || {};
 
     if(!isEmptyObject(errors)) {
@@ -18,7 +18,7 @@ async function validatePassangersData(data){
     return {status: "ok", data: data}
 };
 
-async function createValidateConstraints(data, dataToValidate){
+async function createValidateConstraints(data, dataToValidate, translations){
     const additionalPhoneRegex = new RegExp("^phone-additional-[0-9]+");
     const phoneRegex = new RegExp("^phone-[0-9]+");
     const nameRegex = new RegExp("^name-[0-9]+");
@@ -26,6 +26,7 @@ async function createValidateConstraints(data, dataToValidate){
     const emailRegex = new RegExp("^email-[0-9]+");
     const discountRegex = new RegExp("^discount-[0-9]+");
     const dateOfBirthRegex = new RegExp("^date-of-birth-[0-9]+");
+    const cardDiscountRegex = new RegExp("^card-discount-[0-9]+");
     const constraints = {};
 
     let discounts = await DiscountModel.findAll({
@@ -58,8 +59,9 @@ async function createValidateConstraints(data, dataToValidate){
         const type = passangerType.match(/.+?(?=-)/)[0];
         const defaultDiscountId = "0";
         const bothDiscountIds = discounts.filter(el => el[0] === constants.BOTH)[0]?.[1].map(el => String(el?.id));
+        const discountCardsIds = discounts.filter(el => el[0] === constants.DISCOUNT_CARD)[0]?.[1].map(el => String(el?.id));
         const discountIds = type === constants.ADULT ? discounts.filter(el => el[0] === constants.ADULTS)[0]?.[1].map(el => String(el?.id))
-        .concat(defaultDiscountId, bothDiscountIds) : 
+        .concat(defaultDiscountId, discountCardsIds, bothDiscountIds) : 
         discounts.filter(el => el[0] === constants.CHILDREN)[0]?.[1].map(el => String(el?.id))
         .concat(defaultDiscountId, bothDiscountIds);
 
@@ -69,11 +71,11 @@ async function createValidateConstraints(data, dataToValidate){
                 constraints[key] = {
                     format: {
                         pattern: /^\+380([5-9][0-9]\d{7})$|^\+49(\d{10,11})$/,
-                        message: "^Некоректний номер телефону"
+                        message: translations?.validationErrors?.["1"]
                     },
                     numericality: {
                         onlyInteger: true,
-                        notInteger: "^Має містити лише цифри"
+                        notInteger: translations?.validationErrors?.["2"]
                     }
                 };
             }
@@ -82,21 +84,21 @@ async function createValidateConstraints(data, dataToValidate){
                 constraints[key] = {
                     presence: {
                         allowEmpty: false,
-                        message: "^Заповніть це поле"
+                        message: translations?.validationErrors?.["3"]
                     },
                     format: {
                         pattern: /^\+380([5-9][0-9]\d{7})$|^\+49(\d{10,11})$/,
-                        message: "^Некоректний номер телефону"
+                        message: translations?.validationErrors?.["1"]
                     },
                     numericality: {
                         onlyInteger: true,
-                        notInteger: "^Має містити лише цифри"
+                        notInteger: translations?.validationErrors?.["2"]
                     },
                     exclusion: {
                         within: Object.entries(dataToValidate)
                             .filter(([k, _]) => (phoneRegex.test(k) && Number(k.replace(/^\D+/gm, '')) < Number(key.replace(/^\D+/gm, ''))))
                             .map(el => el?.[1]),
-                        message: "^Ви вже використали цей номер телефону для іншого пасажира"
+                        message: translations?.validationErrors?.["4"]
                     }
                 };
             }
@@ -105,15 +107,15 @@ async function createValidateConstraints(data, dataToValidate){
                 constraints[key] = {
                     presence: {
                         allowEmpty: false,
-                        message: "^Заповніть це поле"
+                        message: translations?.validationErrors?.["3"]
                     },
                     format: {
                         pattern: /^[\u0400-\u04FF]+|[a-zA-ZäöüßÄÖÜẞ]+$/,
-                        message: "^Має містити лише літери"
+                        message: translations?.validationErrors?.["5"]
                     },
                     length: {
                         minimum: 3,
-                        tooShort: "^Має містити мінімум %{count} літери",
+                        tooShort: translations?.validationErrors?.["6"]
                     }
                 };
             }
@@ -122,15 +124,15 @@ async function createValidateConstraints(data, dataToValidate){
                 constraints[key] = {
                     presence: {
                         allowEmpty: false,
-                        message: "^Заповніть це поле"
+                        message: translations?.validationErrors?.["3"]
                     },
                     format: {
                         pattern: /^[\u0400-\u04FF]+|[a-zA-ZäöüßÄÖÜẞ]+$/,
-                        message: "^Має містити лише літери"
+                        message: translations?.validationErrors?.["5"]
                     },
                     length: {
                         minimum: 2,
-                        tooShort: "^Має містити мінімум %{count} літери",
+                        tooShort: translations?.validationErrors?.["6"]
                     }
                 };
             }
@@ -139,10 +141,10 @@ async function createValidateConstraints(data, dataToValidate){
                 constraints[key] = {
                     presence: {
                         allowEmpty: false,
-                        message: "^Заповніть це поле"
+                        message: translations?.validationErrors?.["3"]
                     },
                     email: {
-                        message: "^Некоректний email",
+                        message: translations?.validationErrors?.["7"]
                     }
                 };
             }
@@ -151,11 +153,24 @@ async function createValidateConstraints(data, dataToValidate){
                 constraints[key] = {
                     numericality: {
                         onlyInteger: true,
-                        notInteger: "^Некоректна знижка"
+                        notInteger: translations?.validationErrors?.["8"]
                     },
                     inclusion: {
                         within: discountIds,
-                        message: "^Некоректна знижка"
+                        message: translations?.validationErrors?.["8"]
+                    }
+                };
+            }
+
+            if(cardDiscountRegex.test(key)){
+                constraints[key] = {
+                    presence: {
+                        allowEmpty: false,
+                        message: translations?.validationErrors?.["3"]
+                    },
+                    numericality: {
+                        onlyInteger: true,
+                        message: translations?.validationErrors?.["10"]
                     }
                 };
             }
@@ -164,11 +179,11 @@ async function createValidateConstraints(data, dataToValidate){
                 constraints[key] = {
                     presence: {
                         allowEmpty: false,
-                        message: "^Заповніть це поле"
+                        message: translations?.validationErrors?.["3"]
                     },
                     datetime: {
                         dateOnly: true,
-                        message: "^Некоректна дата"
+                        message: translations?.validationErrors?.["9"]
                     }
                 };
             }

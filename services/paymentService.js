@@ -14,12 +14,14 @@ function strToSign (str) {
     return sha1.digest("base64");
 };
 
+
 async function calculatePrice(
     {
         data, 
         currency, 
         originId, 
-        destinationId, 
+        destinationId,
+        //price, 
         isOneWay = null
     } = {}
     ) {

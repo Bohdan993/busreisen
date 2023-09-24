@@ -6,7 +6,7 @@ const constants = require("../helpers/constants");
 
 const DiscountAttributes = sequelize.define("DiscountAttributes", {
     name: {type: DataTypes.STRING, allowNull: false},
-    group: { type: DataTypes.ENUM, values: [constants.ADULTS, constants.CHILDREN, constants.BOTH, constants.BUS_FLIGHT], defaultValue: constants.ADULTS, allowNull: false},
+    group: { type: DataTypes.ENUM, values: [constants.ADULTS, constants.CHILDREN, constants.BOTH, constants.BUS_FLIGHT, constants.DISCOUNT_CARD], defaultValue: constants.ADULTS, allowNull: false},
     discountId: {
         type: DataTypes.INTEGER,         
         allowNull: false,

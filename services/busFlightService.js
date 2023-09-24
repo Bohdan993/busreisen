@@ -164,6 +164,31 @@ function customRoutesFilter(originId, destinationId, endDate, res){
     return res;  
 }
 
+function calcBusFlightPrice({
+    el,
+    ind,
+    price,
+    busFlights,
+    originId,
+    destinationId
+} = {}){
+    const priceForwards = price.find(el => parseInt(el?.firstCityId) ===  parseInt(originId));
+    const priceBackwards = price.find(el => parseInt(el?.firstCityId) ===  parseInt(destinationId));
+    
+    const calcPrice = (el?.discount || busFlights?.resultTo?.[ind]?.discount) ? {
+        ...priceForwards,
+        priceOneWay: parseInt(priceForwards.priceOneWay * (1 - parseFloat(el?.discount?.coef || 0))),
+        priceRoundTrip: parseInt((priceForwards.priceRoundTrip / 2) * (1 - parseFloat(el?.discount?.coef || 0))) + 
+        parseInt((priceBackwards.priceRoundTrip / 2) * (1 - parseFloat(busFlights?.resultTo?.[ind]?.discount?.coef /*|| el?.discount?.coef*/ || 0))),
+        alternativeOneHalfRoundTripPrice: parseInt((priceForwards.priceRoundTrip / 2) * (1 - parseFloat(el?.discount?.coef || 0)))
+    } : {
+        ...priceForwards,
+        alternativeOneHalfRoundTripPrice: parseInt((priceForwards.priceRoundTrip / 2))
+    };
+
+    return calcPrice;
+}
+
 function transformBusFlights(
     {
         busFlights, 
@@ -182,7 +207,7 @@ function transformBusFlights(
     let result = [];
     const cityFrom = cities?.filter(el => parseInt(el?.id) === parseInt(originId))?.[0];
     const cityTo = cities?.filter(el => parseInt(el?.id) === parseInt(destinationId))?.[0];
-    console.log("BUSSSS", busFlights);
+
     busFlights?.resultFrom.forEach((el, ind) => {
 
         const onboardingPlaces = cityFrom?.places?.filter(elem => el?.route?.routePath?.onboarding.find(item => parseInt(elem.id) === parseInt(item?.placeId)));
@@ -190,21 +215,15 @@ function transformBusFlights(
         
         onboardingPlaces.forEach((onp, i) => {
             outBoardingPlaces.forEach((outp, j) => {
-
-
-                ///???????????????
-                const calcPrice = (el?.discount || busFlights?.resultTo?.[ind]?.discount) ? {
-                    ...price,
-                    priceOneWay: parseInt(price.priceOneWay * (1 - parseFloat(el?.discount?.coef || 0))),
-                    priceRoundTrip: parseInt((price.priceRoundTrip / 2) * (1 - parseFloat(el?.discount?.coef || 0))) + 
-                    parseInt((price.priceRoundTrip / 2) * (1 - parseFloat(busFlights?.resultTo?.[ind]?.discount?.coef || 0))),
-                } : price;
+                
+                const calcPrice = calcBusFlightPrice({el, ind, price, busFlights, originId, destinationId});
 
                 let resultObj = {
                     "id": !isAlternativeBusFlights ? "main-ticket-" + ind + "-" + i + "-" + j : 
                         direction === constants.FORWARDS ? 
                             "alternative-ticket-from-" + ind + "-" + i + "-" + j : 
                             "alternative-ticket-to-" + ind + "-" + i + "-" + j,
+                    "type": (!(isSpecialDate(endDate)) || isRound(endDate)) ? constants.ROUND : isOneWay(endDate) ? constants.ONE_WAY : constants.OPEN_DATE,
                     "cities": {
                         "from": {
                             "id": cityFrom?.id,
@@ -233,8 +252,8 @@ function transformBusFlights(
                 };
 
                 if(isAlternativeBusFlights) {
-                    resultObj.purePrice = (!(isSpecialDate(endDate)) || isRound(endDate)) ? `${calcPrice?.priceRoundTrip / 2}` : isOneWay(endDate) ? `${calcPrice?.priceOneWay}` : `${calcPrice?.priceRoundTrip}`;
-                    resultObj.price = (!(isSpecialDate(endDate)) || isRound(endDate)) ? `${calcPrice?.priceRoundTrip / 2} ${currency?.symbol}` : isOneWay(endDate) ? `${calcPrice?.priceOneWay} ${currency?.symbol}` : `${calcPrice?.priceRoundTrip} ${currency?.symbol}`;
+                    resultObj.purePrice = (!(isSpecialDate(endDate)) || isRound(endDate)) ? `${calcPrice?.alternativeOneHalfRoundTripPrice}` : isOneWay(endDate) ? `${calcPrice?.priceOneWay}` : `${calcPrice?.priceRoundTrip}`;
+                    resultObj.price = (!(isSpecialDate(endDate)) || isRound(endDate)) ? `${calcPrice?.alternativeOneHalfRoundTripPrice} ${currency?.symbol}` : isOneWay(endDate) ? `${calcPrice?.priceOneWay} ${currency?.symbol}` : `${calcPrice?.priceRoundTrip} ${currency?.symbol}`;
                     resultObj.dates.departure = transformDate(el?.dateOfDeparture, languageCode);
                     resultObj.dates.departurePure = el?.dateOfDeparture;
                     resultObj.dates.return = null;

@@ -10,10 +10,12 @@ const { loadLanguageFile } = require("../../helpers");
 const { mapDiscounts, filterByDateDiscounts } = require("../../services/discountService");
 const { validatePassangersData } = require("../../services/passangerService");
 const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
+const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
 const constants = require("../../helpers/constants");
 
 
-router.get("/", checkIfSessionIsStarted, async (req, res) => {
+
+router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req, res) => {
     try {
         let discounts = [];
 
@@ -72,8 +74,6 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
         discounts = mapDiscounts(discounts);
         discounts = filterByDateDiscounts(discounts);
 
-        // console.log("SESSION", req.session);
-
         if(mode?.toLowerCase() === "html" || !mode) {
             return res.render(type === "check" ? "info-check-form" : "passangers-form", 
                 { 
@@ -82,6 +82,7 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
                     discounts,
                     constants, 
                     translations: loadLanguageFile("passangers-form.js", lang?.code),
+                    ticketPrice: req.session.selectedBusFlight.purePrice,
                     passangersInfo: req.session?.passangersInfo ? Object.entries(req.session?.passangersInfo) : null
                 }
             );
@@ -96,19 +97,35 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
     
 });
 
-router.post("/validate", checkIfSessionIsStarted, async (req, res, next) => {
+router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req, res, next) => {
     try {
+
+        const {
+            languageCode = "uk_UA"
+        } = req?.query;
+
         const {
             passangersData
         } = req?.body;
 
-        const validData = await validatePassangersData(passangersData);
+
+        const lang = await LanguagesModel.findOne({
+            where: {
+              code: {
+                [Op.eq]: languageCode,
+              },
+            },
+          });
+      
+        const passangerTranslations = loadLanguageFile("passangers-form.js", lang?.code);
+        const validData = await validatePassangersData(passangersData, passangerTranslations);
 
         if(validData.status === "error") {
             return res.status(422).json({status: "validation error", errors: validData.data});
         }
 
         req.session.passangersInfo = validData.data;
+        console.log(req.session.passangersInfo);
         req.session.email = Object.values(validData.data).find((_, ind) => ind === 0)?.["email-1"];
 
         req.session.save(function (err) {

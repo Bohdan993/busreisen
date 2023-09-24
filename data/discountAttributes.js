@@ -61,14 +61,14 @@ const discountAttributesUK = [
         "name": "Картка постійного клієнта (10%).",
         "discountId": 9,
         "languageId": 1,
-        "group": constants.ADULTS
+        "group": constants.DISCOUNT_CARD
 
     },
     {
         "name": "Картка постійного клієнта (15%).",
         "discountId": 10,
         "languageId": 1,
-        "group": constants.ADULTS
+        "group": constants.DISCOUNT_CARD
     },
     {
         "name": "Знижка на рейс",
@@ -139,14 +139,14 @@ const discountAttributesRU = [
         "name": "Карта постоянного клиента (10%).",
         "discountId": 9,
         "languageId": 2,
-        "group": constants.ADULTS
+        "group": constants.DISCOUNT_CARD
 
     },
     {
         "name": "Карта постоянного клиента (15%).",
         "discountId": 10,
         "languageId": 2,
-        "group": constants.ADULTS
+        "group": constants.DISCOUNT_CARD
     },
     {
         "name": "Скидка на рейс",
@@ -217,14 +217,14 @@ const discountAttributesDE = [
         "name": "Treuekundenkarte (10%).",
         "discountId": 9,
         "languageId": 3,
-        "group": constants.ADULTS
+        "group": constants.DISCOUNT_CARD
 
     },
     {
         "name": "Treuekundenkarte (15%).",
         "discountId": 10,
         "languageId": 3,
-        "group": constants.ADULTS
+        "group": constants.DISCOUNT_CARD
     },
     {
         "name": "Flugrabatt",

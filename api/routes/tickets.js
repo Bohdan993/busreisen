@@ -6,14 +6,15 @@ const TicketsModel = require("../../models/ticket");
 const UsersModel = require("../../models/user");
 const BusFlightsModel = require("../../models/busFlight");
 const { Op } = require("sequelize");
-const { isSpecialDate, transformDate } = require("../../helpers");
+const { isSpecialDate } = require("../../helpers");
 const { checkCallbackSignature } = require("../../middlewares/paymentMiddlewares");
-const { generatePDFTicket, generateHTMLTicket } = require("../../services/ticketService");
 const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
+const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
+const { generatePDFTicket, generateHTMLTicket } = require("../../services/ticketService");
 const constants = require("../../helpers/constants");
 
 
-router.post("/", [checkIfSessionIsStarted, checkCallbackSignature], async (req, res, next) => {
+router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallbackSignature], async (req, res, next) => {
     try {
 
         const {
@@ -129,7 +130,6 @@ router.post("/", [checkIfSessionIsStarted, checkCallbackSignature], async (req, 
     
 });
 
-
 router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], async (req, res) => {
     try {
 
@@ -170,7 +170,6 @@ router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], asyn
         res.status(500).json({status: "fail", error: "Server error"});
     }
 });
-
 
 router.post("/generate-pdf", async (req, res) => {
     try {

@@ -68,7 +68,6 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
 });
 
 
-
 router.post("/", checkIfSessionIsStarted, async (req, res, next) => {
     try {
 

@@ -7,6 +7,7 @@ const constants = {
     CHILD: "child",
     ADULT: "adult",
     BOTH: "both",
+    DISCOUNT_CARD: "discount-card",
     BUS_FLIGHT: "bus-flights",
     FORWARDS: "forwards",
     BACKWARDS: "backwards"
