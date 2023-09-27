@@ -1,11 +1,23 @@
 const translations = {
-    "saveAsPDFText": "Сохранить как PDF",
-    "adultText": "Взрослый",
-    "childText": "Ребенок",
-    "nameText": "Имя",
-    "lastNameText": "Фамилия",
-    "dateOfBirthText": "Дата рождения",
-    "passangerText": "Пасcажир"
+    "saveAsPDFText": "Als PDF speichern",
+    "adultText": "Erwachsener",
+    "childText": "Kind",
+    "nameText": "Name",
+    "lastNameText": "Nachname",
+    "dateOfBirthText": "Geburtsdatum",
+    "passangerText": "Passagier",
+    "passangersText": "Passagiere",
+    "destinationText": "Dort",
+    "returnText": "Return",
+    "onboardingText": "Einstiegsort",
+    "outboardingText": "Abgabeort",
+    "departureTimeText": "Abfahrtszeit",
+    "arrivalTimeText": "Ankunftszeit",
+    "additionalText": "Ankunftszeit für den nächsten Tag",
+    "additionalText2": "Ankunftszeit hängt vom Grenzübergang ab",
+    "inGeneralText": "Im Allgemeinen",
+    "discountText": "Rabatt",
+    "priceText": "Preis"
 }
 
 

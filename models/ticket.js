@@ -12,6 +12,7 @@ const Ticket = sequelize.define("ticket", {
     currencyAbbr: {type: DataTypes.STRING(4), allowNull: false},
     type: { type: DataTypes.ENUM, values: [constants.ONE_WAY, constants.ROUND, constants.OPEN_DATE]},
     signature: { type: DataTypes.STRING, allowNull: false, unique: true},
+    uuid: {  type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4 },
     dateOfFirstUsage: {type: DataTypes.DATEONLY, allowNull: true, validate: {isDate: true}},
     originId: {
         type: DataTypes.INTEGER,

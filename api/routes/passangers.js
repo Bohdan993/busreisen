@@ -8,14 +8,13 @@ const LanguagesModel = require("../../models/language");
 const { Op } = require("sequelize");
 const { loadLanguageFile } = require("../../helpers");
 const { mapDiscounts, filterByDateDiscounts } = require("../../services/discountService");
-const { validatePassangersData } = require("../../services/passangerService");
-const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
+const { validatePassangersData, transformPassangersData } = require("../../services/passangerService");
+const { checkIfSessionIsStarted, checkIfSessionIsFinished } = require("../../middlewares/sessionMiddlewares");
 const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
 const constants = require("../../helpers/constants");
 
 
-
-router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req, res) => {
+router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSessionIsFinished], async (req, res) => {
     try {
         let discounts = [];
 
@@ -97,7 +96,7 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req,
     
 });
 
-router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req, res, next) => {
+router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSessionIsFinished], async (req, res, next) => {
     try {
 
         const {
@@ -124,9 +123,11 @@ router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected], as
             return res.status(422).json({status: "validation error", errors: validData.data});
         }
 
-        req.session.passangersInfo = validData.data;
-        console.log(req.session.passangersInfo);
-        req.session.email = Object.values(validData.data).find((_, ind) => ind === 0)?.["email-1"];
+        const ticketPrice = req.session.selectedBusFlight.purePrice;
+        const transformedPassangersData = await transformPassangersData(validData.data, ticketPrice, lang?.id);
+
+        req.session.passangersInfo = transformedPassangersData;
+        req.session.email = Object.values(transformedPassangersData).find((_, ind) => ind === 0)?.["email-1"];
 
         req.session.save(function (err) {
             if (err) next(err);

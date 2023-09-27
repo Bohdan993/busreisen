@@ -6,17 +6,19 @@ const crypto = require("crypto");
 const fs = require('fs');
 const {v4: uuidv4} = require("uuid");
 const { strToSign, calculatePrice } = require("../../services/paymentService");
-const { loadLanguageFile, isOneWay } = require("../../helpers");
+const { loadLanguageFile, transformTimestampToDate } = require("../../helpers");
 const { checkCallbackSignature } = require("../../middlewares/paymentMiddlewares");
 const { generatePDFTicket, generateHTMLTicket } = require("../../services/ticketService");
-const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
-const { sendFileMail } = require("../../services/mailService");
+const { checkIfSessionIsStarted, checkIfSessionIsFinished } = require("../../middlewares/sessionMiddlewares");
 const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
+const { sendFileMail } = require("../../services/mailService");
+const TicketsModel = require("../../models/ticket");
+const { Op } = require("sequelize");
+const constants = require("../../helpers/constants");
 const router = Router();
 
 
-
-router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req, res) => {
+router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSessionIsFinished], async (req, res) => {
     try {
 
         const {
@@ -36,14 +38,15 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req
 
         const { cities, places, dates } = selectedBusFlight;
 
-        const isOneWay1 = isOneWay(endDate);
-        const price = await calculatePrice({data: passangersInfo, currency, originId, destinationId, isOneWay: isOneWay1});
+        const price = await calculatePrice({data: passangersInfo});
+
+        console.log("PRICE", price);
         
         const params =  {
             "public_key"     : process.env.LIQPAY_PUBLIC_KEY,
             "action"         : "pay",
             "amount"         : price,
-            "currency"       : currency?.currencyAbbr,
+            "currency"       : currency?.abbr,
             "description"    : "Оплата за квиток",
             "order_id"       : uuidv4(),
             "version"        : "3",
@@ -90,11 +93,24 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
         const pdfName = pdfHash + ".pdf";
         const pdfPath = path.resolve("assets", "tickets", pdfName);
 
+        let ticket = await TicketsModel.findOne({
+            attributes: ["uuid", "createdAt"],
+            where: {
+                signature: {
+                    [Op.eq]: signature
+                }
+            }
+        });
+
+
+        ticket = ticket?.toJSON();
+
         const promise = new Promise((res, rej) => {
             fs.readFile(pdfPath, async function (err, fileData) {
 
                 try {
                     if (err) {
+
                         const html = await generateHTMLTicket({
                             languageCode,
                             cities,
@@ -104,8 +120,12 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
                             passangersInfoData,
                             dates,
                             places,
-                            isPDF: true
+                            ticket,
+                            constants,
+                            template: "full-ticket.pug",
+                            transformTimestampToDate
                         });
+
                         const { pdfPath } = await generatePDFTicket(signature, html);
                         await sendFileMail(email, pdfPath);
                         return res();

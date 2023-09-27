@@ -1,13 +1,16 @@
 const translations = {
-    "fromText": "Wovon",
+    "fromText": "Von",
     "toText": "Wo",
-    "destinationText": "Senden",
-    "returnText": "Zurückkehren",
+    "destinationText": "Versand",
+    "returnText": "Return",
     "passangerText": "Passagiere",
-    "confirmText":"Suchen",
-    "adultTexts": ["Erwachsener", "Erwachsene", "Erwachsene"],
-    "childTexts": ["Kind", "Kind", "Kinder"],
-    "oneWayText": "Ein Weg",
-    "openDateText": "Offenes Datum",
-    "noFoundText": "Entschuldigung, nichts gefunden"
+    "confirmText": "Suchen",
+    "adultTexts": ["adult", "adults", "adults"],
+    "childTexts": ["child", "child", "children"],
+    "oneWayText": "Einfache Fahrt",
+    "openDateText": "Datum öffnen",
+    "noFoundText": "Leider wurde nichts gefunden"
 }
+
+
+module.exports = translations;

@@ -27,7 +27,7 @@ script.
     const a = document.createElement("a");
     const link = window.URL.createObjectURL(result);
     a.href = link;
-    a.download = "ticket.pdf";
+    a.download = "Benz_Express_Ticket.pdf";
     document.body.append(a);
     a.click();
     a.remove();
@@ -52,7 +52,8 @@ script.
       Swal.fire({
         title: "!{translations.thanksText}",
         customClass: {
-          container: "booking-payment-popup"
+          container: "booking-payment-popup",
+          confirmButton: 'base-button base-button--primary',
         },
         icon: "success",
         html: ticket, 
@@ -68,12 +69,13 @@ script.
         $(clone).find(".cta").remove();
         const html = $(clone).html();
         try {
-          const result = await fetch(`${url}`, {
+          const result = await fetch(`${url}?languageCode=${bookingHelpersInstance.state?.languageCode}`, {
               method: "POST",
+              credentials: "include",
               headers: {
                   "Content-Type": "application/json",
               },
-              body: JSON.stringify({signature: data?.signature, html: html})
+              body: JSON.stringify({signature: data?.signature, html: html, data: data?.data})
           });
           const blob = await result.blob();
           downdloadTicket(blob);
@@ -89,7 +91,10 @@ script.
             title: "#{translations.oopsText}",
             text: "#{translations.errorText1}",
             showCloseButton: true,
-            showConfirmButton: false
+            showConfirmButton: false,
+            customClass: {
+              confirmButton: 'base-button base-button--primary',
+            }
           });
           return;
         }
@@ -108,7 +113,10 @@ script.
           title: "#{translations.oopsText}",
           text: "#{translations.errorText1}",
           showCloseButton: true,
-          showConfirmButton: false
+          showConfirmButton: false,
+          customClass: {
+              confirmButton: 'base-button base-button--primary',
+          }
         });
         return;
     }
@@ -120,7 +128,10 @@ script.
     title: "#{translations.oopsText}",
     text: "#{translations.errorText2}",
     showCloseButton: true,
-    showConfirmButton: false
+    showConfirmButton: false,
+    customClass: {
+        confirmButton: 'base-button base-button--primary',
+    }
   });
   return;
   

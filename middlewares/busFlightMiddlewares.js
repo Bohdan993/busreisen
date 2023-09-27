@@ -65,7 +65,7 @@ function checkIfBusFlightSelected(req, res, next){
     }
 
     const error401Translations = loadLanguageFile("401-error.js", languageCode);
-    return res.status(401).render("error-401", {translations: error401Translations});  
+    return res.status(401).render("error-401", {translations: error401Translations, languageCode});  
 }
 
 

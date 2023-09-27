@@ -6,6 +6,7 @@ const translations = {
     "lastNameText": "Фамилия",
     "dateOfBirthText": "Дата рождения",
     "passangerText": "Пасcажир",
+    "passangersText": "Пассажиры",
     "destinationText": "Туда",
     "returnText": "Обратно",
     "onboardingText": "Место посадки",
@@ -14,6 +15,9 @@ const translations = {
     "arrivalTimeText": "Время прибытия",
     "additionalText": "время прибытия на следующие сутки",
     "additionalText2": "время прибытия зависит от прохода границы",
+    "inGeneralText": "В общем",
+    "discountText": "Скидка",
+    "priceText": "Цена"
 }
 
 

@@ -1,5 +1,6 @@
 const path = require("path");
 const constants = require("./constants");
+const fs = require("fs");
 
 function isOneWay(date){
     return (String(date) === constants.ONE_WAY);
@@ -71,6 +72,11 @@ function decodeHTMLEntities(rawStr) {
     return rawStr.replace(/&#(\d+);/g, ((match, dec) => `${String.fromCharCode(dec)}`));
 }
 
+function base64_encode(file) {
+    var bitmap = fs.readFileSync(file);
+    return Buffer.from(bitmap).toString('base64');
+}
+
  module.exports = {
     isSpecialDate,
     isOneWay,
@@ -82,5 +88,6 @@ function decodeHTMLEntities(rawStr) {
     isEmptyObject,
     transformTimestampToDate,
     encodeHTMLEntities,
-    decodeHTMLEntities
+    decodeHTMLEntities,
+    base64_encode
  }

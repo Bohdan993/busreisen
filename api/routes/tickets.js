@@ -1,20 +1,24 @@
 const {
     Router
 } = require("express");
+const crypto = require("crypto");
+const path = require("path");
+const fs = require("fs");
 const router = Router();
 const TicketsModel = require("../../models/ticket");
 const UsersModel = require("../../models/user");
 const BusFlightsModel = require("../../models/busFlight");
+const UserTicketModel = require("../../models/userTicket");
 const { Op } = require("sequelize");
-const { isSpecialDate } = require("../../helpers");
+const { isSpecialDate, transformTimestampToDate } = require("../../helpers");
 const { checkCallbackSignature } = require("../../middlewares/paymentMiddlewares");
-const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
+const { checkIfSessionIsStarted, checkIfSessionIsFinished } = require("../../middlewares/sessionMiddlewares");
 const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
 const { generatePDFTicket, generateHTMLTicket } = require("../../services/ticketService");
 const constants = require("../../helpers/constants");
 
 
-router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallbackSignature], async (req, res, next) => {
+router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallbackSignature, checkIfSessionIsFinished], async (req, res, next) => {
     try {
 
         const {
@@ -76,8 +80,8 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
             }
         });
 
-        const getUserIds = async () => {
-            const userIds = await Promise.all(
+        const getUserData = async () => {
+            const userData = await Promise.all(
                 passangersData.map(async (passangerArr, ind) => {
                     if(adultPassangerRegex.test(passangerArr[0])) {
                         const candidate = await UsersModel.findOne({
@@ -95,7 +99,22 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
                                 "phone": passangerArr[1]?.[`phone-${ind + 1}`]
                             });
                             await candidate.save();
-                            return candidate?.id;
+
+                            const dataObj = {
+                                userId: candidate?.id,
+                                ticketId: ticket?.id
+                            }
+
+                            if(passangerArr[1]?.[`discount-${ind + 1}`]) {
+                                dataObj["userDiscountId"] = passangerArr[1]?.[`discount-${ind + 1}`];
+                            }
+
+                            if(passangerArr[1]?.[`card-discount-${ind + 1}`]) {
+                                dataObj["discountCardNumber"] = passangerArr[1]?.[`card-discount-${ind + 1}`];
+                            }
+
+                            return  dataObj;
+
                         } else {
                             const user = await UsersModel.create({
                                 "name": passangerArr[1]?.[`name-${ind + 1}`],
@@ -105,17 +124,35 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
                                 "dateOfBirth": passangerArr[1]?.[`date-of-birth-${ind + 1}`],
                                 "email": passangerArr[1]?.[`email-${ind + 1}`] || null,
                             });
-                            return user?.id;
+
+                            const dataObj = {
+                                userId: user?.id,
+                                ticketId: ticket?.id
+                            }
+
+                            if(passangerArr[1]?.[`discount-${ind + 1}`]) {
+                                dataObj["userDiscountId"] = passangerArr[1]?.[`discount-${ind + 1}`];
+                            }
+
+                            if(passangerArr[1]?.[`card-discount-${ind + 1}`]) {
+                                dataObj["discountCardNumber"] = passangerArr[1]?.[`card-discount-${ind + 1}`];
+                            }
+
+                            return dataObj;
                         }
                     }
+
+                    return null;
                 })
             );
-            return userIds;
+            return userData;
         }
 
-        const userIds = await getUserIds();
-        await ticket.addUsers(userIds.filter(Boolean));
+        const userData = (await getUserData()).filter(Boolean);
 
+        await UserTicketModel.bulkCreate(userData);
+
+        req.session.ticket = ticket?.toJSON();
         req.session.save(function (err) {
             if (err) return next(err);
 
@@ -130,7 +167,7 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
     
 });
 
-router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], async (req, res) => {
+router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], async (req, res, next) => {
     try {
 
         const {
@@ -156,12 +193,14 @@ router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], asyn
             currencyAbbr,
             passangersInfoData,
             dates,
-            places
+            places,
+            // ticket
         });
 
-        req.session.destroy(function (err) {
-            if (err) return next(err);
+        req.session.isFinished = true;
 
+        req.session.save(function (err) {
+            if (err) return next(err);
             return res.send(html);
         });
         
@@ -171,22 +210,72 @@ router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], asyn
     }
 });
 
-router.post("/generate-pdf", async (req, res) => {
+
+router.post("/generate-pdf", [/*checkIfSessionIsStarted,*/ checkCallbackSignature], async (req, res, next) => {
     try {
 
         const {
-            signature,
-            html
+            ticket
+        } = req?.session;
+
+        const {
+            data,
+            signature
         } = req?.body;
 
-        const {pdfPath, pdfName} = await generatePDFTicket(signature, html);
+        const decodedData = Buffer.from(data, "base64").toString("utf-8");
+        const { currency: currencyAbbr, amount: price, info} = JSON.parse(decodedData);
+        const { passangersInfo, cities, places, dates, languageCode} = JSON.parse(info);
+        const passangersInfoData = Object.entries(passangersInfo);
+        const pdfHash = crypto.createHash("sha256").update(signature).digest("hex");
+        const pdfName = pdfHash + ".pdf";
+        const pdfPath = path.resolve("assets", "tickets", pdfName);
 
-        return res.download(pdfPath, function (err) {
-            if (err) {
-                throw err;
-            } else {
-                console.log("Sent downloaded:", pdfName);
-            }
+        const promise = new Promise((res, rej) => {
+            fs.readFile(pdfPath, async function (err, fileData) {
+
+                try {
+                    if (err) {
+
+                        const html = await generateHTMLTicket({
+                            languageCode,
+                            cities,
+                            signature,
+                            price,
+                            currencyAbbr,
+                            passangersInfoData,
+                            dates,
+                            places,
+                            ticket,
+                            constants,
+                            template: "full-ticket.pug",
+                            transformTimestampToDate
+                        });
+
+                        const { pdfPath, pdfName } = await generatePDFTicket(signature, html);
+                        return res({pdfPath, pdfName});
+                        
+                    }
+
+                    return res({pdfPath, pdfName});
+                } catch(err) {
+                    return rej(err);
+                }
+            });
+        });
+
+        const {pdfPath: newPdfPath, pdfName: newPdfName} = await promise;
+        
+        req.session.destroy(function (err) {
+            if (err) return next(err);
+
+            return res.download(newPdfPath, function (err) {
+                if (err) {
+                    throw err;
+                } else {
+                    console.log("Sent downloaded:", newPdfName);
+                }
+            });
         });
 
     } catch (err) {
@@ -195,6 +284,7 @@ router.post("/generate-pdf", async (req, res) => {
     }
     
 });
+
 
 
 module.exports = router

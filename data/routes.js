@@ -1,7 +1,7 @@
 const routes = [
     {
         "routeGroupId": 1,
-        "name": "Запоріжжя_Дюссельдорф",
+        "name": "Запоріжжя - Дюссельдорф",
         "onboarding": [
             {
                 "cityId": 1,
@@ -69,7 +69,8 @@ const routes = [
     },
     {
         "routeGroupId": 1,
-        "name": "Дюссельдорф_Запоріжжя",
+        // "name": "Дюссельдорф_Запоріжжя",
+        "name": "Запоріжжя - Дюссельдорф",
         "onboarding": [
             {
                 "cityId": 19,
@@ -137,7 +138,7 @@ const routes = [
     },
     {
         "routeGroupId": 2,
-        "name": "Запоріжжя_Карлсруе",
+        "name": "Запоріжжя - Карлсруе",
         "onboarding": [
             {
                 "cityId": 1,
@@ -205,7 +206,8 @@ const routes = [
     },  
     {
         "routeGroupId": 2,
-        "name": "Карлсруе_Запоріжжя",
+        // "name": "Карлсруе_Запоріжжя",
+        "name": "Запоріжжя - Карлсруе",
         "onboarding": [
             {
                 "cityId": 11,

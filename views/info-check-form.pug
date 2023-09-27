@@ -21,14 +21,13 @@ div.info-check-form-container-inner
     = translations.infoCheckTitle
   form#booking-info-check-form.booking-info-check-form
     while i < adlts
-      - 
-        let currDiscountCoef = discounts.find(el => el[1].some(elem => parseInt(elem.id) === parseInt(passangersInfo?.[i]?.[1]?.["discount-" + (i + 1)])));
-        if(currDiscountCoef) {
-          currDiscountCoef = currDiscountCoef[1].find(el => parseInt(el.id) === parseInt(passangersInfo[i][1]["discount-" + (i + 1)])).coef;
-        }
-        console.log(passangersInfo);
+      //- - 
+      //-   let currDiscountCoef = discounts.find(el => el[1].some(elem => parseInt(elem.id) === parseInt(passangersInfo?.[i]?.[1]?.["discount-" + (i + 1)])));
+      //-   if(currDiscountCoef) {
+      //-     currDiscountCoef = currDiscountCoef[1].find(el => parseInt(el.id) === parseInt(passangersInfo[i][1]["discount-" + (i + 1)])).coef;
+      //-   }
       //- .passanger-block(class=`${i === 0 ? "is-open": ""}`)
-      .passanger-block(data-passanger-id=`${i + 1}` data-ticket-price=`${(ticketPrice * (1 - currDiscountCoef)) || ticketPrice}` data-full-ticket-price=`${ticketPrice}`)
+      .passanger-block(data-passanger-id=`${i + 1}` data-ticket-price=`${(passangerInfo && passangersInfo[i][1]["discount-ticket-price-" + (i + 1)]) ? passangersInfo[i][1]["discount-ticket-price-" + (i + 1)] : ticketPrice}` data-full-ticket-price=`${ticketPrice}`)
         .booking-flow__passengers__avatar.circled-avatar
           svg.svg-icon.svg-fill.icon(viewbox="0 0 48 48" xml:space="preserve" xmlns:xlink="http:www.w3.org/1999/xlink")
             g
@@ -45,7 +44,7 @@ div.info-check-form-container-inner
                   div.input(id=`adult-input-name-${i + 1}` data-input=`name-${i + 1}`)
                     .input-container
                       label(for=`adult-name-${i + 1}`)= translations.nameText + "*"
-                      input(value=`${passangersInfo ? passangersInfo[i][1]["name-" + (i + 1)] : ""}`  placeholder=`${translations.nameText}` required id=`adult-name-${i + 1}` data-validate=`name-${i + 1}` disabled)
+                      input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["name-" + (i + 1)] : ""}`  placeholder=`${translations.nameText}` required id=`adult-name-${i + 1}` data-validate=`name-${i + 1}` disabled)
                       i.pencil-ico
                         svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
                           rect(fill="none" height="256" width="256")
@@ -59,7 +58,7 @@ div.info-check-form-container-inner
                   div.input(id=`adult-input-last-name-${i + 1}` data-input=`last-name-${i + 1}`)
                     .input-container
                       label(for=`adult-last-name-${i + 1}`)= translations.lastNameText + "*"
-                      input(value=`${passangersInfo ? passangersInfo[i][1]["last-name-" + (i + 1)] : ""}`  placeholder=`${translations.lastNameText}` required id=`adult-last-name-${i + 1}` data-validate=`last-name-${i + 1}` disabled)
+                      input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["last-name-" + (i + 1)] : ""}`  placeholder=`${translations.lastNameText}` required id=`adult-last-name-${i + 1}` data-validate=`last-name-${i + 1}` disabled)
                       i.pencil-ico
                         svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
                           rect(fill="none" height="256" width="256")
@@ -105,7 +104,7 @@ div.info-check-form-container-inner
                     div.input(id=`adult-input-email-${i + 1}` data-input=`email-${i + 1}`)
                       .input-container
                         label(for=`adult-email-${i + 1}`)= translations.emailText + "*"
-                        input(value=`${passangersInfo ? passangersInfo[i][1]["email-" + (i + 1)] : ""}` type="email" placeholder=`${translations.emailText}` id=`adult-email-${i + 1}` data-validate=`email-${i + 1}` required disabled)
+                        input(type="email" value=`${passangersInfo ? passangersInfo[i][1]["email-" + (i + 1)] : ""}` placeholder=`${translations.emailText}` id=`adult-email-${i + 1}` data-validate=`email-${i + 1}` required disabled)
                         i.pencil-ico
                           svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
                             rect(fill="none" height="256" width="256")
@@ -157,7 +156,7 @@ div.info-check-form-container-inner
                       div.input(id=`adult-input-card-discount-${i + 1}` data-input=`card-discount-${i + 1}`)
                         .input-container
                           label(for=`adult-card-discount-${i + 1}`)= translations.discountCardText + "*"
-                          input(id=`adult-card-discount-${i + 1}` type="text" value=`${passangersInfo ? passangersInfo[i][1]["card-discount-" + (i + 1)] : ""}` placeholder=`${translations.discountCardText}` required="required" data-validate=`card-discount-${i + 1}` disabled)
+                          input(type="text" id=`adult-card-discount-${i + 1}` value=`${passangersInfo ? passangersInfo[i][1]["card-discount-" + (i + 1)] : ""}` placeholder=`${translations.discountCardText}` required="required" data-validate=`card-discount-${i + 1}` disabled)
                           i.pencil-ico
                             svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
                               rect(fill="none" height="256" width="256")
@@ -172,12 +171,12 @@ div.info-check-form-container-inner
               = translations.noteText
       - i++
     while i < (adlts + chldrn)
-      - 
-        let currDiscountCoef = discounts.find(el => el[1].some(elem => parseInt(elem.id) === parseInt(passangersInfo?.[i]?.[1]?.["discount-" + (i + 1)])));
-        if(currDiscountCoef) {
-          currDiscountCoef = currDiscountCoef[1].find(el => parseInt(el.id) === parseInt(passangersInfo[i][1]["discount-" + (i + 1)])).coef;
-        }
-      .passanger-block(data-passanger-id=`${i + 1}` data-ticket-price=`${(ticketPrice * (1 - currDiscountCoef)) || ticketPrice}` data-full-ticket-price=`${ticketPrice}`)
+      //- - 
+      //-   let currDiscountCoef = discounts.find(el => el[1].some(elem => parseInt(elem.id) === parseInt(passangersInfo?.[i]?.[1]?.["discount-" + (i + 1)])));
+      //-   if(currDiscountCoef) {
+      //-     currDiscountCoef = currDiscountCoef[1].find(el => parseInt(el.id) === parseInt(passangersInfo[i][1]["discount-" + (i + 1)])).coef;
+      //-   }
+      .passanger-block(data-passanger-id=`${i + 1}` data-ticket-price=`${(passangerInfo && passangersInfo[i][1]["discount-ticket-price-" + (i + 1)])  ? passangersInfo[i][1]["discount-ticket-price-" + (i + 1)] : ticketPrice}`)
         .booking-flow__passengers__avatar.circled-avatar
           svg.svg-icon.svg-fill.icon(viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg")
             path(d="M224 144c39.75 0 72-32.25 72-72S263.8-.0004 224-.0004S151.1 32.25 151.1 72S184.3 144 224 144zM415.1 110.8c-13.89-17.14-39.06-19.8-56.25-5.906L307.6 146.4c-47.16 38.19-120.1 38.19-167.3 0L89.17 104.9C72.02 91 46.8 93.67 32.92 110.8C19.02 128 21.66 153.2 38.83 167.1l51.19 41.47c11.73 9.496 24.63 17.16 37.98 23.92L127.1 480c0 17.62 14.38 32 32 32h15.1c17.62 0 32-14.38 32-32v-112h32V480c0 17.62 14.38 32 32 32h15.1c17.62 0 32-14.38 32-32l-.0001-247.5c13.35-6.756 26.25-14.42 37.97-23.91l51.2-41.47C426.3 153.2 428.1 128 415.1 110.8z")
@@ -191,7 +190,7 @@ div.info-check-form-container-inner
                   div.input(id=`child-input-name-${i + 1}` data-input=`name-${i + 1}`)
                     .input-container
                       label(for=`child-name-${i + 1}`)= translations.nameText + "*"
-                      input(value=`${passangersInfo ? passangersInfo[i][1]["name-" + (i + 1)] : ""}`  placeholder=`${translations.nameText}` required id=`child-name-${i + 1}` data-validate=`name-${i + 1}` disabled)
+                      input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["name-" + (i + 1)] : ""}`  placeholder=`${translations.nameText}` required id=`child-name-${i + 1}` data-validate=`name-${i + 1}` disabled)
                       i.pencil-ico
                         svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
                           rect(fill="none" height="256" width="256")
@@ -204,7 +203,7 @@ div.info-check-form-container-inner
                   div.input(id=`child-input-last-name-${i + 1}` data-input=`last-name-${i + 1}`)
                     .input-container
                       label(for=`child-last-name-${i + 1}`)= translations.lastNameText + "*"
-                      input(value=`${passangersInfo ? passangersInfo[i][1]["last-name-" + (i + 1)] : ""}`  placeholder=`${translations.lastNameText}` required id=`child-last-name-${i + 1}` data-validate=`last-name-${i + 1}` disabled)
+                      input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["last-name-" + (i + 1)] : ""}`  placeholder=`${translations.lastNameText}` required id=`child-last-name-${i + 1}` data-validate=`last-name-${i + 1}` disabled)
                       i.pencil-ico
                         svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
                           rect(fill="none" height="256" width="256")

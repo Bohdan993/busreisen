@@ -2,11 +2,12 @@ const {
     Router
 } = require("express");
 const router = Router();
-const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
+const { checkIfSessionIsStarted, checkIfSessionIsFinished } = require("../../middlewares/sessionMiddlewares");
 const { encodeHTMLEntities, decodeHTMLEntities, isOneWay } = require("../../helpers");
 const { calculatePrice } = require("../../services/paymentService");
 
-router.get("/", checkIfSessionIsStarted, async (req, res) => {
+
+router.get("/", [checkIfSessionIsStarted, checkIfSessionIsFinished], async (req, res) => {
     try {
 
         const {
@@ -26,16 +27,12 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
                 symbol: currencySymbol
             },
             passangersInfo, 
-            currency,
-            originId,
-            destinationId
         } = req?.session;
 
         let price;
 
         if(type === "check") {
-            const isOneWay1 = isOneWay(endDate);
-            price = await calculatePrice({data: passangersInfo, currency, originId, destinationId, isOneWay: isOneWay1});
+            price = await calculatePrice({data: passangersInfo});
         }
 
         if(type === "standart") {
@@ -68,7 +65,7 @@ router.get("/", checkIfSessionIsStarted, async (req, res) => {
 });
 
 
-router.post("/", checkIfSessionIsStarted, async (req, res, next) => {
+router.post("/", [checkIfSessionIsStarted, checkIfSessionIsFinished], async (req, res, next) => {
     try {
 
         for(const key in req?.body) {

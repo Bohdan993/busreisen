@@ -23,5 +23,5 @@
         path(d="M6830 1782 c0 -195 14 -284 62 -400 143 -345 515 -567 878 -523 49 6\
         98 15 109 19 18 6 -54 82 -514 542 l-535 535 0 -173z")
     span.no-flights-box__message= translations.errorText
-    a(href="/").base-button.base-button--primary.no-flights-found-button
+    a(href=`${languageCode === "uk_UA" ? "/ua" : languageCode === "ru_RU" ? "/" : "/" + languageCode.split("_")[0]}`).base-button.base-button--primary.no-flights-found-button
         = translations.buttonText

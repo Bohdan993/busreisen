@@ -26,7 +26,7 @@ const {
   customRoutesFilter,
 } = require("../../services/busFlightService");
 const {
-  checkIfSessionIsStarted,
+  checkIfSessionIsStarted, checkIfSessionIsFinished,
 } = require("../../middlewares/sessionMiddlewares");
 const sequelize = require("../../db");
 const constants = require("../../helpers/constants");
@@ -118,8 +118,6 @@ router.get("/", validateDates, async (req, res, next) => {
 
     busFlights = await BusFlightModel.findAll(query);
     busFlights = busFlights?.map((bf) => bf?.toJSON());
-
-    console.log("BFFF", busFlights);
 
     if (!busFlights?.length) {
       return res.status(404).render("error-404", {
@@ -294,7 +292,7 @@ router.get("/", validateDates, async (req, res, next) => {
 
 router.get(
   "/alternatives",
-  [/*checkIfSessionIsStarted,*/ validateDates],
+  validateDates,
   async (req, res, next) => {
     try {
       let busFlights = [];
@@ -664,7 +662,7 @@ router.get("/available-dates", async (req, res) => {
   }
 });
 
-router.post("/select", checkIfSessionIsStarted, async (req, res, next) => {
+router.post("/select", [checkIfSessionIsStarted, checkIfSessionIsFinished], async (req, res, next) => {
   try {
     const { id, isMain = true, direction = constants.FORWARDS } = req?.body;
 

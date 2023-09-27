@@ -73,6 +73,7 @@ const discountAttributes = require("../data/discountAttributes");
 const UserTicket = require("../models/userTicket");
 
 const { sendTestMail } = require("../services/mailService");
+// const { createPDFTicket } = require("../services/ticketService");
 
 
 // END TEMP VARIABLES
@@ -148,7 +149,6 @@ app.use("/api/test-mail", async (req, res) => {
         res.status(500).json({status: "fail"});
     }
 });
-
 
 
 app.use("/api/insert-values", async function(req, res, next) {

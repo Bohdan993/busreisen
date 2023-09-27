@@ -3,8 +3,85 @@ const validate = require("validate.js");
 const DiscountModel = require("../models/discount");
 const DiscountAttributesModel = require("../models/discountAttributes");
 const { isEmptyObject } = require("../helpers");
-const { mapDiscounts } = require("./discountService");
+const { mapDiscounts, filterByDateDiscounts } = require("./discountService");
 const constants = require("../helpers/constants");
+
+
+async function transformPassangersData(data, price, languageId){
+
+    const passangersData = Object.entries(data || []);
+
+    let discounts = await DiscountModel.findAll({
+        attributes: ["id", "coef", "inactivePeriod"],
+        order: [
+            ["id", "ASC"],
+        ],
+        include: [
+            {
+                model: DiscountAttributesModel,
+                attributes: ["group", "name"],
+                where: {
+                    languageId: {
+                        [Op.eq]: languageId
+                    },
+                    group: {
+                        [Op.not]: constants.BUS_FLIGHT
+                    }
+                }
+            }
+        ],
+    });
+
+    discounts = discounts?.map(discount => discount?.toJSON());
+    discounts = mapDiscounts(discounts);
+    discounts = filterByDateDiscounts(discounts);
+
+    const discountRegex = new RegExp("^discount-[0-9]+");
+    const transformedData = passangersData
+                            .map(passangerMapper)
+                            .reduce(passangerReducer, {});
+
+    function passangerMapper (el) {
+            let discountId;
+            let currPassangerCount = el[0].replace(/\D+/, "");
+
+            for(let key in el[1]) {
+                if(discountRegex.test(key)) {
+                    discountId = el[1][key];
+                }
+            }
+
+            
+            const currDiscount = discounts?.filter(item => item?.[1]?.find(el => String(el?.id) === String(discountId)))
+            ?.[0]?.[1]
+            ?.find(el => String(el?.id) === String(discountId));
+            const discountCoef = currDiscount?.coef;
+            const discountName = currDiscount?.DiscountAttributes?.[0]?.name;
+
+            const calcPrice = parseInt(price) * (1 - Number(discountCoef || 0));
+            const newObj = {
+                ...el[1],
+                [`full-ticket-price-${currPassangerCount}`]: parseInt(price),
+                [`discount-ticket-price-${currPassangerCount}`]: calcPrice,
+                [`discount-percantage-${currPassangerCount}`]: (discountCoef || 0) * 100,
+                [`discount-name-${currPassangerCount}`]: discountName
+            };
+
+            return [el[0], {
+                ...newObj
+            }];
+    }
+
+    function passangerReducer(acc, curr) {
+        if(!acc[curr[0]] ) {
+            acc[curr[0]] = curr[1];
+        }
+
+        return acc;
+    }
+
+    return transformedData;
+}
 
 async function validatePassangersData(data, translations){
     const dataToValidate = Object.values(data).reduce((acc, curr) => acc = {...acc, ...curr} , {});
@@ -194,5 +271,6 @@ async function createValidateConstraints(data, dataToValidate, translations){
 };
 
 module.exports = {
-    validatePassangersData
+    validatePassangersData,
+    transformPassangersData
 }
