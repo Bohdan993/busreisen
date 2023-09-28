@@ -81,7 +81,6 @@ script.
   $('#payment-container').append(btn);
   if(data.status === "success") {
     try {
-      $("#booking2 .booking-content .loading-area").fadeOut(100);
       $('#search-change-button').attr("disabled", true);
       await postTicketData(data?.data, data?.signature);
       const ticket = await generateTicket(data?.data, data?.signature);
@@ -98,6 +97,7 @@ script.
         showConfirmButton: false
       });
       $(document).on("click", "#generate-ticket-pdf", generateTicketPDF.bind(null, data?.data, data?.signature));
+      $("#booking2 .booking-content .loading-area").fadeOut(100);
 
       return;
     } catch(err) {
