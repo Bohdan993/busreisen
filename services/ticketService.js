@@ -62,7 +62,7 @@ async function generateHTMLTicket(
                     const html = pug.renderFile(ticketTemplate, 
                         {
                             qr: url,
-                            logo: base64_encode(path.resolve("assets", "images", "logo_benz_express.png")),
+                            logo: "data:image/png;base64," + base64_encode(path.resolve("assets", "images", "logo_benz_express.png")),
                             translations: loadLanguageFile("ticket.js", languageCode),
                             constants,
                             transformTimestampToDate,

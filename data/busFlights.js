@@ -330,6 +330,66 @@ const busFlights = [
     },
     //////////////////////////////////////////////////
     //////////////////////////////////////////////////
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 1,
+        "dateOfDeparture": "2023-10-12"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 2,
+        "dateOfDeparture": "2023-10-12"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 3,
+        "dateOfDeparture": "2023-10-12"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 17,
+        "routeId": 4,
+        "dateOfDeparture": "2023-10-12"
+
+    },
+    //////////////////////////////////////////////////
+    //////////////////////////////////////////////////
+    {
+        "allSeats": 38,
+        "freeSeats": 5,
+        "routeId": 1,
+        "dateOfDeparture": "2023-10-14"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 11,
+        "routeId": 2,
+        "dateOfDeparture": "2023-10-14"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 22,
+        "routeId": 3,
+        "dateOfDeparture": "2023-10-14"
+
+    },
+    {
+        "allSeats": 38,
+        "freeSeats": 8,
+        "routeId": 4,
+        "dateOfDeparture": "2023-10-14"
+
+    },
+    //////////////////////////////////////////////////
+    //////////////////////////////////////////////////
 
 ];
 
