@@ -85,6 +85,8 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
             signature
         } = req?.body;
 
+        console.log("TRIGGERED CALLBACK");
+
         const decodedData = Buffer.from(data, "base64").toString("utf-8");
         const { currency: currencyAbbr, amount: price, info} = JSON.parse(decodedData);
         const { passangersInfo, cities, places, dates, email, languageCode} = JSON.parse(info);
@@ -94,7 +96,7 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
         const pdfPath = path.resolve("assets", "tickets", pdfName);
 
         let ticket = await TicketsModel.findOne({
-            attributes: ["uuid", "createdAt"],
+            // attributes: ["uuid", "createdAt"],
             where: {
                 signature: {
                     [Op.eq]: signature
@@ -104,6 +106,8 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
 
 
         ticket = ticket?.toJSON();
+
+        console.log("TICKET", ticket);
 
         const promise = new Promise((res, rej) => {
             fs.readFile(pdfPath, async function (err, fileData) {
@@ -141,7 +145,7 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
         });
 
         await promise;
-        
+        console.log("EVERETHING IS OK");
         return res.json({status: "ok"});
 
     } catch (err) {

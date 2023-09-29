@@ -16,6 +16,7 @@ function createMailer(){
 }
 
 async function sendFileMail(to, file){
+    console.log("MAIL SENDING");
     const mailOptions = {
         from: "noreply@busreisen.com",
         to,

@@ -9,7 +9,7 @@ function strToSign (str) {
 
 async function calculatePrice(
     {
-        data, 
+        data
     } = {}
     ) {
     const passangersData = Object.entries(data || []);
@@ -23,6 +23,7 @@ async function calculatePrice(
 
     return calculatedPrice;
 };
+
 
 module.exports = {
     calculatePrice,
