@@ -24,6 +24,7 @@ const translations = {
     "carrierText": "Träger:",
     "routeText": "Route:",
     "contactsText": "Kontakte:",
+    "validationErrorText": "Füllen Sie dieses Feld aus",
     "phoneNums": [
          "+38 067 903 82 20", "+38 044 360 34 05", "+38 044 486 95 44", "+38 050 168 45 45"
     ]
