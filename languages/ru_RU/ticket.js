@@ -5,10 +5,10 @@ const translations = {
     "nameText": "Имя",
     "lastNameText": "Фамилия",
     "dateOfBirthText": "Дата рождения",
-    "passangerText": "Пасcажир",
+    "passangerText": "Пассажир",
     "passangersText": "Пассажиры",
     "destinationText": "Туда",
-    "returnText": "Обратно",
+    "returnText": "Назад",
     "onboardingText": "Место посадки",
     "outboardingText": "Место высадки",
     "departureTimeText": "Время отправления",
@@ -17,8 +17,18 @@ const translations = {
     "additionalText2": "время прибытия зависит от прохода границы",
     "inGeneralText": "В общем",
     "discountText": "Скидка",
-    "priceText": "Цена"
+    "priceText": "Цена",
+    "discountCardNumberText": "Номер карты",
+    "ticketNumberText": "Номер билета:",
+    "dateOfBuingText": "Дата покупки:",
+    "carrierText": "Перевозчик:",
+    "routeText": "Маршрут:",
+    "contactsText": "Контакты:",
+    "phoneNums": [
+         "+38 067 903 82 20", "+38 044 360 34 05", "+38 044 486 95 44", "+38 050 168 45 45"
+    ]
+
 }
 
 
-module.exports = translations;
+module.exports=translations;

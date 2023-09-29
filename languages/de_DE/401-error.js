@@ -1,6 +1,8 @@
 const translations = {
-    "errorText": "Ваш сеанс минув через бездіяльність і був припинений",
-    "buttonText": "На головну"
+    "errorText": "Ihre Sitzung ist aufgrund von Inaktivität abgelaufen und wurde beendet",
+    "buttonText": "Home",
+    "confirmButtonText": "Von vorne beginnen",
+    "attentionText": "Achtung!"
 }
 
 

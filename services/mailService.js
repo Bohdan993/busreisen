@@ -1,4 +1,6 @@
 const nodemailer = require("nodemailer");
+const { loadLanguageFile } = require("../helpers");
+
 
 function createMailer(){
     const transporter = nodemailer.createTransport({
@@ -15,13 +17,13 @@ function createMailer(){
     return transporter;
 }
 
-async function sendFileMail(to, file){
-    console.log("MAIL SENDING");
+async function sendFileMail(to, file, languageCode){
+    const translations = loadLanguageFile("mail.js", languageCode);
     const mailOptions = {
         from: "noreply@busreisen.com",
         to,
-        subject: "Ваш квиток",
-        text: "Перевірте Ваш квиток у вкладеному файлі",
+        subject: translations?.subjectText,
+        text: translations?.text,
         attachments: [{
           filename: "ticket.pdf",
           path: file,
@@ -43,32 +45,32 @@ async function sendActivationMail(to, link){
 
 }
 
-async function sendTestMail(to){
-    const mailOptions = {
-        from: "noreply@busreisen.com",
-        to,
-        subject: "Ваш квиток",
-        text: "Перевірте Ваш квиток у вкладеному файлі",
-    };
+// async function sendTestMail(to){
+//     const mailOptions = {
+//         from: "noreply@busreisen.com",
+//         to,
+//         subject: "Ваш квиток",
+//         text: "Перевірте Ваш квиток у вкладеному файлі",
+//     };
 
-    const transporter = createMailer();
+//     const transporter = createMailer();
 
 
-    return new Promise((res, rej) => {
-        transporter.sendMail(mailOptions, function(err, info) {
-            if (err) {
-                console.error(err);
-                rej();
-            } else {
-                console.log('Email sent: ' + info.response);
-                res();
-            }
-        });
-    });
-}
+//     return new Promise((res, rej) => {
+//         transporter.sendMail(mailOptions, function(err, info) {
+//             if (err) {
+//                 console.error(err);
+//                 rej();
+//             } else {
+//                 console.log('Email sent: ' + info.response);
+//                 res();
+//             }
+//         });
+//     });
+// }
 
 module.exports = {
     sendActivationMail,
     sendFileMail,
-    sendTestMail
+    // sendTestMail
 }

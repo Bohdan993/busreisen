@@ -37,11 +37,7 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSess
         } = req.session;
 
         const { cities, places, dates } = selectedBusFlight;
-
         const price = await calculatePrice({data: passangersInfo});
-
-        console.log("PRICE", price);
-        
         const params =  {
             "public_key"     : process.env.LIQPAY_PUBLIC_KEY,
             "action"         : "pay",
@@ -85,8 +81,6 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
             signature
         } = req?.body;
 
-        console.log("TRIGGERED CALLBACK");
-
         const decodedData = Buffer.from(data, "base64").toString("utf-8");
         const { currency: currencyAbbr, amount: price, info} = JSON.parse(decodedData);
         const { passangersInfo, cities, places, dates, email, languageCode} = JSON.parse(info);
@@ -106,10 +100,7 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
 
 
         ticket = ticket?.toJSON();
-
-        console.log("TICKET", ticket);
-        console.log("TYPEOF", typeof ticket.createdAt);
-        console.log("TYPEOF2", typeof ticket.createdAt.toString());
+        ticket.createdAt.toString();
 
         const promise = new Promise((res, rej) => {
             fs.readFile(pdfPath, async function (err, fileData) {
@@ -133,12 +124,12 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
                         });
 
                         const { pdfPath } = await generatePDFTicket(signature, html);
-                        await sendFileMail(email, pdfPath);
+                        await sendFileMail(email, pdfPath, languageCode);
                         return res();
                         
                     }
                     
-                    await sendFileMail(email, pdfPath);
+                    await sendFileMail(email, pdfPath, languageCode);
                     return res();
                 } catch(err) {
                     return rej(err);
@@ -147,7 +138,7 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
         });
 
         await promise;
-        console.log("EVERETHING IS OK");
+        
         return res.json({status: "ok"});
 
     } catch (err) {

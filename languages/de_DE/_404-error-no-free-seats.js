@@ -1,6 +1,6 @@
 const translations = {
-    "noFoundFligthsText": "Нажаль немає вільних місць на обрану Вами дату",
-    "buttonText": "До пошуку"
+    "noFoundFligthsText": "Leider sind an dem von Ihnen ausgewählten Datum keine Plätze verfügbar",
+    "buttonText": "Zu suchen"
 }
 
 

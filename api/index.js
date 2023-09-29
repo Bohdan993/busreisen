@@ -72,9 +72,6 @@ const discountAttributes = require("../data/discountAttributes");
 
 const UserTicket = require("../models/userTicket");
 
-const { sendTestMail } = require("../services/mailService");
-// const { createPDFTicket } = require("../services/ticketService");
-
 
 // END TEMP VARIABLES
 const PORT = process.env.PORT || 5000;
@@ -100,7 +97,7 @@ const sessionOptions = {
         secure: true,
         httpOnly: true,
         sameSite: "none",
-        maxAge: 180 * 60 * 1000,
+        maxAge: 15 * 60 * 1000,
         path: '/'
     }
 };
@@ -137,18 +134,6 @@ app.use("/api/tickets", ticketsRoute);
 app.use("/api/translations", translationsRoute);
 app.use("/api/payment", paymentRoute);
 app.use("/api/current-data", sessionData);
-
-app.use("/api/test-mail", async (req, res) => {
-    try {
-        const {
-            email
-        } = req?.query;
-        await sendTestMail(email);
-        res.json({status: "ok"});
-    } catch(err){
-        res.status(500).json({status: "fail"});
-    }
-});
 
 
 app.use("/api/insert-values", async function(req, res, next) {

@@ -1,9 +1,9 @@
 const translations = {
-    "noFoundFligthsText": "Не знайдено доступних рейсів за вказаними параметрами",
-    "errorText": "Вибачте, сталася помилка. Спробуйте, будь ласка, ще раз.",
-    "confirmButtonText": "Розпочати заново",
-    "buttonText": "До пошуку",
-    "oopsText": "Ой..."
+    "noFoundFligthsText": "Es wurden keine verfügbaren Flüge mit den angegebenen Parametern gefunden",
+    "errorText": "Leider ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "confirmButtonText": "Von vorne beginnen",
+    "buttonText": "Zu suchen",
+    "oopsText": "Ups…"
 }
 
 

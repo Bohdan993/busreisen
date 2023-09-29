@@ -32,7 +32,6 @@ const translations = {
     "passangerTexts": ["пасажир", "пасажири", "пасажирів"],
     "ticketsTitle": "Ваш рейс",
     "alternativeTicketsTitle": "Найближчі доступні рейси",
-    
 }
 
 

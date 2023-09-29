@@ -495,7 +495,7 @@ div.ticket-bus-container
                   td.passanger-date-of-birth
                     = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
                   td.passanger-discount(style="white-space:pre;")
-                    = (passanger[1]["discount-name-" + (ind + 1)] || " - ") + (passanger[1]["card-discount-" + (ind + 1)] ? "\r\nНомер карти - (" + passanger[1]["card-discount-" + (ind + 1)] + ")." : "")
+                    = (passanger[1]["discount-name-" + (ind + 1)] || " - ") + (passanger[1]["card-discount-" + (ind + 1)] ? "\r\n" + translations.discountCardNumberText + "- (" + passanger[1]["card-discount-" + (ind + 1)] + ")." : "")
                   td.passanger-price
                     = passanger[1]["discount-ticket-price-" + (ind + 1)]
                 //- .passanger
@@ -538,13 +538,13 @@ div.ticket-bus-container
             div
               i.ico
               span
-                |Номер квитка:
+                = translations.ticketNumberText
               p
                 = data.ticket.uuid
             div
               i.ico
               span
-                |Дата покупки:
+                = translations.dateOfBuingText
               p
                 = data.ticket.createdAt.split("T")[0]
           .image
@@ -558,27 +558,22 @@ div.ticket-bus-container
               i.ico
 
               span
-                |Перевізник:
+                = translations.carrierText
               p
                 |Benz Express
             div
               i.ico
                 
               span
-                |Маршрут:
+                = translations.routeText
               p
                 = data.places.from.routeName
             div.general-info-contacts
               i.ico
                 
               span
-                |Контакти:
+                = translations.contactsText
               p
-                span
-                  |+38 067 903 82 20
-                span
-                  |+38 044 360 34 05
-                span
-                  |+38 044 486 95 44
-                span
-                  |+38 050 168 45 45
+                each phone, ind in translations.phoneNums
+                  span
+                    = phone
