@@ -108,6 +108,8 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
         ticket = ticket?.toJSON();
 
         console.log("TICKET", ticket);
+        console.log("TYPEOF", typeof ticket.createdAt);
+        console.log("TYPEOF2", typeof ticket.createdAt.toString());
 
         const promise = new Promise((res, rej) => {
             fs.readFile(pdfPath, async function (err, fileData) {
