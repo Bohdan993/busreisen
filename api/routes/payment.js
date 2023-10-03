@@ -100,7 +100,7 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
 
 
         ticket = ticket?.toJSON();
-        ticket.createdAt = ticket.createdAt.toString();
+        ticket.createdAt = ticket.createdAt.toISOString();
 
         const promise = new Promise((res, rej) => {
             fs.readFile(pdfPath, async function (err, fileData) {
@@ -138,7 +138,7 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
         });
 
         await promise;
-        
+
         return res.json({status: "ok"});
 
     } catch (err) {
