@@ -1,6 +1,8 @@
 const { strToSign } = require("../services/paymentService");
 
 function checkCallbackSignature(req, res, next){
+    console.log("REQ BODY", req?.body);
+
     const {
         data,
         signature
