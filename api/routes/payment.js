@@ -74,6 +74,7 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSess
 });
 
 router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
+    console.log("LIQPAY CALLBACK");
     try {
 
         const {
@@ -90,7 +91,6 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
         const pdfPath = path.resolve("assets", "tickets", pdfName);
 
         let ticket = await TicketsModel.findOne({
-            // attributes: ["uuid", "createdAt"],
             where: {
                 signature: {
                     [Op.eq]: signature
@@ -100,7 +100,7 @@ router.post("/liqpay-callback", checkCallbackSignature, async (req, res) => {
 
 
         ticket = ticket?.toJSON();
-        ticket.createdAt.toString();
+        ticket.createdAt = ticket.createdAt.toString();
 
         const promise = new Promise((res, rej) => {
             fs.readFile(pdfPath, async function (err, fileData) {

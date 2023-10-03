@@ -32,6 +32,8 @@ const translations = {
     "passangerTexts": ["пассажир", "пассажиры", "пассажиров"],
     "ticketsTitle": "Ваш рейс",
     "alternativeTicketsTitle": "Ближайшие доступные рейсы",
+    "discountCardNumberText": "Номер карты",
+    "validationErrorText": "Заполните это поле",
 }
 
 

@@ -18,7 +18,7 @@ function createMailer(){
 }
 
 async function sendFileMail(to, file, languageCode){
-    const translations = loadLanguageFile("mail.js", languageCode);
+    const translations = loadLanguageFile("_mail.js", languageCode);
     const mailOptions = {
         from: "noreply@busreisen.com",
         to,

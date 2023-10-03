@@ -31,7 +31,9 @@ const translations = {
     "changeText": "Ändern",
     "passangerTexts": ["passenger", "passengers", "passengers"],
     "ticketsTitle": "Ihr Flug",
-    "alternativeTicketsTitle": "Nächste verfügbare Flüge"
+    "alternativeTicketsTitle": "Nächste verfügbare Flüge",
+    "discountCardNumberText": "Kartennummer",
+    "validationErrorText": "Füllen Sie dieses Feld aus",
 }
 
 

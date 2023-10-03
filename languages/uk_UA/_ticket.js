@@ -24,7 +24,6 @@ const translations = {
     "carrierText": "Перевізник:",
     "routeText": "Маршрут:",
     "contactsText": "Контакти:",
-    "validationErrorText": "Заповніть це поле",
     "phoneNums": [
          "+38 067 903 82 20", "+38 044 360 34 05", "+38 044 486 95 44", "+38 050 168 45 45"
     ]

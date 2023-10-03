@@ -63,7 +63,7 @@ async function generateHTMLTicket(
                         {
                             qr: url,
                             logo: "data:image/png;base64," + base64_encode(path.resolve("assets", "images", "logo_benz_express.png")),
-                            translations: loadLanguageFile("ticket.js", languageCode),
+                            translations: loadLanguageFile("_ticket.js", languageCode),
                             constants,
                             transformTimestampToDate,
                             data: {
