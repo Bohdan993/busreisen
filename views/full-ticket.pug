@@ -1,0 +1,579 @@
+div.ticket-bus-container
+  style.
+    .ticket-bus-container {
+      font-family: GothamPro, tahoma, verdana, arial, sans-serif !important; 
+    }
+    .ticket-bus {
+      margin: auto;
+      background: #ffffff;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      width: 100%;
+      padding-top: 0;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid gray;
+    }
+    .ticket-bus-inner {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      padding: 15px 25px;
+      background: #fff;
+      border-radius: 6px;
+    }
+    .route {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      font-weight: 600;
+      color: #121212;
+      -ms-flex-pack: distribute;
+          justify-content: space-around;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      margin-bottom: 10px;
+    }
+    .route p span:first-child {
+      font-size: 40px;
+      font-weight: 700;
+      color: #3256a4;
+    }
+    .route svg {
+      height: 40px;
+      -webkit-transform: rotateY(180deg);
+              transform: rotateY(180deg);
+      width: 40px;
+      min-width: 40px;
+      fill: #1b3b7f;
+    }
+    .route p {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      margin-bottom: 0;
+    }
+    .route p span:last-child {
+      font-size: 20px;
+      font-weight: 700;
+      width: 125px;
+      text-align: center;
+    }
+    .time {
+      margin: 20px 0 20px;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
+      border-top: 1px dashed #cdcdcd;
+      padding: 25px 0;
+      border-bottom: 1px dashed #cdcdcd;
+    }
+    .time p {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+    }
+    .time p span:last-child {
+      font-size: 22px;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: #121212;
+    }
+    .flight p span:last-child {
+      font-size: 22px;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: #121212;
+    }
+    .flight {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+      -webkit-box-pack: space-evenly;
+          -ms-flex-pack: space-evenly;
+              justify-content: space-evenly;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+    }
+    .flight p {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+      width: 50%;
+      margin: 20px 0 0;
+    }
+    .flight p:nth-child(even) {
+      text-align: right;
+    }
+    .flight p:nth-child(odd) {
+      text-align: left;
+    }
+    .flight p:first-child,
+    .flight p:nth-child(2) {
+      margin-top: 0;
+    }
+    .flight p span:first-child {
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #777676;
+    }
+    .time p span:first-child {
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #777676;
+    }
+    .title {
+      gap: 10px;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      padding: 12px 15px;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      background-color: #1b3b7f;
+    }
+    .title svg {
+      height: 24px;
+      -webkit-transform: scaleX(-1);
+          -ms-transform: scaleX(-1);
+              transform: scaleX(-1);
+      width: 24px;
+      margin-left: 10px;
+      margin-right: 30px;
+    }
+    .title span {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+    .title span:only-child {
+      margin: 0 auto;
+    }
+    .ticket-bus-inner .image {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: end;
+          -ms-flex-pack: end;
+              justify-content: flex-end;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      position: relative;
+    }
+    .ticket-bus-inner .image img,
+    .carrier img {
+      width: 100%;
+      max-width: 120px;
+    }
+    .title span.share-icon {
+      margin-left: auto;
+    }
+    .title span.share-icon svg {
+      height: 20px;
+      width: 20px;
+      fill: #121212;
+    }
+    .ticket-bus-inner .cta a {
+      padding: 16px 20px;
+      background: #1976d2;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      text-align: center;
+      -webkit-box-pack: center;
+          -ms-flex-pack: center;
+              justify-content: center;
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 500;
+      border-radius: 3px;
+    }
+    .ticket-bus-inner .cta a .pdf-icon {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      margin-right: 10px;
+    }
+    .ticket-bus-inner .cta a .pdf-icon svg {
+      height: 20px;
+      fill: #fff;
+    }
+    .passangers {
+      padding: 10px 0;
+      border-bottom: 1px dashed #cdcdcd;
+    }
+    .ticket-bus p.sub-title {
+      font-weight: 500;
+      color: #1b3b7f;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .ticket-bus p.sub-title span {
+      font-size: 15px;
+      font-weight: 700;
+      color: #1b3b7f;
+      text-align: center;
+    }
+    .passanger-name span,
+    .passanger-last-name span,
+    .passanger-date-of-birth span {
+      display: block;
+      padding-bottom: 5px;
+      font-size: 12px;
+    }
+    .passanger-name p,
+    .passanger-last-name p,
+    .passanger-date-of-birth p {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .cta {
+      padding-top: 30px;
+    }
+    .places {
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #cdcdcd;
+    }
+    .places p {
+      margin-bottom: 6px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 400;
+    }
+    .places span {
+      font-size: 12px;
+      display: block;
+      color: #343434;
+      font-weight: 700;
+    }
+    .places-additional-info {
+      margin-top: 10px;
+    }
+    .places-additional-info p {
+      font-size: 10px;
+      margin-bottom: 4px;
+      font-weight: 400;
+    }
+    .place-curriculum {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
+    }
+    .table {
+      width: 100%;
+    }
+    .table td {
+      text-align: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .table th {
+      font-size: 12px;
+      font-weight: 400;
+    }
+    .general-info {
+      padding-top: 10px;
+    }
+    .general-info-container,
+    .ticket-info-container {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      font-size: 12px;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+    }
+    .general-info-container > div,
+    .ticket-info-container > div {
+      -webkit-box-flex: 1;
+          -ms-flex-positive: 1;
+              flex-grow: 1;
+      margin: 0 5px;
+    }
+    .ticket-info {
+      font-size: 12px;
+      padding: 10px 0;
+      border-bottom: 1px dashed #cdcdcd;
+    }
+    .carrier-info > div,
+    .ticket-data > div {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+      -webkit-box-pack: start;
+          -ms-flex-pack: start;
+              justify-content: flex-start;
+      margin-bottom: 5px;
+    }
+    .carrier-info > div span,
+    .ticket-data > div span {
+      margin-right: 5px;
+    }
+    .carrier-info > div p,
+    .ticket-data > div p {
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .ticket-data > div p {
+      color: #3256a4;
+    }
+    .ticket-info > div {
+      margin-bottom: 0;
+    }
+    .general-info-contacts > p {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+              flex-direction: column;
+    }
+  
+  .ticket-bus
+    //- .title
+    //-   span
+    //-     = data.startDate
+    //-   if data.endDate
+    //-     span
+    //-       | - 
+    //-     span
+    //-       = data.endDate
+    .ticket-bus-inner
+      .route
+        p
+          span 
+            = data.origin
+        svg(class="svg-icon svg-fill icon icon__plane icon__plane" version="1.1" viewBox="0 0 512 512" style="height:40px;transform: rotateY(180deg);width:40px;min-width:40px;fill:#1b3b7f;")
+          g
+            path(class="st0" d="M436.3,125H99.9c-23,0-42.6,16.6-46.5,39.2L29.2,305.7c-4.9,28.8,17.3,55.1,46.5,55.1h17.8   c0-22.2,18-40.2,40.2-40.2c22.2,0,40.2,18,40.2,40.2h164.3c0-22.2,18-40.2,40.2-40.2c22.2,0,40.2,18,40.2,40.2h17.8   c26.1,0,47.2-21.1,47.2-47.2V172.2C483.5,146.1,462.4,125,436.3,125z M380.7,178.1c0-7,5.6-12.6,12.6-12.6h29.2   c7,0,12.6,5.7,12.6,12.6v62.9c0,7-5.7,12.6-12.6,12.6h-29.2c-7,0-12.6-5.7-12.6-12.6V178.1z M294.5,178.1c0-7,5.6-12.6,12.6-12.6   h29.2c7,0,12.6,5.7,12.6,12.6v62.9c0,7-5.7,12.6-12.6,12.6h-29.2c-7,0-12.6-5.7-12.6-12.6V178.1z M208.4,178.1   c0-7,5.7-12.6,12.6-12.6h29.2c7,0,12.6,5.7,12.6,12.6v62.9c0,7-5.7,12.6-12.6,12.6H221c-7,0-12.6-5.7-12.6-12.6V178.1z    M155.9,277.7c-2.9,17.2-19.1,29.9-38.1,29.9H75.7c-2.6,0-4.2-1.2-5.2-2.2c-0.9-1-1.9-2.7-1.5-5l24.3-129.8c0.6-3,3.4-5.2,6.6-5.2   h75.2L155.9,277.7z M435.2,301.6H208.4c-3.9,0-7-3.1-7-7c0-3.9,3.1-7,7-7h226.8c3.9,0,7,3.1,7,7C442.2,298.4,439,301.6,435.2,301.6   z")
+            path(class="st0" d="M133.7,334.6c-14.5,0-26.2,11.7-26.2,26.2s11.7,26.2,26.2,26.2c14.5,0,26.2-11.7,26.2-26.2   S148.1,334.6,133.7,334.6z")
+            path(class="st0" d="M378.3,334.6c-14.5,0-26.2,11.7-26.2,26.2s11.7,26.2,26.2,26.2c14.5,0,26.2-11.7,26.2-26.2   S392.8,334.6,378.3,334.6z")
+        p
+          span 
+            = data.destination
+      .places
+        .place
+          if data.endDate
+            p.place-title.sub-title
+              span
+                = translations.destinationText + " - " + data.startDate
+          .place-curriculum
+            div
+              .place-station
+                p
+                  = translations.onboardingText + ": "
+                  span
+                    = data.places.from.onBoardingPlace
+              .place-station
+                p
+                  = translations.outboardingText + ": " 
+                  span 
+                    = data.places.from.outBoardingPlace
+            div
+              .place-time
+                p
+                  = translations.departureTimeText + ": " 
+                  span 
+                    = data.places.from.onBoardingTime
+              .place-time
+                p
+                  = translations.arrivalTimeText + "**: " 
+                  span 
+                    = data.places.from.outBoardingTime + "*"
+        if data.endDate
+          .place
+            p.place-title.sub-title
+              span
+                = translations.returnText + " - " + data.endDate
+            .place-curriculum
+              div
+                .place-station
+                  p
+                    = translations.onboardingText + ": "
+                    span
+                      = data.places.to.onBoardingPlace
+                .place-station
+                  p
+                    = translations.outboardingText + ": "
+                    span
+                      = data.places.to.outBoardingPlace
+              div
+                .place-time
+                  p
+                    = translations.departureTimeText + ": "
+                    span
+                      = data.places.to.onBoardingTime
+                .place-time
+                  p
+                    = translations.arrivalTimeText + "**: "
+                    span
+                      = data.places.to.outBoardingTime + "*"
+        .places-additional-info
+          div
+            div
+              p(style="margin-bottom: 4px;")
+                = "* - " + translations.additionalText + "."
+            div
+              p
+                = "** - " + translations.additionalText2 + "."
+      .passangers
+        table.table
+          thead
+            tr
+              th(scope='col') #
+              th(scope='col') 
+                =translations.nameText
+              th(scope='col')
+                = translations.lastNameText
+              th(scope='col')
+                = translations.dateOfBirthText
+              th(scope='col')
+                = translations.discountText
+              th(scope='col')
+                = translations.priceText + ", " + data.currencyAbbr
+          tbody
+            each passanger, ind in data.passangersInfo
+              if passanger[0].includes(constants.ADULT)
+                tr.passanger
+                  th(scope='row')= (ind + 1)
+                  td.passanger-name
+                    = passanger[1]["name-" + (ind + 1)]
+                  td.passanger-last-name
+                    = passanger[1]["last-name-" + (ind + 1)]
+                  td.passanger-date-of-birth
+                    = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
+                  td.passanger-discount(style="white-space:pre;")
+                    = (passanger[1]["discount-name-" + (ind + 1)] || " - ") + (passanger[1]["card-discount-" + (ind + 1)] ? "\r\n" + translations.discountCardNumberText + "- (" + passanger[1]["card-discount-" + (ind + 1)] + ")." : "")
+                  td.passanger-price
+                    = passanger[1]["discount-ticket-price-" + (ind + 1)]
+                //- .passanger
+                //-   .passanger-name
+                //-     span
+                //-       = translations.nameText  + ":"
+                //-     p
+                //-       = passanger[1]["name-" + (ind + 1)]
+                //-   .passanger-last-name
+                //-     span
+                //-       = translations.lastNameText  + ":"
+                //-     p
+                //-       = passanger[1]["last-name-" + (ind + 1)]
+                //-   .passanger-date-of-birth
+                //-     span
+                //-       = translations.dateOfBirthText  + ":"
+                //-     p
+                //-       = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
+              if passanger[0].includes(constants.CHILD)
+                tr.passanger
+                  th(scope='row')= (ind + 1)
+                  td.passanger-name
+                    = passanger[1]["name-" + (ind + 1)]
+                  td.passanger-last-name
+                    = passanger[1]["last-name-" + (ind + 1)]
+                  td.passanger-date-of-birth
+                    = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
+                  td.passanger-discount
+                    = passanger[1]["discount-name-" + (ind + 1)]
+                  td.passanger-price
+                    = passanger[1]["discount-ticket-price-" + (ind + 1)]
+            tr
+              th(colspan="5" style="text-align: left; font-weight: 700;padding-top: 10px;font-size:14px;color:#3256a4;")
+                = translations.inGeneralText
+              td(style="padding-top: 10px; font-size:14px;color:#3256a4;")
+                = data.price
+      .ticket-info
+        .ticket-info-container
+          .ticket-data.ticket-info-block
+            div
+              i.ico
+              span
+                = translations.ticketNumberText
+              p
+                = data.ticket.uuid
+            div
+              i.ico
+              span
+                = translations.dateOfBuingText
+              p
+                = data.ticket.createdAt.split("T")[0]
+          .image
+            img(src=`${qr}` alt="QR code")
+      .general-info
+        .general-info-container
+          .carrier.general-info-block
+            img(src=`${logo}` alt="Logo")
+          .carrier-info.general-info-block
+            div
+              i.ico
+
+              span
+                = translations.carrierText
+              p
+                |Benz Express
+            div
+              i.ico
+                
+              span
+                = translations.routeText
+              p
+                = data.places.from.routeName
+            div.general-info-contacts
+              i.ico
+                
+              span
+                = translations.contactsText
+              p
+                each phone, ind in translations.phoneNums
+                  span
+                    = phone
