@@ -152,7 +152,7 @@ const discountAttributesRU = [
     {
         "name": "Карточка постоянного клиента – 10%.",
         "discountId": 10,
-        "languageId": 1,
+        "languageId": 2,
         "group": constants.DISCOUNT_CARD
 
     },
