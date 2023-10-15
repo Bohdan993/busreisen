@@ -46,11 +46,16 @@ const discounts = [
     },
     {
         "id": 10,
-        "coef": 0.15,
+        "coef": 0.10,
         "inactivePeriod": null
     },
     {
         "id": 11,
+        "coef": 0.15,
+        "inactivePeriod": null
+    },
+    {
+        "id": 12,
         "coef": 0.1,
         "inactivePeriod": null,
         "busflightId": 20
