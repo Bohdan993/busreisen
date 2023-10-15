@@ -6,9 +6,9 @@ const path = require("path");
 const fs = require("fs");
 const router = Router();
 const TicketsModel = require("../../models/ticket");
-const UsersModel = require("../../models/user");
+const PassangersModel = require("../../models/passanger");
 const BusFlightsModel = require("../../models/busFlight");
-const UserTicketModel = require("../../models/userTicket");
+const PassangerTicketModel = require("../../models/passangerTicket");
 const { Op } = require("sequelize");
 const { isSpecialDate, transformTimestampToDate } = require("../../helpers");
 const { checkCallbackSignature } = require("../../middlewares/paymentMiddlewares");
@@ -18,6 +18,8 @@ const { generatePDFTicket, generateHTMLTicket } = require("../../services/ticket
 const constants = require("../../helpers/constants");
 
 
+
+// ???????????????????????????
 router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallbackSignature, checkIfSessionIsFinished], async (req, res, next) => {
     try {
 
@@ -35,7 +37,7 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
         const decodedData = Buffer.from(data, "base64").toString("utf-8");
         
         const { currency: currencyAbbr, amount: price, info } = JSON.parse(decodedData);
-        const { passangersInfo, originId, destinationId, startDate, endDate } = JSON.parse(info);
+        const { passangersInfo, originId, destinationId, startDate, endDate, busFlightFromId, busFlightToId } = JSON.parse(info);
         const adultPassangerRegex = new RegExp("^adult-passanger-[0-9]+");
         const childPassangerRegex = new RegExp("^child-passanger-[0-9]+");
         const passangersData = Object.entries(passangersInfo);
@@ -44,13 +46,16 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
         const ticket = await TicketsModel.create({
             "dateOfDeparture": startDate,
             "dateOfReturn": isSpecialDate(endDate) ? null : endDate,
+            "busFlightFromId": busFlightFromId,
+            "busFlightToId": busFlightToId,
             "price": price,
             "type": isSpecialDate(endDate) ? Object.values(constants).find(el => el === endDate) : constants.ROUND,
             "currencyAbbr": currencyAbbr,
             "originId": parseInt(originId),
             "destinationId": parseInt(destinationId),
             "children": JSON.stringify(children.reduce((acc, curr) =>{acc[curr[0]] = curr[1]; return acc;}, {})),
-            "signature": signature
+            "signature": signature,
+            "status": constants.TICKET_STATUS_PAYED
         });
 
 
@@ -80,11 +85,11 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
             }
         });
 
-        const getUserData = async () => {
-            const userData = await Promise.all(
+        const getPassangerData = async () => {
+            const passangerData = await Promise.all(
                 passangersData.map(async (passangerArr, ind) => {
                     if(adultPassangerRegex.test(passangerArr[0])) {
-                        const candidate = await UsersModel.findOne({
+                        const candidate = await PassangersModel.findOne({
                             where: {
                                 [Op.or] : [
                                     {"phone": passangerArr[1]?.[`phone-${ind + 1}`]}, 
@@ -101,12 +106,12 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
                             await candidate.save();
 
                             const dataObj = {
-                                userId: candidate?.id,
+                                passangerId: candidate?.id,
                                 ticketId: ticket?.id
                             }
 
-                            if(passangerArr[1]?.[`discount-${ind + 1}`]) {
-                                dataObj["userDiscountId"] = passangerArr[1]?.[`discount-${ind + 1}`];
+                            if(parseInt(passangerArr[1]?.[`discount-${ind + 1}`])) {
+                                dataObj["passangerDiscountId"] = passangerArr[1]?.[`discount-${ind + 1}`];
                             }
 
                             if(passangerArr[1]?.[`card-discount-${ind + 1}`]) {
@@ -116,7 +121,7 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
                             return  dataObj;
 
                         } else {
-                            const user = await UsersModel.create({
+                            const passanger = await PassangersModel.create({
                                 "name": passangerArr[1]?.[`name-${ind + 1}`],
                                 "lastName": passangerArr[1]?.[`last-name-${ind + 1}`],
                                 "phone":  passangerArr[1]?.[`phone-${ind + 1}`],
@@ -126,12 +131,12 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
                             });
 
                             const dataObj = {
-                                userId: user?.id,
+                                passangerId: passanger?.id,
                                 ticketId: ticket?.id
                             }
 
-                            if(passangerArr[1]?.[`discount-${ind + 1}`]) {
-                                dataObj["userDiscountId"] = passangerArr[1]?.[`discount-${ind + 1}`];
+                            if(parseInt(passangerArr[1]?.[`discount-${ind + 1}`])) {
+                                dataObj["passangerDiscountId"] = passangerArr[1]?.[`discount-${ind + 1}`];
                             }
 
                             if(passangerArr[1]?.[`card-discount-${ind + 1}`]) {
@@ -145,12 +150,12 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
                     return null;
                 })
             );
-            return userData;
+            return passangerData;
         }
 
-        const userData = (await getUserData()).filter(Boolean);
+        const passangerData = (await getPassangerData()).filter(Boolean);
 
-        await UserTicketModel.bulkCreate(userData);
+        await PassangerTicketModel.bulkCreate(passangerData);
 
         req.session.ticket = ticket?.toJSON();
         req.session.save(function (err) {

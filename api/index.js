@@ -70,7 +70,7 @@ const discounts = require("../data/discounts");
 const DiscountAttributes = require("../models/discountAttributes");
 const discountAttributes = require("../data/discountAttributes");
 
-const UserTicket = require("../models/userTicket");
+const PassangerTicket = require("../models/passangerTicket");
 
 
 // END TEMP VARIABLES
@@ -147,6 +147,16 @@ app.use("/api/insert-values", async function(req, res, next) {
                 });
             }
 
+            for(const currency of currencies) {
+                await Currency.create({
+                    "name": currency?.name,
+                    "abbr": currency?.abbr,
+                    "symbol": currency?.symbol,
+                    "isBaseCurrency": currency?.isBaseCurrency,
+                    "coef": currency?.coef
+                });
+            }
+
             for (const country of countries) {
                 await Country.create({
                     "id": country?.id
@@ -164,7 +174,8 @@ app.use("/api/insert-values", async function(req, res, next) {
             for(const city of cities) {
                 await City.create({
                     "id": city?.id,
-                    "countryId": city?.countryId
+                    "countryId": city?.countryId,
+                    "currencyId": city?.currencyId
                 });
             }
 
@@ -197,15 +208,6 @@ app.use("/api/insert-values", async function(req, res, next) {
                 });
             }
 
-            for(const currency of currencies) {
-                await Currency.create({
-                    "name": currency?.name,
-                    "abbr": currency?.abbr,
-                    "symbol": currency?.symbol,
-                    "isBaseCurrency": currency?.isBaseCurrency,
-                    "coef": currency?.coef
-                });
-            }
 
             for(const busFlight of busFlights) {
                 await BusFlight.create({

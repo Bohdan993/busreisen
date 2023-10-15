@@ -9,6 +9,20 @@ function filterBusFlightsWithFreeSeats({busFlights, numOfPassangers}){
     });
 }
 
+// function checkIfBusFlightsFromOneRouteRouteGroupHaveDiffIds(busFlights){
+//     const obj = {};
+//     busFlights.forEach(bf => {
+//         const groupId = bf?.route?.routePath?.routeGroupId;
+//         if(obj[groupId]) {
+//             obj[groupId].push(bf);
+//         } else {
+//             obj[groupId] = [bf];
+//         }
+//     });
+
+
+// }
+
 function filterBusFlights({ 
     busFlights, 
     originId,
@@ -74,7 +88,6 @@ function filterBusFlights({
         result = customRoutesFilter(originId, destinationId, endDate, result);
     }
     
-
     return result;
 }
 
@@ -209,7 +222,7 @@ function transformBusFlights(
     const cityTo = cities?.filter(el => parseInt(el?.id) === parseInt(destinationId))?.[0];
 
     busFlights?.resultFrom.forEach((el, ind) => {
-
+        
         const onboardingPlaces = cityFrom?.places?.filter(elem => el?.route?.routePath?.onboarding.find(item => parseInt(elem.id) === parseInt(item?.placeId)));
         const outBoardingPlaces = cityTo?.places?.filter(elem => el?.route?.routePath?.outboarding.find(item => parseInt(elem.id) === parseInt(item?.placeId)));
         
@@ -224,6 +237,8 @@ function transformBusFlights(
                             "alternative-ticket-from-" + ind + "-" + i + "-" + j : 
                             "alternative-ticket-to-" + ind + "-" + i + "-" + j,
                     "type": (!(isSpecialDate(endDate)) || isRound(endDate)) ? constants.ROUND : isOneWay(endDate) ? constants.ONE_WAY : constants.OPEN_DATE,
+                    "busFlightFromId": el?.id,
+                    "busFlightToId": busFlights?.resultTo?.[ind]?.id || null,
                     "cities": {
                         "from": {
                             "id": cityFrom?.id,
@@ -256,8 +271,8 @@ function transformBusFlights(
                     resultObj.price = (!(isSpecialDate(endDate)) || isRound(endDate)) ? `${calcPrice?.alternativeOneHalfRoundTripPrice} ${currency?.symbol}` : isOneWay(endDate) ? `${calcPrice?.priceOneWay} ${currency?.symbol}` : `${calcPrice?.priceRoundTrip} ${currency?.symbol}`;
                     resultObj.dates.departure = transformDate(el?.dateOfDeparture, languageCode);
                     resultObj.dates.departurePure = el?.dateOfDeparture;
-                    resultObj.dates.return = null;
-                    resultObj.dates.returnPure = null;
+                    resultObj.dates.return = busFlights?.resultTo?.length ? transformDate(busFlights?.resultTo?.[ind]?.dateOfDeparture, languageCode) : transformDate(endDate, languageCode);
+                    resultObj.dates.returnPure = busFlights?.resultTo?.length ? busFlights?.resultTo?.[ind]?.dateOfDeparture : endDate;
                 } else {
                     if(!isSpecialDate(endDate)) {
                         resultObj.places.to.routeId = busFlights?.resultTo?.[ind]?.route.id;
@@ -301,7 +316,6 @@ function filterBusFlightsAvailableDates(busFlights, originId, destinationId, isS
     Array.from(new Set(result.map(el => el?.dateOfDeparture))).slice(1) : 
     Array.from(new Set(result.map(el => el?.dateOfDeparture)));
 }
-
 
 module.exports = {
     customRoutesFilter,

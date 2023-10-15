@@ -30,20 +30,20 @@ function transformDate(dateStr, languageCode = "uk_UA"){
         const day = (d.getDate() < 10) ? ("0" + d.getDate()) : d.getDate();
         const year = d.getFullYear();
     
-        return `${month} ${day}, ${year}`;
+        return `${day} ${month} ${year}`;
     }
 
     return null;
 }
 
-function transformTimestampToDate(timestamp) {
+function transformTimestampToDate(timestamp, sep = ".") {
     const d = new Date(timestamp);
     if(isValidDate(d)) {
         const month = ((d.getMonth() + 1) < 10) ? ("0" + (d.getMonth() + 1)) : (d.getMonth() + 1);
         const day = (d.getDate() < 10) ? ("0" + d.getDate()) : d.getDate();
         const year = d.getFullYear();
 
-        return `${day}.${month}.${year}`;
+        return `${day}${sep}${month}${sep}${year}`;
     }
 
     return null;
@@ -72,7 +72,7 @@ function decodeHTMLEntities(rawStr) {
     return rawStr.replace(/&#(\d+);/g, ((match, dec) => `${String.fromCharCode(dec)}`));
 }
 
-function base64_encode(file) {
+function base64Encode(file) {
     var bitmap = fs.readFileSync(file);
     return Buffer.from(bitmap).toString('base64');
 }
@@ -89,5 +89,5 @@ function base64_encode(file) {
     transformTimestampToDate,
     encodeHTMLEntities,
     decodeHTMLEntities,
-    base64_encode
+    base64Encode
  }

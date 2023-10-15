@@ -1,11 +1,11 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
 const TicketsModel = require("./ticket");
-const UsersModel = require("./user");
+const PassangersModel = require("./passanger");
 const DiscountsModel = require("./discount");
 
-const UserTicket = sequelize.define("UserTicket", {
-    userDiscountId: {
+const PassangerTicket = sequelize.define("PassangerTicket", {
+    passangerDiscountId: {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
@@ -22,16 +22,16 @@ const UserTicket = sequelize.define("UserTicket", {
         allowNull: false,
         primaryKey: true,
         references: {
-            model: UsersModel, 
+            model: TicketsModel, 
             key: "id",
         }
     },
-    userId: {
+    passangerId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         references: {
-            model: TicketsModel, 
+            model: PassangersModel, 
             key: "id",
         }
     }
@@ -39,8 +39,8 @@ const UserTicket = sequelize.define("UserTicket", {
 });
 
 
-UsersModel.belongsToMany(TicketsModel, { through: UserTicket });
-TicketsModel.belongsToMany(UsersModel, { through: UserTicket });
+PassangersModel.belongsToMany(TicketsModel, { through: PassangerTicket });
+TicketsModel.belongsToMany(PassangersModel, { through: PassangerTicket });
 
-module.exports = UserTicket;
+module.exports = PassangerTicket;
 

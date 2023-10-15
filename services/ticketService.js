@@ -3,7 +3,7 @@ const path = require("path");
 const HTMLToPDF = require("html-pdf-node");
 const QRCode = require("qrcode");
 const pug = require("pug");
-const { loadLanguageFile, base64_encode } = require("../helpers");
+const { loadLanguageFile, base64Encode } = require("../helpers");
 
 
 async function generatePDFTicket(signature, html){
@@ -62,7 +62,7 @@ async function generateHTMLTicket(
                     const html = pug.renderFile(ticketTemplate, 
                         {
                             qr: url,
-                            logo: "data:image/png;base64," + base64_encode(path.resolve("assets", "images", "logo_benz_express.png")),
+                            logo: "data:image/png;base64," + base64Encode(path.resolve("assets", "images", "logo_benz_express.png")),
                             translations: loadLanguageFile("_ticket.js", languageCode),
                             constants,
                             transformTimestampToDate,

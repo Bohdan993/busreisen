@@ -6,7 +6,8 @@ const City = require("../../models/city");
 const LanguagesModel = require("../../models/language");
 const CountriesModel = require("../../models/country");
 const CountryAttributes = require("../../models/countryAttributes");
-const CityAttributes = require("../../models/cityAttributes");
+const CityAttributesModel = require("../../models/cityAttributes");
+const CurrenciesModel = require("../../models/currency");
 const { Op } = require("sequelize");
 
 
@@ -55,18 +56,18 @@ router.get("/", async (req, res) => {
         cities = await City.findAll({
             attributes: ["id"],
             include: [
-                {
-                    model: LanguagesModel,
-                    where: {
-                        code: {
-                            [Op.eq]: languageCode
-                        }
-                    },
-                    attributes: ["name", "code"],
-                    through: {
-                        attributes: []
-                    }
-                },
+                // {
+                //     model: LanguagesModel,
+                //     where: {
+                //         code: {
+                //             [Op.eq]: lang?.id
+                //         }
+                //     },
+                //     attributes: ["name", "code"],
+                //     through: {
+                //         attributes: []
+                //     }
+                // },
                 {
                     model: CountriesModel,
                     attributes: ["id"],
@@ -87,7 +88,7 @@ router.get("/", async (req, res) => {
                     }]
                 },
                 {
-                    model: CityAttributes,
+                    model: CityAttributesModel,
                     attributes: ["name", "cityId", "languageId"],
                     where: {
                         languageId: {
@@ -95,11 +96,15 @@ router.get("/", async (req, res) => {
                         }
                     }
 
+                },
+                {
+                    model: CurrenciesModel,
+                    attributes: ["abbr", "symbol"]
                 }
             ],
             order: [
                 [{model: CountriesModel}, {model: CountryAttributes},  "name", "DESC"],
-                [{model: CityAttributes}, "name", "ASC"]
+                [{model: CityAttributesModel}, "name", "ASC"]
             ]
 
         });

@@ -44,6 +44,7 @@ div.info-check-form-container-inner
                   div.input(id=`adult-input-name-${i + 1}` data-input=`name-${i + 1}`)
                     .input-container
                       label(for=`adult-name-${i + 1}`)= translations.nameText + "*"
+                      //- input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["name-" + (i + 1)] : ""}`  placeholder=`${translations.nameText}` required id=`adult-name-${i + 1}` data-validate=`name-${i + 1}` disabled autocomplete="off")
                       input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["name-" + (i + 1)] : ""}`  placeholder=`${translations.nameText}` required id=`adult-name-${i + 1}` data-validate=`name-${i + 1}` disabled)
                       i.pencil-ico
                         svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
@@ -58,6 +59,7 @@ div.info-check-form-container-inner
                   div.input(id=`adult-input-last-name-${i + 1}` data-input=`last-name-${i + 1}`)
                     .input-container
                       label(for=`adult-last-name-${i + 1}`)= translations.lastNameText + "*"
+                      //- input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["last-name-" + (i + 1)] : ""}`  placeholder=`${translations.lastNameText}` required id=`adult-last-name-${i + 1}` data-validate=`last-name-${i + 1}` disabled autocomplete="off")
                       input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["last-name-" + (i + 1)] : ""}`  placeholder=`${translations.lastNameText}` required id=`adult-last-name-${i + 1}` data-validate=`last-name-${i + 1}` disabled)
                       i.pencil-ico
                         svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
@@ -74,6 +76,7 @@ div.info-check-form-container-inner
                   div.input(id=`adult-input-phone-${i + 1}` data-input=`phone-${i + 1}`)
                     .input-container.input-phone-container
                       label(for=`adult-phone-${i + 1}`)= translations.phoneText + "*"
+                      //- input(type="tel" class="passanger-phone" placeholder=`${translations.phoneText}` required id=`adult-phone-${i + 1}` data-validate=`phone-${i + 1}` disabled autocomplete="off")
                       input(type="tel" class="passanger-phone" placeholder=`${translations.phoneText}` required id=`adult-phone-${i + 1}` data-validate=`phone-${i + 1}` disabled)
                       i.pencil-ico
                         svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
@@ -87,6 +90,7 @@ div.info-check-form-container-inner
                   div.input(id=`adult-input-date-of-birth-${i + 1}` data-input=`date-of-birth-${i + 1}`)
                     .input-container
                       label(for=`adult-date-of-birth-${i + 1}`)= translations.dateOfBirthText + "*"
+                      //- input(type="text" class="date-of-birth" placeholder=`${translations.dateOfBirthPlaceholder}` id=`adult-date-of-birth-${i + 1}` data-validate=`date-of-birth-${i + 1}` required disabled autocomplete="off")
                       input(type="text" class="date-of-birth" placeholder=`${translations.dateOfBirthPlaceholder}` id=`adult-date-of-birth-${i + 1}` data-validate=`date-of-birth-${i + 1}` required disabled)
                       i.pencil-ico
                         svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
@@ -104,6 +108,7 @@ div.info-check-form-container-inner
                     div.input(id=`adult-input-email-${i + 1}` data-input=`email-${i + 1}`)
                       .input-container
                         label(for=`adult-email-${i + 1}`)= translations.emailText + "*"
+                        //- input(type="email" value=`${passangersInfo ? passangersInfo[i][1]["email-" + (i + 1)] : ""}` placeholder=`${translations.emailText}` id=`adult-email-${i + 1}` data-validate=`email-${i + 1}` required disabled autocomplete="off")
                         input(type="email" value=`${passangersInfo ? passangersInfo[i][1]["email-" + (i + 1)] : ""}` placeholder=`${translations.emailText}` id=`adult-email-${i + 1}` data-validate=`email-${i + 1}` required disabled)
                         i.pencil-ico
                           svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
@@ -117,6 +122,7 @@ div.info-check-form-container-inner
                     div.input(id=`adult-input-phone-additional-${i + 1}` data-input=`phone-additional-${i + 1}`)
                       .input-container.input-phone-container
                         label(for=`adult-phone-additional-${i + 1}`)= translations.additionalPhoneText
+                        //- input(type="tel" class="passanger-phone" placeholder=`${translations.additionalPhoneText}` id=`adult-phone-additional-${i + 1}` data-validate=`phone-additional-${i + 1}` disabled autocomplete="off")
                         input(type="tel" class="passanger-phone" placeholder=`${translations.additionalPhoneText}` id=`adult-phone-additional-${i + 1}` data-validate=`phone-additional-${i + 1}` disabled)
                         i.pencil-ico
                           svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
@@ -156,6 +162,7 @@ div.info-check-form-container-inner
                       div.input(id=`adult-input-card-discount-${i + 1}` data-input=`card-discount-${i + 1}`)
                         .input-container
                           label(for=`adult-card-discount-${i + 1}`)= translations.discountCardText + "*"
+                          //- input(type="text" id=`adult-card-discount-${i + 1}` value=`${passangersInfo ? passangersInfo[i][1]["card-discount-" + (i + 1)] : ""}` placeholder=`${translations.discountCardText}` required="required" data-validate=`card-discount-${i + 1}` disabled autocomplete="off")
                           input(type="text" id=`adult-card-discount-${i + 1}` value=`${passangersInfo ? passangersInfo[i][1]["card-discount-" + (i + 1)] : ""}` placeholder=`${translations.discountCardText}` required="required" data-validate=`card-discount-${i + 1}` disabled)
                           i.pencil-ico
                             svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
@@ -190,6 +197,7 @@ div.info-check-form-container-inner
                   div.input(id=`child-input-name-${i + 1}` data-input=`name-${i + 1}`)
                     .input-container
                       label(for=`child-name-${i + 1}`)= translations.nameText + "*"
+                      //- input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["name-" + (i + 1)] : ""}`  placeholder=`${translations.nameText}` required id=`child-name-${i + 1}` data-validate=`name-${i + 1}` disabled autocomplete="off")
                       input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["name-" + (i + 1)] : ""}`  placeholder=`${translations.nameText}` required id=`child-name-${i + 1}` data-validate=`name-${i + 1}` disabled)
                       i.pencil-ico
                         svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
@@ -203,6 +211,7 @@ div.info-check-form-container-inner
                   div.input(id=`child-input-last-name-${i + 1}` data-input=`last-name-${i + 1}`)
                     .input-container
                       label(for=`child-last-name-${i + 1}`)= translations.lastNameText + "*"
+                      //- input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["last-name-" + (i + 1)] : ""}`  placeholder=`${translations.lastNameText}` required id=`child-last-name-${i + 1}` data-validate=`last-name-${i + 1}` disabled autocomplete="off")
                       input(type="text" value=`${passangersInfo ? passangersInfo[i][1]["last-name-" + (i + 1)] : ""}`  placeholder=`${translations.lastNameText}` required id=`child-last-name-${i + 1}` data-validate=`last-name-${i + 1}` disabled)
                       i.pencil-ico
                         svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
@@ -219,6 +228,7 @@ div.info-check-form-container-inner
                   div.input(id=`child-input-date-of-birth-${i + 1}` data-input=`date-of-birth-${i + 1}`)
                     .input-container
                       label(for=`child-date-of-birth-${i + 1}`)= translations.dateOfBirthText + "*"
+                      //- input(type="text" class="date-of-birth" placeholder=`${translations.dateOfBirthPlaceholder}` id=`child-date-of-birth-${i + 1}` data-validate=`date-of-birth-${i + 1}` required disabled autocomplete="off")
                       input(type="text" class="date-of-birth" placeholder=`${translations.dateOfBirthPlaceholder}` id=`child-date-of-birth-${i + 1}` data-validate=`date-of-birth-${i + 1}` required disabled)
                       i.pencil-ico
                         svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
@@ -284,10 +294,12 @@ div.info-check-form-container-inner
               });
             });
         - if(dateOfBirthRegex.test(Object.keys(data[j][k])?.[0]))
-          . 
-            promise.then(_ => {
-              $("#" + "#{Object.keys(data[j][k])[0]}").datepicker("setUTCDate", new Date(#{Object.values(data[j][k])[0]}));
-            });
+          - const dateB = transformTimestampToDate(Object.values(data[j][k])[0], "-")
+            . 
+              promise.then(_ => {
+                //- $("#" + "#{Object.keys(data[j][k])[0]}").datepicker("setUTCDate", new Date(#{Object.values(data[j][k])[0]}));
+                $("#" + "#{Object.keys(data[j][k])[0]}").val("#{dateB}");
+              });
         - if(discountRegex.test(Object.keys(data[j][k])?.[0]))
           .
             promise.then(_ => {

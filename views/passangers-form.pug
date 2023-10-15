@@ -201,10 +201,12 @@ form#booking-passangers-form.booking-passangers-form
               });
             });
         - if(dateOfBirthRegex.test(Object.keys(data[j][k])?.[0]))
-          . 
-            promise.then(_ => {
-              $("#" + "#{Object.keys(data[j][k])[0]}").datepicker("setUTCDate", new Date(#{Object.values(data[j][k])[0]}));
-            });
+          - const dateB = transformTimestampToDate(Object.values(data[j][k])[0], "-")
+            . 
+              promise.then(_ => {
+                //- $("#" + "#{Object.keys(data[j][k])[0]}").datepicker("setUTCDate", new Date(#{Object.values(data[j][k])[0]}));
+                $("#" + "#{Object.keys(data[j][k])[0]}").val("#{dateB}");
+              });
         - if(discountRegex.test(Object.keys(data[j][k])?.[0]))
           .
             promise.then(_ => {

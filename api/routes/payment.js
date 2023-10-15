@@ -36,7 +36,7 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSess
             email
         } = req.session;
 
-        const { cities, places, dates } = selectedBusFlight;
+        const { cities, places, dates, busFlightToId, busFlightFromId } = selectedBusFlight;
         const price = await calculatePrice({data: passangersInfo});
         const params =  {
             "public_key"     : process.env.LIQPAY_PUBLIC_KEY,
@@ -48,7 +48,20 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSess
             "version"        : "3",
             "paytypes"       : "card, liqpay, qr",
             "language"       : languageCode === "de_DE" ? "en" : languageCode.split("_")[0],
-            "info"           : JSON.stringify({passangersInfo, cities, places, dates, startDate, endDate, destinationId, originId, email, languageCode}),
+            "info"           : JSON.stringify({
+                                passangersInfo, 
+                                cities, 
+                                places, 
+                                dates, 
+                                startDate, 
+                                endDate, 
+                                destinationId, 
+                                originId, 
+                                email, 
+                                languageCode, 
+                                busFlightFromId, 
+                                busFlightToId
+                            }),
             "server_url"     : process.env.LIQPAY_CALLBACK_URL
         };
 

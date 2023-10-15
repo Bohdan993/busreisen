@@ -1,7 +1,7 @@
 const { transformDateToShortString } = require("../helpers");
 
 function mapDiscounts(discounts) {
-    let uniq = {};
+    const uniq = {};
     discounts.forEach(discount => {
         const key = discount?.DiscountAttributes?.[0]?.group;
         if(key && uniq[key]) {
@@ -11,7 +11,7 @@ function mapDiscounts(discounts) {
             uniq[key].push(discount);
         }
     });
-    let resultArr = Object.entries(uniq);
+    const resultArr = Object.entries(uniq);
 
     return resultArr;
 }

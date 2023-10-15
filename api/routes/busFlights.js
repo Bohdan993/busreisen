@@ -119,6 +119,7 @@ router.get("/", validateDates, async (req, res, next) => {
     busFlights = await BusFlightModel.findAll(query);
     busFlights = busFlights?.map((bf) => bf?.toJSON());
 
+    
     if (!busFlights?.length) {
       return res.status(404).render("error-404", {
         translations: error404Translations,
@@ -130,6 +131,8 @@ router.get("/", validateDates, async (req, res, next) => {
       busFlights,
       numOfPassangers: parseInt(adults) + parseInt(children),
     });
+
+    console.log("NNS888777", filteredBusFlightsWithFreeSeats);
 
     if (!filteredBusFlightsWithFreeSeats.length) {
       return res.status(404).render("error-404", {
@@ -309,6 +312,7 @@ router.get(
         adults = 1,
         children = 0,
         direction = constants.FORWARDS,
+        currencyAbbr = null,
       } = req?.query;
 
       const lang = await LanguagesModel.findOne({
@@ -422,6 +426,8 @@ router.get(
 
       busFlights = busFlights?.map((bf) => bf?.toJSON());
 
+      console.log("BFF&&!$", busFlights, direction);
+
       if (!busFlights?.length) {
         return res.status(404).render("error-404", {
           translations: error404Translations,
@@ -429,20 +435,29 @@ router.get(
         });
       }
 
+
+      
+
       const filteredBusFlightsWithFreeSeats = filterBusFlightsWithFreeSeats({
         busFlights,
         numOfPassangers: parseInt(adults) + parseInt(children),
       });
 
+
+      
+      
+
       if (!filteredBusFlightsWithFreeSeats.length) {
         return res.status(404).render("error-404", {
           translations: loadLanguageFile(
-            "_404-error-no-free-seats.js",
+            "_404-error-no-alternative-tickets-free-seats.js",
             lang?.code
           ),
           isShowBtn: false,
         });
       }
+
+      
 
       const filteredBusFlights = filterBusFlights({
         busFlights: filteredBusFlightsWithFreeSeats,
@@ -538,7 +553,7 @@ router.get(
                     originId, destinationId
                 ]
             },
-            currencyId: req.session?.currency?.id
+            currencyId: req.session?.currency?.id || 1
         }
       };
 
@@ -556,7 +571,7 @@ router.get(
         startDate,
         languageCode: lang?.code,
         isAlternativeBusFlights: true,
-        direction,
+        direction
       });
 
       transformedBusFlights = transformedBusFlights.reduce((acc, curr) => {
@@ -681,7 +696,7 @@ router.post("/select", [checkIfSessionIsStarted, checkIfSessionIsFinished], asyn
       switch (direction) {
         case constants.FORWARDS: {
             
-          selectedBusFlight = req.session?.alternativeBusFlightsFrom
+          const selectedBF = req.session?.alternativeBusFlightsFrom
             ?.find((el) => {
               return el?.[1].find((elem) => {
                 return String(elem?.id) === String(id);
@@ -690,6 +705,22 @@ router.post("/select", [checkIfSessionIsStarted, checkIfSessionIsFinished], asyn
             .find((el) => {
               return String(el?.id) === String(id);
             });
+          // if(req.session?.selectedBusFlight?.id?.includes("alternative-ticket-to")) {
+          //   selectedBusFlight = req.session.selectedBusFlight;
+          //   selectedBusFlight.places.from.routeId = selectedBF.places.from.routeId;
+          //   selectedBusFlight.places.from.onBoardingPlace = selectedBF.places.from.onBoardingPlace;
+          //   selectedBusFlight.places.from.outBoardingPlace = selectedBF.places.from.outBoardingPlace;
+          //   selectedBusFlight.places.from.routeName = selectedBF.places.from.routeName;
+          //   selectedBusFlight.places.from.onBoardingTime = selectedBF.places.from.onBoardingTime;
+          //   selectedBusFlight.places.from.outBoardingTime = selectedBF.places.from.outBoardingTime;
+          //   selectedBusFlight.dates.departure = selectedBF.dates.departure;
+          //   selectedBusFlight.dates.departurePure = selectedBF.dates.departurePure;
+          //   selectedBusFlight.purePrice = String(parseInt(selectedBusFlight.purePrice) + parseInt(selectedBF.purePrice));
+          //   selectedBusFlight.price = selectedBusFlight.purePrice + selectedBF.price.replace(/^\d+/gm, "");
+          //   selectedBusFlight.isSelected = true;
+          // } else {
+            selectedBusFlight = selectedBF;
+          // }
             
           if(selectedBusFlight.type !== constants.ROUND) {
             selectedBusFlight.isSelected = true;
@@ -709,7 +740,10 @@ router.post("/select", [checkIfSessionIsStarted, checkIfSessionIsFinished], asyn
             return String(el?.id) === String(id);
           });
 
+          
+
           selectedBusFlight = req.session.selectedBusFlight;
+          selectedBusFlight.busFlightToId = selectedBF.busFlightFromId;
           selectedBusFlight.places.to.routeId = selectedBF.places.from.routeId;
           selectedBusFlight.places.to.onBoardingPlace = selectedBF.places.from.onBoardingPlace;
           selectedBusFlight.places.to.outBoardingPlace = selectedBF.places.from.outBoardingPlace;
@@ -720,7 +754,11 @@ router.post("/select", [checkIfSessionIsStarted, checkIfSessionIsFinished], asyn
           selectedBusFlight.dates.returnPure = selectedBF.dates.departurePure;
           selectedBusFlight.purePrice = String(parseInt(selectedBusFlight.purePrice) + parseInt(selectedBF.purePrice));
           selectedBusFlight.price = selectedBusFlight.purePrice + selectedBF.price.replace(/^\d+/gm, "");
-          selectedBusFlight.isSelected = true;
+
+          if(selectedBusFlight.id.includes("alternative-ticket-from")) {
+            selectedBusFlight.isSelected = true;
+          }
+
           break;
         }
 
@@ -734,7 +772,11 @@ router.post("/select", [checkIfSessionIsStarted, checkIfSessionIsFinished], asyn
       throw new Error();
     }
 
+    console.log("SBF", selectedBusFlight);
     req.session.selectedBusFlight = selectedBusFlight;
+    req.session.startDate = selectedBusFlight.dates.departurePure;
+    req.session.endDate = selectedBusFlight.dates.returnPure;
+
     // req.session.busFlights = null;
 
     req.session.save(function (err) {

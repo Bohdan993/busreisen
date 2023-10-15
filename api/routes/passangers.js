@@ -6,13 +6,12 @@ const DiscountModel = require("../../models/discount");
 const DiscountAttributesModel = require("../../models/discountAttributes");
 const LanguagesModel = require("../../models/language");
 const { Op } = require("sequelize");
-const { loadLanguageFile } = require("../../helpers");
+const { loadLanguageFile, transformTimestampToDate } = require("../../helpers");
 const { mapDiscounts, filterByDateDiscounts } = require("../../services/discountService");
 const { validatePassangersData, transformPassangersData } = require("../../services/passangerService");
 const { checkIfSessionIsStarted, checkIfSessionIsFinished } = require("../../middlewares/sessionMiddlewares");
 const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
 const constants = require("../../helpers/constants");
-
 
 router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSessionIsFinished], async (req, res) => {
     try {
@@ -25,7 +24,6 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSessi
         } = req?.query;
 
         const {
-             
             adults = 1, 
             children = 0
         } = req.session;
@@ -82,7 +80,8 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSessi
                     constants, 
                     translations: loadLanguageFile("passangers-form.js", lang?.code),
                     ticketPrice: req.session.selectedBusFlight.purePrice,
-                    passangersInfo: req.session?.passangersInfo ? Object.entries(req.session?.passangersInfo) : null
+                    passangersInfo: req.session?.passangersInfo ? Object.entries(req.session?.passangersInfo) : null,
+                    transformTimestampToDate
                 }
             );
         }

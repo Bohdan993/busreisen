@@ -4,11 +4,17 @@ const LanguagesModel = require("./language");
 const CityModel = require("./city");
 
 const CityAttributes = sequelize.define("CityAttributes", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
+    },
     name: {type: DataTypes.STRING(30), allowNull: false},
     cityId: {
         type: DataTypes.INTEGER,         
         allowNull: false,
-        primaryKey: true,
+        // primaryKey: true,
         references: {
             model: CityModel, 
             key: "id",
@@ -17,7 +23,7 @@ const CityAttributes = sequelize.define("CityAttributes", {
     languageId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
+        // primaryKey: true,
         references: {
             model: LanguagesModel, 
             key: "id",

@@ -4,11 +4,17 @@ const LanguagesModel = require("./language");
 const CountriesModel = require("./country");
 
 const CountryAttributes = sequelize.define("CountryAttributes", {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
+    },
     name: {type: DataTypes.STRING(30), allowNull: false},
     countryId: {
         type: DataTypes.INTEGER,         
         allowNull: false,
-        primaryKey: true,
+        // primaryKey: true,
         references: {
             model: CountriesModel, 
             key: "id",
@@ -17,7 +23,7 @@ const CountryAttributes = sequelize.define("CountryAttributes", {
     languageId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        primaryKey: true,
+        // primaryKey: true,
         references: {
             model: LanguagesModel, 
             key: "id",

@@ -8,14 +8,14 @@ import CurrencyModel from "./currency";
 import DiscountModel from "./discount";
 import DiscountAttributesModel from "./discountAttributes";
 import LanguageModel from "./language";
+import PassanagerModel from "./passanger";
+import PassangerTicketModel from "./passangerTicket";
 import PlaceModel from "./place";
 import PlaceAttributesModel from "./placeAttributes";
 import RouteModel from "./route";
 import TicketModel from "./ticket";
 import TokenModel from "./token";
 import UserModel from "./user";
-import UserTicketModel from "./userTicket";
-
 
 
 export {
@@ -29,11 +29,12 @@ export {
     DiscountModel,
     DiscountAttributesModel,
     LanguageModel,
+    PassanagerModel,
+    PassangerTicketModel,
     PlaceModel,
     PlaceAttributesModel,
     RouteModel,
     TicketModel,
     TokenModel,
-    UserModel,
-    UserTicketModel
+    UserModel
 }

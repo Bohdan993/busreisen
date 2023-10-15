@@ -9,7 +9,7 @@ const discountAttributesUK = [
 
     },
     {
-        "name": "Дитина від 1 до 4 років - 30 %",
+        "name": "Дитина від 1 до 4 років - 30 %.",
         "discountId": 2,
         "languageId": 1,
         "group": constants.CHILDREN
@@ -108,7 +108,7 @@ const discountAttributesRU = [
 
     },
     {
-        "name": "Студент – 10 % (скидка в период с 15 июня по 15 августа бездействует).",
+        "name": "Студент – 10 % (скидка в период с 15 июня по 15 августа не действует).",
         "discountId": 5,
         "languageId": 2,
         "group": constants.ADULTS
