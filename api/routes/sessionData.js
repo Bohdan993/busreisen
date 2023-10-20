@@ -2,17 +2,13 @@ const {
     Router
 } = require("express");
 const router = Router();
-const { checkIfSessionIsStarted, checkIfSessionIsFinished } = require("../../middlewares/sessionMiddlewares");
+const { checkIfSessionIsStarted/*, checkIfSessionIsFinished */} = require("../../middlewares/sessionMiddlewares");
 const { encodeHTMLEntities, decodeHTMLEntities, isOneWay } = require("../../helpers");
 const { calculatePrice } = require("../../services/paymentService");
 
 
-router.get("/", [checkIfSessionIsStarted, checkIfSessionIsFinished], async (req, res) => {
+router.get("/", [checkIfSessionIsStarted/*, checkIfSessionIsFinished*/], async (req, res, next) => {
     try {
-
-        const {
-            type = "standart"
-        } = req?.query;
 
         const {
             adults,
@@ -29,16 +25,8 @@ router.get("/", [checkIfSessionIsStarted, checkIfSessionIsFinished], async (req,
             passangersInfo, 
         } = req?.session;
 
-        let price;
+        let price = await calculatePrice({data: passangersInfo}) || Math.round(parseInt(purePrice) * (parseInt(adults) + parseInt(children)));
 
-        if(type === "check") {
-            price = await calculatePrice({data: passangersInfo});
-        }
-
-        if(type === "standart") {
-            price = parseInt(purePrice) * (parseInt(adults) + parseInt(children));
-        }
-        
         const data = { 
             adults, 
             children, 
@@ -58,14 +46,12 @@ router.get("/", [checkIfSessionIsStarted, checkIfSessionIsFinished], async (req,
         return res.json({status: "ok", data});
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({status: "fail", error: "Server error"});
+        return next(err);
     }
     
 });
 
-
-router.post("/", [checkIfSessionIsStarted, checkIfSessionIsFinished], async (req, res, next) => {
+router.post("/", [checkIfSessionIsStarted/*, checkIfSessionIsFinished*/], async (req, res, next) => {
     try {
 
         for(const key in req?.body) {
@@ -73,14 +59,13 @@ router.post("/", [checkIfSessionIsStarted, checkIfSessionIsFinished], async (req
         }
 
         req.session.save(function (err) {
-            if (err) next(err);
+            if (err) return next(err);
 
             return res.json({status: "ok"});
         });
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({status: "fail", error: "Server error"});
+        return next(err);
     }
     
 });

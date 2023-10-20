@@ -1,35 +1,45 @@
+const APIError = require("../exeptions/api-error");
 const { loadLanguageFile } = require("../helpers");
-
 
 function checkIfSessionIsStarted(req, res, next) {
 
-    const {
-        languageCode = "uk_UA", 
-    } = req.query;
+    try {
+        const {
+            languageCode = "uk_UA", 
+        } = req.query;
     
-    if(req.session?.isStarted) {
-        return next();
+        if(req.session?.isStarted) {
+            return next();
+        }
+    
+        const error401Translations = loadLanguageFile("401-error.js", languageCode);
+        throw APIError.UnauthorizedError("unauthorized", "error-401", {translations: error401Translations, languageCode}); 
+    } catch(err) {
+        return next(err);
     }
 
-    const error401Translations = loadLanguageFile("401-error.js", languageCode);
-    return res.status(401).render("error-401", {translations: error401Translations, languageCode});  
 }
 
-function checkIfSessionIsFinished(req, res, next) {
+// function checkIfSessionIsFinished(req, res, next) {
     
-    const {
-        languageCode = "uk_UA", 
-    } = req.query;
+//     try {
+//         const {
+//             languageCode = "uk_UA", 
+//         } = req.query;
+    
+//         if(!(req.session?.isFinished)) {
+//             return next();
+//         }
+    
+//         const error401Translations = loadLanguageFile("401-error.js", languageCode);
+//         throw APIError.UnauthorizedError("unauthorized", "error-401", {translations: error401Translations, languageCode});
+//     } catch(err) {
+//         return next(err);
+//     }
 
-    if(!(req.session?.isFinished)) {
-        return next();
-    }
-
-    const error401Translations = loadLanguageFile("401-error.js", languageCode);
-    return res.status(401).render("error-401", {translations: error401Translations, languageCode});  
-}
+// }
 
 module.exports = {
     checkIfSessionIsStarted,
-    checkIfSessionIsFinished
+    // checkIfSessionIsFinished
 }

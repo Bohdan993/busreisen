@@ -29,7 +29,7 @@ function mapCities(cities){
     return resultCities;
 }
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
     
     try {
         let cities = [];
@@ -123,8 +123,7 @@ router.get("/", async (req, res) => {
         }
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({status: "fail", error: "Server error"});
+        return next(err);
     }
     
 });

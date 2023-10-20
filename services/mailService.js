@@ -42,35 +42,30 @@ async function sendFileMail(to, file, languageCode){
 }
 
 async function sendActivationMail(to, link){
+    const transporter = createMailer();
+    const mailOptions = {
+        from: "noreply@busreisen.com",
+        to,
+        subject: "Активація акаунту на " + process.env.API_URL,
+        text: "",
+        html: `
+            <div>
+                <h1>Для активації перейдіть по посиланню</h1>
+                <a href="${link}">${link}</a>
+            </div>
+        `
+    };
 
+    transporter.sendMail(mailOptions, function(err, info) {
+        if (err) {
+            console.error(err);
+        } else {
+            console.log('Activation email sent: ' + info.response);
+        }
+    });
 }
-
-// async function sendTestMail(to){
-//     const mailOptions = {
-//         from: "noreply@busreisen.com",
-//         to,
-//         subject: "Ваш квиток",
-//         text: "Перевірте Ваш квиток у вкладеному файлі",
-//     };
-
-//     const transporter = createMailer();
-
-
-//     return new Promise((res, rej) => {
-//         transporter.sendMail(mailOptions, function(err, info) {
-//             if (err) {
-//                 console.error(err);
-//                 rej();
-//             } else {
-//                 console.log('Email sent: ' + info.response);
-//                 res();
-//             }
-//         });
-//     });
-// }
 
 module.exports = {
     sendActivationMail,
-    sendFileMail,
-    // sendTestMail
+    sendFileMail
 }

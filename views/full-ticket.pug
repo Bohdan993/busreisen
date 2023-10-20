@@ -1,5 +1,16 @@
+-
+  const separatorIndex = translations.phoneNums.indexOf("--separator--");
+  const firstPartPhones = translations.phoneNums.slice(0, separatorIndex);
+  const secondPartPhones = translations.phoneNums.slice(separatorIndex + 1);
+
+
 div.ticket-bus-container
   style.
+    img {
+      break-before: auto; /* 'always,' 'avoid,' 'left,' 'inherit,' or 'right' */
+      break-after: auto; /* 'always,' 'avoid,' 'left,' 'inherit,' or 'right' */
+      break-inside: avoid; /* or 'auto' */
+    }
     .ticket-bus-container {
       font-family: GothamPro, tahoma, verdana, arial, sans-serif !important; 
     }
@@ -200,6 +211,7 @@ div.ticket-bus-container
     .carrier img {
       width: 100%;
       max-width: 120px;
+      display: block;
     }
     .title span.share-icon {
       margin-left: auto;
@@ -308,6 +320,8 @@ div.ticket-bus-container
     }
     .table {
       width: 100%;
+      table-layout: auto;
+      /* table-layout: fixed; */
     }
     .table td {
       text-align: center;
@@ -371,7 +385,7 @@ div.ticket-bus-container
     .ticket-info > div {
       margin-bottom: 0;
     }
-    .general-info-contacts > p {
+    .general-info-contacts p {
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
@@ -380,6 +394,14 @@ div.ticket-bus-container
           -ms-flex-direction: column;
               flex-direction: column;
     }
+    .general-info-contacts p:first-child {
+      margin-right: 10px;  
+    }
+    .general-info-contacts-inner {
+      display: flex;
+      justify-content: flex-start;
+    }
+
   
   .ticket-bus
     //- .title
@@ -479,7 +501,7 @@ div.ticket-bus-container
                 = translations.lastNameText
               th(scope='col')
                 = translations.dateOfBirthText
-              th(scope='col')
+              th(scope='col' colspan="5")
                 = translations.discountText
               th(scope='col')
                 = translations.priceText + ", " + data.currencyAbbr
@@ -494,7 +516,7 @@ div.ticket-bus-container
                     = passanger[1]["last-name-" + (ind + 1)]
                   td.passanger-date-of-birth
                     = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
-                  td.passanger-discount(style="white-space:pre;")
+                  td.passanger-discount(colspan="5")
                     = (passanger[1]["discount-name-" + (ind + 1)] || " - ") + (passanger[1]["card-discount-" + (ind + 1)] ? "\r\n" + translations.discountCardNumberText + "- (" + passanger[1]["card-discount-" + (ind + 1)] + ")." : "")
                   td.passanger-price
                     = passanger[1]["discount-ticket-price-" + (ind + 1)]
@@ -523,18 +545,24 @@ div.ticket-bus-container
                     = passanger[1]["last-name-" + (ind + 1)]
                   td.passanger-date-of-birth
                     = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
-                  td.passanger-discount
+                  td.passanger-discount(colspan="5")
                     = passanger[1]["discount-name-" + (ind + 1)]
                   td.passanger-price
                     = passanger[1]["discount-ticket-price-" + (ind + 1)]
             tr
-              th(colspan="5" style="text-align: left; font-weight: 700;padding-top: 10px;font-size:14px;color:#3256a4;")
+              th(colspan="9" style="text-align: left; font-weight: 700;padding-top: 10px;font-size:14px;color:#3256a4;")
                 = translations.inGeneralText
               td(style="padding-top: 10px; font-size:14px;color:#3256a4;")
                 = data.price
       .ticket-info
         .ticket-info-container
           .ticket-data.ticket-info-block
+            div
+              i.ico
+              span
+                = translations.ticketTypeText
+              p
+                = translations.ticketTypes[data.ticket.type]
             div
               i.ico
               span
@@ -573,7 +601,12 @@ div.ticket-bus-container
                 
               span
                 = translations.contactsText
-              p
-                each phone, ind in translations.phoneNums
-                  span
-                    = phone
+              div.general-info-contacts-inner
+                p
+                  each phone, ind in firstPartPhones
+                    span
+                      = phone
+                p
+                  each phone, ind in secondPartPhones
+                    span
+                      = phone

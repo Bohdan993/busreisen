@@ -6,7 +6,7 @@ const Currency = require("../../models/currency");
 const { Op } = require("sequelize");
 
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
     try {
 
         const {
@@ -29,8 +29,7 @@ router.get("/", async (req, res) => {
         return res.json({status: "ok", data: currencies});
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({status: "fail", error: "Server error"});
+        return next(err);
     }
     
 });

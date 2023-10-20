@@ -58,7 +58,7 @@ async function transformPassangersData(data, price, languageId){
             const discountCoef = currDiscount?.coef;
             const discountName = currDiscount?.DiscountAttributes?.[0]?.name;
 
-            const calcPrice = parseInt(price) * (1 - Number(discountCoef || 0));
+            const calcPrice = Math.round(parseInt(price) * (1 - Number(discountCoef || 0)));
             const newObj = {
                 ...el[1],
                 [`full-ticket-price-${currPassangerCount}`]: parseInt(price),
@@ -187,7 +187,7 @@ async function createValidateConstraints(data, dataToValidate, translations){
                         message: translations?.validationErrors?.["3"]
                     },
                     format: {
-                        pattern: /^[\u0400-\u04FF]+|[a-zA-ZäöüßÄÖÜẞ]+$/,
+                        pattern: /^[\u0400-\u04FF-]+|[a-zA-ZäöüßÄÖÜẞ-]+$/,
                         message: translations?.validationErrors?.["5"]
                     },
                     length: {
@@ -204,7 +204,7 @@ async function createValidateConstraints(data, dataToValidate, translations){
                         message: translations?.validationErrors?.["3"]
                     },
                     format: {
-                        pattern: /^[\u0400-\u04FF]+|[a-zA-ZäöüßÄÖÜẞ]+$/,
+                        pattern: /^[\u0400-\u04FF-]+|[a-zA-ZäöüßÄÖÜẞ-]+$/,
                         message: translations?.validationErrors?.["5"]
                     },
                     length: {

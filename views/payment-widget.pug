@@ -1,27 +1,65 @@
 script.
   async function postTicketData(data, signature){
     const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets";
-    const result = await bookingHelpersInstance.makeRequest(url, null, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({data, signature})
-    });
-    return result;
+    try {
+      const result = await bookingHelpersInstance.makeRequest(url, null, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({data, signature})
+      });
+      return result;
+    } catch(err) {
+      console.error("[API Error]", `Error: ${err?.message}`);
+      if(Swal.isVisible()) {
+        Swal.close();
+      }
+      Swal.fire({
+        icon: "error",
+        title: "#{translations.oopsText}",
+        text: "#{translations.errorText1}",
+        showCloseButton: true,
+        showConfirmButton: false,
+        customClass: {
+          confirmButton: 'base-button base-button--primary',
+        }
+      });
+      throw err;
+      return;
+    }
   };
   async function generateTicket(data, signature){
     const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets/generate";
-    const result = await bookingHelpersInstance.makeRequest(url, null, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({data, signature})
-    });
-    return result;
+    try {
+      const result = await bookingHelpersInstance.makeRequest(url, null, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({data, signature})
+      });
+      return result;
+    } catch(err) {
+      console.error("[API Error]", `Error: ${err?.message}`);
+      if(Swal.isVisible()) {
+        Swal.close();
+      }
+      Swal.fire({
+        icon: "error",
+        title: "#{translations.oopsText}",
+        text: "#{translations.errorText1}",
+        showCloseButton: true,
+        showConfirmButton: false,
+        customClass: {
+          confirmButton: 'base-button base-button--primary',
+        }
+      });
+      throw err;
+      return;
+    }
   };
   function downdloadTicket(result){
     const a = document.createElement("a");
@@ -48,7 +86,7 @@ script.
       const blob = await result.blob();
       downdloadTicket(blob);
       bookingHelpersInstance.hideLoadSpinner('#generate-ticket-pdf');
-      return;
+      return result;
     } catch (err) {
       console.error("[API Error]", `Error: ${err?.message}`);
       if(Swal.isVisible()) {
@@ -64,6 +102,38 @@ script.
           confirmButton: 'base-button base-button--primary',
         }
       });
+      throw err;
+      return;
+    }
+  }
+  async function sendTicketMail(data, signature){
+    const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets/send";
+    try {
+      const result = await fetch(`${url}?languageCode=${bookingHelpersInstance.state?.languageCode}`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({data, signature})
+      });
+      return result;
+    } catch (err) {
+      console.error("[API Error]", `Error: ${err?.message}`);
+      if(Swal.isVisible()) {
+        Swal.close();
+      }
+      Swal.fire({
+        icon: "error",
+        title: "#{translations.oopsText}",
+        text: "#{translations.errorText1}",
+        showCloseButton: true,
+        showConfirmButton: false,
+        customClass: {
+          confirmButton: 'base-button base-button--primary',
+        }
+      });
+      throw err;
       return;
     }
   }
@@ -98,7 +168,7 @@ script.
       });
       $(document).on("click", "#generate-ticket-pdf", generateTicketPDF.bind(null, data?.data, data?.signature));
       $("#booking2 .booking-content .loading-area").fadeOut(100);
-
+      await sendTicketMail(data?.data, data?.signature);
       return;
     } catch(err) {
         const errObj = JSON.parse(err.message);

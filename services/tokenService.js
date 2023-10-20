@@ -24,7 +24,6 @@ async function saveToken(userId, refreshToken, deviceFingerprint){
                 {userId: userId},
                 {deviceFingerprint: deviceFingerprint}
             ]
-
         }
     });
 
@@ -41,7 +40,6 @@ async function saveToken(userId, refreshToken, deviceFingerprint){
 
     return token;
 }
-
 
 async function deleteExpiredTokens(){
 

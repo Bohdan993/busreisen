@@ -12,7 +12,9 @@ async function generatePDFTicket(signature, html){
     const pdfPath = path.resolve("assets", "tickets", pdfName);
     const pdfOptions = {
         path: pdfPath,
-        margin: 60
+        margin: {top: "20px", bottom: "20px", left: "5px", right: "5px"},
+        printBackground: true,
+        format: 'A4',
     };
     const fileOptions = {
         content: html

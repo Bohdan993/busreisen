@@ -8,7 +8,7 @@ const Token = sequelize.define("token", {
     deviceFingerprint: {type: DataTypes.STRING, allowNull: false}
 });
 
-UsersModel.hasOne(Token);
+UsersModel.hasMany(Token);
 Token.belongsTo(UsersModel);
 
 module.exports = Token;

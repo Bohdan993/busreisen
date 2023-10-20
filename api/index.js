@@ -20,7 +20,7 @@ const cert = process.env.NODE_ENV === "development" ? fs.readFileSync(certPath, 
 const server = process.env.NODE_ENV === "development" ? https.createServer({key: key, cert: cert }, app) : null;
 
 
-const authRoute = require("./routes/auth");
+const authRoute = require("./routes/admin/auth");
 const citiesRoute = require("./routes/cities");
 const currenciesRoute = require("./routes/currency");
 const busflightsRoute = require("./routes/busFlights");
@@ -28,7 +28,7 @@ const passangersRoute = require("./routes/passangers");
 const translationsRoute = require("./routes/translations");
 const paymentRoute = require("./routes/payment");
 const ticketsRoute = require("./routes/tickets");
-const sessionData = require("./routes/sessionData");
+const sessionDataRoute = require("./routes/sessionData");
 
 // TEMP VARIABLES
 const Language = require("../models/language");
@@ -55,6 +55,9 @@ const placeAttributes = require("../data/placeAttributes");
 const Route = require("../models/route");
 const routes = require("../data/routes");
 
+const RouteAttributes = require("../models/routeAttributes");
+const routeAttributes = require("../data/routeAttributes");
+
 const Currency = require("../models/currency");
 const currencies = require("../data/currencies");
 
@@ -71,6 +74,7 @@ const DiscountAttributes = require("../models/discountAttributes");
 const discountAttributes = require("../data/discountAttributes");
 
 const PassangerTicket = require("../models/passangerTicket");
+const { handleError } = require("../middlewares/errorMiddlewares");
 
 
 // END TEMP VARIABLES
@@ -125,7 +129,7 @@ app.use(cookieParser());
 app.use(Fingerprint());
 app.use(session(sessionOptions));
 
-app.use("/api/auth", authRoute);
+
 app.use("/api/cities", citiesRoute);
 app.use("/api/currencies", currenciesRoute);
 app.use("/api/bus-flights", busflightsRoute);
@@ -133,7 +137,9 @@ app.use("/api/passangers", passangersRoute);
 app.use("/api/tickets", ticketsRoute);
 app.use("/api/translations", translationsRoute);
 app.use("/api/payment", paymentRoute);
-app.use("/api/current-data", sessionData);
+app.use("/api/current-data", sessionDataRoute);
+
+app.use("/api/admin/auth", authRoute);
 
 
 app.use("/api/insert-values", async function(req, res, next) {
@@ -209,6 +215,15 @@ app.use("/api/insert-values", async function(req, res, next) {
             }
 
 
+            for(const routeAttribute of routeAttributes) {
+                await RouteAttributes.create({
+                    "name": routeAttribute?.name,
+                    "routeId": routeAttribute?.routeId,
+                    "languageId": routeAttribute?.languageId
+                });
+            }
+
+
             for(const busFlight of busFlights) {
                 await BusFlight.create({
                     "allSeats": busFlight?.allSeats,
@@ -249,10 +264,12 @@ app.use("/api/insert-values", async function(req, res, next) {
         await run();
         return res.json({status: "ok", data: "ok"});
     } catch (err) {
-        console.log("ERR", err);
-        res.status(500).json({status: "fail", error: "Server error"});
+        return next(err);
     }
 });
+
+app.use(handleError);
+
 
 
 async function start(){

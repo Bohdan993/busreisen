@@ -9,11 +9,12 @@ const { Op } = require("sequelize");
 const { loadLanguageFile, transformTimestampToDate } = require("../../helpers");
 const { mapDiscounts, filterByDateDiscounts } = require("../../services/discountService");
 const { validatePassangersData, transformPassangersData } = require("../../services/passangerService");
-const { checkIfSessionIsStarted, checkIfSessionIsFinished } = require("../../middlewares/sessionMiddlewares");
+const { checkIfSessionIsStarted/*, checkIfSessionIsFinished*/ } = require("../../middlewares/sessionMiddlewares");
 const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
 const constants = require("../../helpers/constants");
+const APIError = require("../../exeptions/api-error");
 
-router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSessionIsFinished], async (req, res) => {
+router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected/*, checkIfSessionIsFinished*/], async (req, res, next) => {
     try {
         let discounts = [];
 
@@ -86,16 +87,21 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSessi
             );
         }
 
-        return res.json({status: "ok", data: { adults, children, discounts }});
+        req.session.busFlights = null;
+        req.session.alternativeBusFlightsFrom = null;
+        req.session.alternativeBusFlightsTo = null;
+        req.session.save(function (err) {
+            if (err) return next(err);
+            return res.json({status: "ok", data: { adults, children, discounts }});
+        });
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({status: "fail", error: "Server error"});
+        return next(err);
     }
     
 });
 
-router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfSessionIsFinished], async (req, res, next) => {
+router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected/*, checkIfSessionIsFinished*/], async (req, res, next) => {
     try {
 
         const {
@@ -105,7 +111,6 @@ router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected, che
         const {
             passangersData
         } = req?.body;
-
 
         const lang = await LanguagesModel.findOne({
             where: {
@@ -119,7 +124,8 @@ router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected, che
         const validData = await validatePassangersData(passangersData, passangerTranslations);
 
         if(validData.status === "error") {
-            return res.status(422).json({status: "validation error", errors: validData.data});
+            throw APIError.ValidationError("validation error", validData.data);
+            // return res.status(422).json({status: "validation error", errors: validData.data});
         }
 
         const ticketPrice = req.session.selectedBusFlight.purePrice;
@@ -129,14 +135,13 @@ router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected, che
         req.session.email = Object.values(transformedPassangersData).find((_, ind) => ind === 0)?.["email-1"];
 
         req.session.save(function (err) {
-            if (err) next(err);
+            if (err) return next(err);
 
             return res.json({status: "ok"});
         });
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({status: "fail", error: "Server error"});
+        return next(err);
     }
     
 });

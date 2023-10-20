@@ -192,7 +192,7 @@ function calcBusFlightPrice({
         ...priceForwards,
         priceOneWay: parseInt(priceForwards.priceOneWay * (1 - parseFloat(el?.discount?.coef || 0))),
         priceRoundTrip: parseInt((priceForwards.priceRoundTrip / 2) * (1 - parseFloat(el?.discount?.coef || 0))) + 
-        parseInt((priceBackwards.priceRoundTrip / 2) * (1 - parseFloat(busFlights?.resultTo?.[ind]?.discount?.coef /*|| el?.discount?.coef*/ || 0))),
+        parseInt((priceBackwards.priceRoundTrip / 2) * (1 - parseFloat(busFlights?.resultTo?.[ind]?.discount?.coef || 0))),
         alternativeOneHalfRoundTripPrice: parseInt((priceForwards.priceRoundTrip / 2) * (1 - parseFloat(el?.discount?.coef || 0)))
     } : {
         ...priceForwards,
@@ -252,7 +252,7 @@ function transformBusFlights(
                     "places": {
                         "from": {
                             "routeId": el?.route?.id,
-                            "routeName": el?.route?.routePath?.name,
+                            "routeName": el?.route?.RouteAttributes?.[0]?.name,
                             "onBoardingPlace": onp?.PlaceAttributes?.[0]?.name,
                             "outBoardingPlace": outp?.PlaceAttributes?.[0]?.name,
                             "onBoardingTime": el?.route?.routePath?.onboarding?.find(el => parseInt(el?.placeId) === parseInt(onp?.id))?.time,
@@ -276,7 +276,7 @@ function transformBusFlights(
                 } else {
                     if(!isSpecialDate(endDate)) {
                         resultObj.places.to.routeId = busFlights?.resultTo?.[ind]?.route.id;
-                        resultObj.places.to.routeName =  busFlights?.resultTo?.[ind]?.route?.routePath?.name;
+                        resultObj.places.to.routeName =  busFlights?.resultTo?.[ind]?.route?.RouteAttributes?.[0]?.name;
                         resultObj.places.to.onBoardingPlace =  outp?.PlaceAttributes?.[0]?.name;
                         resultObj.places.to.outBoardingPlace = onp?.PlaceAttributes?.[0]?.name;
                         resultObj.places.to.onBoardingTime =  busFlights?.resultTo?.[ind]?.route?.routePath?.onboarding?.find(el => parseInt(el?.placeId) === parseInt(outp?.id))?.time;

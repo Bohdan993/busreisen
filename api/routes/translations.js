@@ -7,7 +7,7 @@ const path = require("path");
 const fs = require("fs");
 
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
     try {
 
         const {
@@ -34,8 +34,7 @@ router.get("/", async (req, res) => {
         return res.json({status: "ok", data: result});
 
     } catch (err) {
-        console.log(err);
-        res.status(500).json({status: "fail", error: "Server error"});
+        return next(err);
     }
     
 });

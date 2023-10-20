@@ -82,6 +82,12 @@ const discountAttributesUK = [
         "discountId": 12,
         "languageId": 1,
         "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 13,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
     }
 ];
 
@@ -167,6 +173,12 @@ const discountAttributesRU = [
         "discountId": 12,
         "languageId": 2,
         "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 13,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
     }
 ];
 
@@ -250,6 +262,12 @@ const discountAttributesDE = [
     {
         "name": "Flugrabatt",
         "discountId": 12,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 13,
         "languageId": 3,
         "group": constants.BUS_FLIGHT
     }
