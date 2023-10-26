@@ -135,28 +135,29 @@ div.info-check-form-container-inner
           fieldset
             div
               .input-group.is-horizontal(tabindex="0")
-                div
-                  div.select(id=`adult-select-discount-${i + 1}` data-input=`discount-${i + 1}`)
-                    .select-container 
-                      label(for=`adult-discount-${i + 1}`)= translations.discountText
-                      .select-box
-                        select(id=`adult-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passangersInfo ? passangersInfo[i][1]["discount-" + (i + 1)] : "0"}` disabled)
-                          option(value="0" selected="true")= translations.noDiscountText
-                          each discount in adultsDiscounts
-                            option(value=`${discount.id}` data-type="adults" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
-                          each discount in discountCards
-                            option(value=`${discount.id}` data-type="cards" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
-                          each discount in bothDiscounts
-                            option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
-                      i.pencil-ico
-                        svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
-                          rect(fill="none" height="256" width="256")
-                          path(d="M224,76.7,179.3,32a15.9,15.9,0,0,0-22.6,0L130.3,58.3h0L36.7,152A15.9,15.9,0,0,0,32,163.3V208a16,16,0,0,0,16,16H92.7a15.9,15.9,0,0,0,11.3-4.7l120-120A16.1,16.1,0,0,0,224,76.7ZM51.3,160,144,67.3,160.7,84,68,176.7ZM48,179.3,76.7,208H48Zm48,25.4L79.3,188,172,95.3,188.7,112Z")
-                      i.checkmark-ico
-                        svg(xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24')
-                          path(d='M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm5.707,8.707-7,7a1,1,0,0,1-1.414,0l-3-3a1,1,0,0,1,1.414-1.414L10,14.586l6.293-6.293a1,1,0,0,1,1.414,1.414Z')
-                      .input-error= translations.errorText
-                      .select-dropdown
+                if showDiscounts
+                  div
+                    div.select(id=`adult-select-discount-${i + 1}` data-input=`discount-${i + 1}`)
+                      .select-container 
+                        label(for=`adult-discount-${i + 1}`)= translations.discountText
+                        .select-box
+                          select(id=`adult-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passangersInfo ? passangersInfo[i][1]["discount-" + (i + 1)] : "0"}` disabled)
+                            option(value="0" selected="true")= translations.noDiscountText
+                            each discount in adultsDiscounts
+                              option(value=`${discount.id}` data-type="adults" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                            each discount in bothDiscounts
+                              option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                            each discount in discountCards
+                              option(value=`${discount.id}` data-type="cards" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                        i.pencil-ico
+                          svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
+                            rect(fill="none" height="256" width="256")
+                            path(d="M224,76.7,179.3,32a15.9,15.9,0,0,0-22.6,0L130.3,58.3h0L36.7,152A15.9,15.9,0,0,0,32,163.3V208a16,16,0,0,0,16,16H92.7a15.9,15.9,0,0,0,11.3-4.7l120-120A16.1,16.1,0,0,0,224,76.7ZM51.3,160,144,67.3,160.7,84,68,176.7ZM48,179.3,76.7,208H48Zm48,25.4L79.3,188,172,95.3,188.7,112Z")
+                        i.checkmark-ico
+                          svg(xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24')
+                            path(d='M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm5.707,8.707-7,7a1,1,0,0,1-1.414,0l-3-3a1,1,0,0,1,1.414-1.414L10,14.586l6.293-6.293a1,1,0,0,1,1.414,1.414Z')
+                        .input-error= translations.errorText
+                        .select-dropdown
                 - if(passangersInfo?.[i]?.[1]?.["card-discount-" + (i + 1)])
                     .discount-card-container
                       div.input(id=`adult-input-card-discount-${i + 1}` data-input=`card-discount-${i + 1}`)
@@ -238,26 +239,27 @@ div.info-check-form-container-inner
                         svg(xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24')
                           path(d='M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm5.707,8.707-7,7a1,1,0,0,1-1.414,0l-3-3a1,1,0,0,1,1.414-1.414L10,14.586l6.293-6.293a1,1,0,0,1,1.414,1.414Z')
                     .input-error= translations.errorText 
-                div
-                  div.select(id=`child-select-discount-${i + 1}` data-input=`discount-${i + 1}`)
-                    .select-container
-                      label(for=`child-discount-${i + 1}`)= translations.discountText
-                      .select-box
-                        select(id=`child-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passangersInfo ? passangersInfo[i][1]["discount-" + (i + 1)] : "0"}` disabled)
-                          option(value="0" selected="true")= translations.noDiscountText
-                          each discount in childrenDiscounts
-                            option(value=`${discount.id}` data-type="children" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
-                          each discount in bothDiscounts
-                            option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
-                      i.pencil-ico
-                        svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
-                          rect(fill="none" height="256" width="256")
-                          path(d="M224,76.7,179.3,32a15.9,15.9,0,0,0-22.6,0L130.3,58.3h0L36.7,152A15.9,15.9,0,0,0,32,163.3V208a16,16,0,0,0,16,16H92.7a15.9,15.9,0,0,0,11.3-4.7l120-120A16.1,16.1,0,0,0,224,76.7ZM51.3,160,144,67.3,160.7,84,68,176.7ZM48,179.3,76.7,208H48Zm48,25.4L79.3,188,172,95.3,188.7,112Z")
-                      i.checkmark-ico
-                        svg(xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24')
-                          path(d='M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm5.707,8.707-7,7a1,1,0,0,1-1.414,0l-3-3a1,1,0,0,1,1.414-1.414L10,14.586l6.293-6.293a1,1,0,0,1,1.414,1.414Z')
-                      .input-error= translations.errorText
-                      .select-dropdown
+                if showDiscounts
+                  div
+                    div.select(id=`child-select-discount-${i + 1}` data-input=`discount-${i + 1}`)
+                      .select-container
+                        label(for=`child-discount-${i + 1}`)= translations.discountText
+                        .select-box
+                          select(id=`child-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passangersInfo ? passangersInfo[i][1]["discount-" + (i + 1)] : "0"}` disabled)
+                            option(value="0" selected="true")= translations.noDiscountText
+                            each discount in childrenDiscounts
+                              option(value=`${discount.id}` data-type="children" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                            each discount in bothDiscounts
+                              option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                        i.pencil-ico
+                          svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
+                            rect(fill="none" height="256" width="256")
+                            path(d="M224,76.7,179.3,32a15.9,15.9,0,0,0-22.6,0L130.3,58.3h0L36.7,152A15.9,15.9,0,0,0,32,163.3V208a16,16,0,0,0,16,16H92.7a15.9,15.9,0,0,0,11.3-4.7l120-120A16.1,16.1,0,0,0,224,76.7ZM51.3,160,144,67.3,160.7,84,68,176.7ZM48,179.3,76.7,208H48Zm48,25.4L79.3,188,172,95.3,188.7,112Z")
+                        i.checkmark-ico
+                          svg(xmlns='http://www.w3.org/2000/svg' viewbox='0 0 24 24')
+                            path(d='M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm5.707,8.707-7,7a1,1,0,0,1-1.414,0l-3-3a1,1,0,0,1,1.414-1.414L10,14.586l6.293-6.293a1,1,0,0,1,1.414,1.414Z')
+                        .input-error= translations.errorText
+                        .select-dropdown
           .booking-flow__passengers__info
             p
               = translations.noteText

@@ -3,7 +3,8 @@ const path = require("path");
 const HTMLToPDF = require("html-pdf-node");
 const QRCode = require("qrcode");
 const pug = require("pug");
-const { loadLanguageFile, base64Encode } = require("../helpers");
+const { loadLanguageFile, base64Encode, includeFunc } = require("../helpers");
+
 
 
 async function generatePDFTicket(signature, html){
@@ -48,6 +49,7 @@ async function generateHTMLTicket(
     ) {
     
     const ticketTemplate = path.resolve("views", template);
+    const termsOfUsePath = path.resolve("views", "ticket-terms-of-use", `${languageCode}.pug`);
 
     return new Promise((res, rej) => {
         QRCode.toDataURL(signature,
@@ -68,6 +70,8 @@ async function generateHTMLTicket(
                             translations: loadLanguageFile("_ticket.js", languageCode),
                             constants,
                             transformTimestampToDate,
+                            include: template === "full-ticket.pug" ? includeFunc.bind(null, pug) : null,
+                            termsOfUsePath: template === "full-ticket.pug" ? termsOfUsePath : null,
                             data: {
                                 price,
                                 currencyAbbr,

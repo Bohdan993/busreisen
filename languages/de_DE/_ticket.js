@@ -41,7 +41,8 @@ const translations = {
         [ONE_WAY]: "Ein Weg",
         [OPEN_DATE]: "Offener Termin",
         [ROUND]: "Rundfahrt"
-    }
+    },
+    "saleText": "Aktionsrabatt"
 }
 
 

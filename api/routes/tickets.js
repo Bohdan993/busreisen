@@ -64,7 +64,9 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
             "destinationId": parseInt(destinationId),
             "children": JSON.stringify(children.reduce((acc, curr) =>{acc[curr[0]] = curr[1]; return acc;}, {})),
             "signature": signature,
-            "status": constants.TICKET_STATUS_PAYED
+            "status": constants.TICKET_STATUS_PAYED,
+            "hasDiscount": selectedBusFlight?.hasDiscount,
+            "discountPercentage": selectedBusFlight?.discountPercentage || 0,
         });
 
 
@@ -109,13 +111,8 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
                         //     }
                         // }
 
-                        // console.log("PASSANGER QUERY " + (ind + 1), passangerQuery);
-
                         const candidate = await PassangersModel.findOne(passangerQuery);
-                        console.log("CANDIDATE", candidate);
                         if(candidate) {
-                            console.log("EMAIL", passangerArr[1]?.[`email-${ind + 1}`] || null);
-                            console.log("PHONE", passangerArr[1]?.[`phone-${ind + 1}`]);
                             // await candidate.update({ 
                             //     "email": passangerArr[1]?.[`email-${ind + 1}`] || null,  
                             //     "phone": passangerArr[1]?.[`phone-${ind + 1}`]

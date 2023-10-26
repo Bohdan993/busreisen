@@ -140,6 +140,10 @@ app.use("/api/payment", paymentRoute);
 app.use("/api/current-data", sessionDataRoute);
 
 app.use("/api/admin/auth", authRoute);
+// app.use("/api/admin/passangers", authRoute);
+// app.use("/api/admin/bus-flights", authRoute);
+// app.use("/api/admin/tickets", authRoute);
+// app.use("/api/admin/users", authRoute);
 
 
 app.use("/api/insert-values", async function(req, res, next) {
@@ -248,7 +252,8 @@ app.use("/api/insert-values", async function(req, res, next) {
                     "id": discount?.id,
                     "coef": discount?.coef,
                     "inactivePeriod": discount?.inactivePeriod,
-                    "busflightId": discount?.busflightId
+                    "busflightId": discount?.busflightId,
+                    "order": discount?.order
                 });
             }
 

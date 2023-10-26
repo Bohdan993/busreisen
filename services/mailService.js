@@ -21,7 +21,7 @@ async function sendFileMail(to, file, languageCode){
     const translations = loadLanguageFile("_mail.js", languageCode);
     const mailOptions = {
         from: "noreply@busreisen.com",
-        to,
+        to: [to, "busreisen@ukr.net"],
         subject: translations?.subjectText,
         text: translations?.text,
         attachments: [{

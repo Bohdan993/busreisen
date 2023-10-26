@@ -10,6 +10,10 @@ function isRound(date){
     return (String(date) === constants.ROUND);
 }
 
+function isOpenDate(date){
+    return (String(date) === constants.OPEN_DATE);
+}
+
 function isSpecialDate(date){
     return (String(date) === constants.ONE_WAY || String(date) === constants.OPEN_DATE || String(date) === constants.ROUND);
 }
@@ -77,10 +81,15 @@ function base64Encode(file) {
     return Buffer.from(bitmap).toString('base64');
 }
 
+function includeFunc(pug, pathToPug, options = {}){
+    return pug.renderFile(pathToPug, options); //render the pug file
+}
+
  module.exports = {
     isSpecialDate,
     isOneWay,
     isRound,
+    isOpenDate,
     transformDate,
     loadLanguageFile,
     isValidDate,
@@ -89,5 +98,6 @@ function base64Encode(file) {
     transformTimestampToDate,
     encodeHTMLEntities,
     decodeHTMLEntities,
-    base64Encode
+    base64Encode,
+    includeFunc
  }

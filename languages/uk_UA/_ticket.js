@@ -42,7 +42,8 @@ const translations = {
         [ONE_WAY]: "В одну сторону",
         [OPEN_DATE]: "Відкрита дата",
         [ROUND]: "В обидві сторони"
-    }
+    },
+    "saleText": "Акційна знижка"
 
 }
 

@@ -81,22 +81,23 @@ form#booking-passangers-form.booking-passangers-form
         fieldset
           div
             .input-group.is-horizontal(tabindex="0")
-              div
-                div.select(id=`adult-select-discount-${i + 1}` data-input=`discount-${i + 1}`)
-                  .select-container 
-                    label(for=`adult-discount-${i + 1}`)= translations.discountText
-                    .select-box
-                      select(id=`adult-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passangersInfo ? passangersInfo[i][1]["discount-" + (i + 1)] : "0"}`)
-                        //- option(value="-1" disabled="" selected="true")= translations.discountText
-                        option(value="0" selected="true")= translations.noDiscountText
-                        each discount in adultsDiscounts
-                          option(value=`${discount.id}` data-type="adults" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
-                        each discount in discountCards
-                          option(value=`${discount.id}` data-type="cards" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
-                        each discount in bothDiscounts
-                          option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
-                    .input-error= translations.errorText
-                    .select-dropdown
+              if showDiscounts 
+                div
+                  div.select(id=`adult-select-discount-${i + 1}` data-input=`discount-${i + 1}`)
+                    .select-container 
+                      label(for=`adult-discount-${i + 1}`)= translations.discountText
+                      .select-box
+                        select(id=`adult-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passangersInfo ? passangersInfo[i][1]["discount-" + (i + 1)] : "0"}`)
+                          //- option(value="-1" disabled="" selected="true")= translations.discountText
+                          option(value="0" selected="true")= translations.noDiscountText
+                          each discount in adultsDiscounts
+                            option(value=`${discount.id}` data-type="adults" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                          each discount in bothDiscounts
+                            option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                          each discount in discountCards
+                            option(value=`${discount.id}` data-type="cards" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                      .input-error= translations.errorText
+                      .select-dropdown
               - if(passangersInfo?.[i]?.[1]?.["card-discount-" + (i + 1)])
                   .discount-card-container
                     div.input(id=`adult-input-card-discount-${i + 1}` data-input=`card-discount-${i + 1}`)
@@ -147,21 +148,22 @@ form#booking-passangers-form.booking-passangers-form
                   .input-container
                     label(for=`child-date-of-birth-${i + 1}`)= translations.dateOfBirthText + "*"
                     input(type="text" class="date-of-birth" placeholder=`${translations.dateOfBirthPlaceholder}` id=`child-date-of-birth-${i + 1}` data-validate=`date-of-birth-${i + 1}` required)
-                  .input-error= translations.errorText 
-              div
-                div.select(id=`child-select-discount-${i + 1}` data-input=`discount-${i + 1}`)
-                  .select-container
-                    label(for=`child-discount-${i + 1}`)= translations.discountText
-                    .select-box
-                      select(id=`child-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passangersInfo ? passangersInfo[i][1]["discount-" + (i + 1)] : "0"}`)
-                        //- option(value="-1" disabled="" selected="true")= translations.discountText
-                        option(value="0" selected="true")= translations.noDiscountText
-                        each discount in childrenDiscounts
-                          option(value=`${discount.id}` data-type="children" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
-                        each discount in bothDiscounts
-                          option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
-                    .input-error= translations.errorText
-                    .select-dropdown
+                  .input-error= translations.errorText
+              if showDiscounts 
+                div
+                  div.select(id=`child-select-discount-${i + 1}` data-input=`discount-${i + 1}`)
+                    .select-container
+                      label(for=`child-discount-${i + 1}`)= translations.discountText
+                      .select-box
+                        select(id=`child-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passangersInfo ? passangersInfo[i][1]["discount-" + (i + 1)] : "0"}`)
+                          //- option(value="-1" disabled="" selected="true")= translations.discountText
+                          option(value="0" selected="true")= translations.noDiscountText
+                          each discount in childrenDiscounts
+                            option(value=`${discount.id}` data-type="children" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                          each discount in bothDiscounts
+                            option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                      .input-error= translations.errorText
+                      .select-dropdown
         .booking-flow__passengers__info
           p
             = translations.noteText

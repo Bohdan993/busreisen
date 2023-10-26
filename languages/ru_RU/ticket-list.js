@@ -15,6 +15,7 @@ const translations = {
     },
     "fromText": "Откуда",
     "toText": "Куда",
+    "priceTextFull": "Старая цена",
     "priceText": "Цена за пассажира",
     "buttonSelectText": "Выбрать",
     "destinationText": "Туда",
@@ -32,8 +33,17 @@ const translations = {
     "passangerTexts": ["пассажир", "пассажиры", "пассажиров"],
     "ticketsTitle": "Ваш рейс",
     "alternativeTicketsTitle": "Ближайшие доступные рейсы",
+    "discountText": "Скидка",
     "discountCardNumberText": "Номер карты",
     "validationErrorText": "Заполните это поле",
+    "attentionText": "Обратите внимание!",
+    "termsOfUseSaleTicketText": {
+        1: "Для акционных билетов персональные скидки пассажиров не действуют.",
+        2: "Акционные билеты обмену и возврату не подлежат."
+    },
+    "termsOfUseOpenDateTicketText": {
+        1: "Билеты с открытой датой обмену и возврату не подлежат."
+    }
 }
 
 

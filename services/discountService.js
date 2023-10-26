@@ -12,7 +12,6 @@ function mapDiscounts(discounts) {
         }
     });
     const resultArr = Object.entries(uniq);
-
     return resultArr;
 }
 

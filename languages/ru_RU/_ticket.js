@@ -41,7 +41,8 @@ const translations = {
         [ONE_WAY]: "В одну сторону",
         [OPEN_DATE]: "Открытая дата",
         [ROUND]: "В обе стороны"
-    }
+    },
+    "saleText": "Акционная скидка"
 
 }
 

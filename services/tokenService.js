@@ -41,11 +41,43 @@ async function saveToken(userId, refreshToken, deviceFingerprint){
     return token;
 }
 
+async function removeToken(refreshToken){
+    const tokenData = await TokensModel.deleteOne({refreshToken});
+    return tokenData;
+}
+
+async function findToken(refreshToken){
+    const tokenData = await TokensModel.findOne({refreshToken});
+    return tokenData;
+}
+
+function validateAccessToken(token){
+    try {
+        const userData = jwt.verify(token, process.env.JWT_SECRET_ACCESS);
+        return userData;
+    } catch(err) {
+        return null;
+    }
+}
+
+function validateRefreshToken(token){
+    try {
+        const userData = jwt.verify(token, process.env.JWT_SECRET_REFRESH);
+        return userData;
+    } catch(err) {
+        return null;
+    }
+}
+
 async function deleteExpiredTokens(){
 
 }
 
 module.exports = {
     generateTokens,
-    saveToken
+    saveToken,
+    removeToken,
+    findToken,
+    validateRefreshToken,
+    validateAccessToken
 }

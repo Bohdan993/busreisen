@@ -3,7 +3,6 @@
   const firstPartPhones = translations.phoneNums.slice(0, separatorIndex);
   const secondPartPhones = translations.phoneNums.slice(separatorIndex + 1);
 
-
 div.ticket-bus-container
   style.
     img {
@@ -24,6 +23,9 @@ div.ticket-bus-container
       overflow: hidden;
       position: relative;
       border: 1px solid gray;
+      -webkit-column-break-after: page;
+      -moz-column-break-after: page;
+      break-after: page;
     }
     .ticket-bus-inner {
       display: -webkit-box;
@@ -401,7 +403,10 @@ div.ticket-bus-container
       display: flex;
       justify-content: flex-start;
     }
-
+    .terms-of-use {
+      border: 1px solid gray;
+      padding: 15px 25px;
+    }
   
   .ticket-bus
     //- .title
@@ -516,8 +521,12 @@ div.ticket-bus-container
                     = passanger[1]["last-name-" + (ind + 1)]
                   td.passanger-date-of-birth
                     = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
-                  td.passanger-discount(colspan="5")
-                    = (passanger[1]["discount-name-" + (ind + 1)] || " - ") + (passanger[1]["card-discount-" + (ind + 1)] ? "\r\n" + translations.discountCardNumberText + "- (" + passanger[1]["card-discount-" + (ind + 1)] + ")." : "")
+                  if data.ticket.hasDiscount
+                    td.passanger-discount(colspan="5")
+                      = translations.saleText + " - " + data.ticket.discountPercentage + "%."
+                  else
+                    td.passanger-discount(colspan="5")
+                      = (passanger[1]["discount-name-" + (ind + 1)] || " - ") + (passanger[1]["card-discount-" + (ind + 1)] ? "\r\n" + translations.discountCardNumberText + "- (" + passanger[1]["card-discount-" + (ind + 1)] + ")." : "")
                   td.passanger-price
                     = passanger[1]["discount-ticket-price-" + (ind + 1)]
                 //- .passanger
@@ -545,8 +554,12 @@ div.ticket-bus-container
                     = passanger[1]["last-name-" + (ind + 1)]
                   td.passanger-date-of-birth
                     = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
-                  td.passanger-discount(colspan="5")
-                    = passanger[1]["discount-name-" + (ind + 1)]
+                  if data.ticket.hasDiscount
+                    td.passanger-discount(colspan="5")
+                      = translations.saleText + " - " + data.ticket.discountPercentage + "%."
+                  else
+                    td.passanger-discount(colspan="5")
+                      = passanger[1]["discount-name-" + (ind + 1)]
                   td.passanger-price
                     = passanger[1]["discount-ticket-price-" + (ind + 1)]
             tr
@@ -589,13 +602,13 @@ div.ticket-bus-container
                 = translations.carrierText
               p
                 |Benz Express
-            div
-              i.ico
+            //- div
+            //-   i.ico
                 
-              span
-                = translations.routeText
-              p
-                = data.places.from.routeName
+            //-   span
+            //-     = translations.routeText
+            //-   p
+            //-     = data.places.from.routeName
             div.general-info-contacts
               i.ico
                 
@@ -610,3 +623,5 @@ div.ticket-bus-container
                   each phone, ind in secondPartPhones
                     span
                       = phone
+  .terms-of-use
+    |!{include(termsOfUsePath)}

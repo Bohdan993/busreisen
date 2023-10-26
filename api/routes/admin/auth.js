@@ -1,7 +1,7 @@
 const {
     Router
 } = require("express");
-const { registration, activation, login } = require("../../../services/userService");
+const { registration, activation, login, logout, refresh } = require("../../../services/userService");
 const router = Router();
 const {body, validationResult} = require("express-validator");
 const AdminAPIError = require("../../../exeptions/admin/api-error");
@@ -55,7 +55,10 @@ router.post("/login", async (req, res, next) => {
 
 router.post("/logout", async (req, res, next) => {
     try {
-
+        const { refreshToken } = req.cookies;
+        const token = await logout(refreshToken);
+        res.clearCookie('refreshToken');
+        return res.json({status: "ok"});
     } catch (err) {
         return next(err);
     }
@@ -75,7 +78,16 @@ router.get("/activate/:link", async (req, res, next) => {
 
 router.get("/refresh", async (req, res, next) => {
     try {
-
+        const { refreshToken } = req.cookies;
+        // const {email, password} = req.body;
+        const deviceFingerprint = req.fingerprint?.hash;
+        const userData = await refresh(refreshToken, deviceFingerprint);
+        res.cookie("refreshToken", userData?.refreshToken, {
+            maxAge: 30 * 24 * 60 * 60,
+            httpOnly: true,
+            // secure: true 
+        });
+        return res.json({status: "ok", data: userData});
     } catch (err) {
         return next(err);
     }

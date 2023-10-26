@@ -642,12 +642,7 @@ router.get(
             direction === constants.FORWARDS
           ) {
             req.session.alternativeBusFlightsFrom = transformedBusFlights;
-          } /*else if (
-            req.session.alternativeBusFlightsFrom ||
-            direction === constants.BACKWARDS
-          ) {
-            req.session.alternativeBusFlightsTo = transformedBusFlights;
-          }*/
+          }
 
           req.session.startDate = startDate;
           req.session.endDate = endDate;
@@ -737,7 +732,7 @@ router.post("/select", [checkIfSessionIsStarted], async (req, res, next) => {
     const { id, isMain = true, direction = constants.FORWARDS } = req?.body;
 
     let selectedBusFlight = null;
-
+    console.log("IS MAIN", isMain);
     if (isMain) {
       selectedBusFlight = req.session?.busFlights?.find((el) => {
         return String(el?.id) === String(id);
@@ -778,9 +773,8 @@ router.post("/select", [checkIfSessionIsStarted], async (req, res, next) => {
             return String(el?.id) === String(id);
           });
 
-          
-
           selectedBusFlight = req.session.selectedBusFlight;
+          selectedBusFlight.isSelected = false;
           selectedBusFlight.busFlightToId = selectedBF.busFlightFromId;
           selectedBusFlight.places.to.routeId = selectedBF.places.from.routeId;
           selectedBusFlight.places.to.onBoardingPlace = selectedBF.places.from.onBoardingPlace;
@@ -790,8 +784,12 @@ router.post("/select", [checkIfSessionIsStarted], async (req, res, next) => {
           selectedBusFlight.places.to.outBoardingTime = selectedBF.places.from.outBoardingTime;
           selectedBusFlight.dates.return = selectedBF.dates.departure;
           selectedBusFlight.dates.returnPure = selectedBF.dates.departurePure;
-          selectedBusFlight.purePrice = String(parseInt(selectedBusFlight.purePrice) + parseInt(selectedBF.purePrice));
+          selectedBusFlight.purePriceFull = String(Math.round(selectedBusFlight.purePriceFull) + Math.round(selectedBF.purePriceFull));
+          selectedBusFlight.priceFull = selectedBusFlight.purePriceFull + selectedBF.priceFull.replace(/^\d+/gm, "");
+          selectedBusFlight.purePrice = String(Math.round(selectedBusFlight.purePrice) + Math.round(selectedBF.purePrice));
           selectedBusFlight.price = selectedBusFlight.purePrice + selectedBF.price.replace(/^\d+/gm, "");
+          selectedBusFlight.hasDiscount = selectedBusFlight.hasDiscount || selectedBF.hasDiscount;
+          selectedBusFlight.discountPercentage = Number(Number(((selectedBusFlight.purePriceFull - selectedBusFlight.purePrice) / selectedBusFlight.purePriceFull) * 100).toFixed(1));
 
           if(selectedBusFlight.id.includes("alternative-ticket-from")) {
             selectedBusFlight.isSelected = true;
@@ -810,8 +808,7 @@ router.post("/select", [checkIfSessionIsStarted], async (req, res, next) => {
       throw new Error();
     }
 
-    console.log("REQ SS1", req.session);
-    console.log("SVG1", selectedBusFlight);
+    console.log("SEL BF", selectedBusFlight);
 
     req.session.selectedBusFlight = selectedBusFlight;
     req.session.startDate = selectedBusFlight.dates.departurePure;

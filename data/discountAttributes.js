@@ -156,14 +156,14 @@ const discountAttributesRU = [
 
     },
     {
-        "name": "Карточка постоянного клиента – 10%.",
+        "name": "Карта постоянного клиента – 10%.",
         "discountId": 10,
         "languageId": 2,
         "group": constants.DISCOUNT_CARD
 
     },
     {
-        "name": "Карточка постоянного клиента – 15%.",
+        "name": "Карта постоянного клиента – 15%.",
         "discountId": 11,
         "languageId": 2,
         "group": constants.DISCOUNT_CARD
