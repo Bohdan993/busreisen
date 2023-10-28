@@ -28,7 +28,7 @@ const Ticket = sequelize.define("ticket", {
     status: { type: DataTypes.ENUM, values: [constants.TICKET_STATUS_NOT_PAYED, constants.TICKET_STATUS_PAYED, constants.TICKET_STATUS_HALF_USED, constants.TICKET_STATUS_USED], defaultValue: constants.TICKET_STATUS_NOT_PAYED, allowNull: false},
     dateOfFirstUsage: {type: DataTypes.DATEONLY, allowNull: true, validate: {isDate: true}},
     hasDiscount: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false},
-    discountPercentage: {type: DataTypes.FLOAT(2, 1), allowNull: false},
+    discountPercentage: {type: DataTypes.FLOAT(3, 1), allowNull: false},
     originId: {
         type: DataTypes.INTEGER,
         allowNull: false,

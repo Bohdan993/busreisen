@@ -65,18 +65,105 @@ const discounts = [
         "inactivePeriod": null,
         "order": 110
     },
+    ////////////////////////////
+    ////////////////////////////
     {
         "id": 12,
-        "coef": 0.15,
+        "coef": 0.1,
         "inactivePeriod": null,
-        "busflightId": 26
+        "busflightId": 1
     },
     {
         "id": 13,
-        "coef": 0.125,
+        "coef": 0.15,
         "inactivePeriod": null,
-        "busflightId": 34
+        "busflightId": 2
+    },
+    {
+        "id": 14,
+        "coef": 0.12,
+        "inactivePeriod": null,
+        "busflightId": 3
+    },
+    {
+        "id": 15,
+        "coef": 0.14,
+        "inactivePeriod": null,
+        "busflightId": 4
+    },
+    {
+        "id": 16,
+        "coef": 0.2,
+        "inactivePeriod": null,
+        "busflightId": 5
+    },
+    {
+        "id": 17,
+        "coef": 0.25,
+        "inactivePeriod": null,
+        "busflightId": 6
+    },
+    {
+        "id": 18,
+        "coef": 0.15,
+        "inactivePeriod": null,
+        "busflightId": 7
+    },
+    {
+        "id": 19,
+        "coef": 0.16,
+        "inactivePeriod": null,
+        "busflightId": 8
+    },
+    {
+        "id": 20,
+        "coef": 0.15,
+        "inactivePeriod": null,
+        "busflightId": 9
+    },
+    {
+        "id": 21,
+        "coef": 0.1,
+        "inactivePeriod": null,
+        "busflightId": 10
+    },
+    {
+        "id": 22,
+        "coef": 0.18,
+        "inactivePeriod": null,
+        "busflightId": 11
+    },
+    {
+        "id": 23,
+        "coef": 0.25,
+        "inactivePeriod": null,
+        "busflightId": 12
+    },
+    {
+        "id": 24,
+        "coef": 0.2,
+        "inactivePeriod": null,
+        "busflightId": 13
+    },
+    {
+        "id": 25,
+        "coef": 0.15,
+        "inactivePeriod": null,
+        "busflightId": 14
+    },
+    {
+        "id": 26,
+        "coef": 0.2,
+        "inactivePeriod": null,
+        "busflightId": 15
+    },
+    {
+        "id": 27,
+        "coef": 0.12,
+        "inactivePeriod": null,
+        "busflightId": 16
     }
+
 ];
 
 module.exports = discounts;

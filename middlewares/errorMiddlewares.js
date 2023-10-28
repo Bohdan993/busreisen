@@ -2,7 +2,7 @@ const APIError = require("../exeptions/api-error");
 const AdminAPIError = require("../exeptions/admin/api-error");
 
 function handleError (err, req, res, next) {
-    console.log("[API error]: ", err?.message);
+    console.log("[API error]: ", err);
 
     if(err instanceof APIError) {
         if(err.template !== "") {

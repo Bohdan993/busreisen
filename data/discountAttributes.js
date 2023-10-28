@@ -88,6 +88,90 @@ const discountAttributesUK = [
         "discountId": 13,
         "languageId": 1,
         "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 14,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 15,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 16,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 17,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 18,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 19,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 20,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 21,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 22,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 23,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 24,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 25,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 26,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Знижка на рейс",
+        "discountId": 27,
+        "languageId": 1,
+        "group": constants.BUS_FLIGHT
     }
 ];
 
@@ -179,6 +263,90 @@ const discountAttributesRU = [
         "discountId": 13,
         "languageId": 2,
         "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 14,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 15,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 16,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 17,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 18,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 19,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 20,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 21,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 22,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 23,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 24,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 25,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 26,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Скидка на рейс",
+        "discountId": 27,
+        "languageId": 2,
+        "group": constants.BUS_FLIGHT
     }
 ];
 
@@ -268,6 +436,90 @@ const discountAttributesDE = [
     {
         "name": "Flugrabatt",
         "discountId": 13,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 14,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 15,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 16,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 17,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 18,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 19,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 20,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 21,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 22,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 23,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 24,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 25,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 26,
+        "languageId": 3,
+        "group": constants.BUS_FLIGHT
+    },
+    {
+        "name": "Flugrabatt",
+        "discountId": 27,
         "languageId": 3,
         "group": constants.BUS_FLIGHT
     }
