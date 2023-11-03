@@ -71,97 +71,97 @@ const discounts = [
         "id": 12,
         "coef": 0.1,
         "inactivePeriod": null,
-        "busflightId": 1
+        "busflightId": 17
     },
     {
         "id": 13,
         "coef": 0.15,
         "inactivePeriod": null,
-        "busflightId": 2
+        "busflightId": 18
     },
     {
         "id": 14,
         "coef": 0.12,
         "inactivePeriod": null,
-        "busflightId": 3
+        "busflightId": 19
     },
     {
         "id": 15,
         "coef": 0.14,
         "inactivePeriod": null,
-        "busflightId": 4
+        "busflightId": 20
     },
     {
         "id": 16,
         "coef": 0.2,
         "inactivePeriod": null,
-        "busflightId": 5
+        "busflightId": 21
     },
     {
         "id": 17,
         "coef": 0.25,
         "inactivePeriod": null,
-        "busflightId": 6
+        "busflightId": 22
     },
     {
         "id": 18,
         "coef": 0.15,
         "inactivePeriod": null,
-        "busflightId": 7
+        "busflightId": 23
     },
     {
         "id": 19,
         "coef": 0.16,
         "inactivePeriod": null,
-        "busflightId": 8
+        "busflightId": 24
     },
     {
         "id": 20,
         "coef": 0.15,
         "inactivePeriod": null,
-        "busflightId": 9
+        "busflightId": 25
     },
     {
         "id": 21,
         "coef": 0.1,
         "inactivePeriod": null,
-        "busflightId": 10
+        "busflightId": 26
     },
     {
         "id": 22,
         "coef": 0.18,
         "inactivePeriod": null,
-        "busflightId": 11
+        "busflightId": 27
     },
     {
         "id": 23,
         "coef": 0.25,
         "inactivePeriod": null,
-        "busflightId": 12
+        "busflightId": 28
     },
     {
         "id": 24,
         "coef": 0.2,
         "inactivePeriod": null,
-        "busflightId": 13
+        "busflightId": 29
     },
     {
         "id": 25,
         "coef": 0.15,
         "inactivePeriod": null,
-        "busflightId": 14
+        "busflightId": 30
     },
     {
         "id": 26,
         "coef": 0.2,
         "inactivePeriod": null,
-        "busflightId": 15
+        "busflightId": 31
     },
     {
         "id": 27,
         "coef": 0.12,
         "inactivePeriod": null,
-        "busflightId": 16
+        "busflightId": 32
     }
 
 ];

@@ -10,6 +10,7 @@ const { createClient } = require("redis");
 const Fingerprint = require("express-fingerprint");
 const path = require("path");
 const validate = require("validate.js");
+const fetch = require("node-fetch");
 
 const app = express();
 
@@ -270,6 +271,19 @@ app.use("/api/insert-values", async function(req, res, next) {
         return res.json({status: "ok", data: "ok"});
     } catch (err) {
         return next(err);
+    }
+});
+
+
+app.use("/api/test", async function(req, res, next) {
+    try {
+        const currenciesExchangeUrl = "https://api.privatbank.ua/p24api/pubinfo?exchange&json&coursid=11";
+        const result = await fetch(currenciesExchangeUrl);
+        const data = await result.json();
+        console.log(data);
+        res.json({"status": "ok"});
+    } catch(err) {
+        console.log(err);
     }
 });
 

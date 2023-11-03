@@ -38,7 +38,7 @@ router.post("/register",
 
 router.post("/login", async (req, res, next) => {
     try {
-        const {email, password} = req.body;
+        const { email, password } = req.body;
         const deviceFingerprint = req.fingerprint?.hash;
         const userData = await login(email, password, deviceFingerprint);
         res.cookie("refreshToken", userData?.refreshToken, {
@@ -94,10 +94,9 @@ router.get("/refresh", async (req, res, next) => {
     
 });
 
-router.get("/test", async (req, res, next) => {
-
-    res.json({status: "ok", data: req.fingerprint?.hash});
-});
+// router.get("/test", async (req, res, next) => {
+//     res.json({status: "ok", data: req.fingerprint?.hash});
+// });
 
 
 module.exports = router

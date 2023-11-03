@@ -213,7 +213,7 @@ div.ticket-bus-container
     .ticket-bus-inner .image img,
     .carrier img {
       width: 100%;
-      max-width: 120px;
+      max-width: 100px;
       display: block;
     }
     .title span.share-icon {
@@ -570,7 +570,12 @@ div.ticket-bus-container
               th(colspan="9" style="text-align: left; font-weight: 700;padding-top: 10px;font-size:13px;color:#3256a4;")
                 = translations.inGeneralText
               td(style="padding-top: 10px; font-size:13px;color:#3256a4;")
-                = data.price
+                if data.convertedPrice !== data.price && data.convertedPrice !== 0
+                  = data.price
+                  br
+                  = "(" + data.convertedPrice + " UAH)"
+                else
+                  = data.price
       .ticket-info
         .ticket-info-container
           .ticket-data.ticket-info-block
@@ -584,8 +589,9 @@ div.ticket-bus-container
               i.ico
               span
                 = translations.ticketNumberText
+              - let ticketId = data.ticket.id; while(String(ticketId).length < 6) ticketId = "0" + ticketId;
               p
-                = data.ticket.uuid
+                = ticketId
             div
               i.ico
               span

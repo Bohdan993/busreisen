@@ -13,7 +13,7 @@ async function generatePDFTicket(signature, html){
     const pdfPath = path.resolve("assets", "tickets", pdfName);
     const pdfOptions = {
         path: pdfPath,
-        margin: {top: "20px", bottom: "20px", left: "5px", right: "5px"},
+        margin: {top: "10px", bottom: "10px", left: "5px", right: "5px"},
         printBackground: true,
         format: 'A4',
     };
@@ -37,6 +37,7 @@ async function generateHTMLTicket(
         cities,
         signature,
         price,
+        convertedPrice = 0,
         currencyAbbr,
         passangersInfoData,
         dates,
@@ -74,6 +75,7 @@ async function generateHTMLTicket(
                             termsOfUsePath: template === "full-ticket.pug" ? termsOfUsePath : null,
                             data: {
                                 price,
+                                convertedPrice,
                                 currencyAbbr,
                                 passangersInfo: passangersInfoData, 
                                 startDate: dates?.departure, 

@@ -46,11 +46,12 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
 
         const decodedData = Buffer.from(data, "base64").toString("utf-8");
         
-        const { currency: currencyAbbr, amount: price } = JSON.parse(decodedData);
+        const { currency: currencyAbbr, amount: price, info } = JSON.parse(decodedData);
         const adultPassangerRegex = new RegExp("^adult-passanger-[0-9]+");
         const childPassangerRegex = new RegExp("^child-passanger-[0-9]+");
         const passangersInfoData = Object.entries(passangersInfo);
         const children = passangersInfoData.filter(passangerArr => childPassangerRegex.test(passangerArr?.[0]));
+        const { originalCurrency, originalPrice } = JSON.parse(info);
 
         let ticket = await TicketsModel.create({
             "dateOfDeparture": startDate,
@@ -178,8 +179,9 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
             languageCode,
             cities: selectedBusFlight.cities,
             signature,
-            price,
-            currencyAbbr,
+            price: originalPrice,
+            convertedPrice: price,
+            currencyAbbr: originalCurrency,
             passangersInfoData,
             dates: selectedBusFlight.dates,
             places: selectedBusFlight.places,

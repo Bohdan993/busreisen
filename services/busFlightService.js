@@ -188,13 +188,14 @@ function calcBusFlightPrice({
 } = {}){
     const priceForwards = price.find(el => parseInt(el?.firstCityId) ===  parseInt(originId));
     const priceBackwards = price.find(el => parseInt(el?.firstCityId) ===  parseInt(destinationId));
+
     
     const calcPrice = (el?.discount || busFlights?.resultTo?.[ind]?.discount) ? {
         ...priceForwards,
         "priceOneWay": Math.round(priceForwards.priceOneWay * (1 - parseFloat(el?.discount?.coef || 0))),
         "priceOneWayFull": priceForwards.priceOneWay,
-        "priceRoundTrip": Math.round((priceForwards.priceRoundTrip / 2) * (1 - parseFloat(el?.discount?.coef || 0))) + 
-        Math.round((priceBackwards.priceRoundTrip / 2) * (1 - parseFloat(busFlights?.resultTo?.[ind]?.discount?.coef || 0))),
+        "priceRoundTrip": Math.round((priceForwards.priceRoundTrip / 2) * (1 - parseFloat(el?.discount?.coef || 0)) + 
+        (priceBackwards.priceRoundTrip / 2) * (1 - parseFloat(busFlights?.resultTo?.[ind]?.discount?.coef || 0))),
         "priceRoundTripFull": Math.round((priceForwards.priceRoundTrip / 2)) + Math.round((priceBackwards.priceRoundTrip / 2)),
         "alternativeOneHalfRoundTripPrice": Math.round((priceForwards.priceRoundTrip / 2) * (1 - parseFloat(el?.discount?.coef || 0))),
         "alternativeOneHalfRoundTripPriceFull": Math.round((priceForwards.priceRoundTrip / 2))
@@ -275,6 +276,7 @@ function transformBusFlights(
                     (((Number(el?.discount?.coef || 0) * 100) + (Number(busFlights?.resultTo?.[ind]?.discount?.coef || 0) * 100)) / 2) : 
                     (Number(el?.discount?.coef || 0) * 100)
                 };
+
 
                 if(isAlternativeBusFlights) {
                     resultObj.purePriceFull = (!(isSpecialDate(endDate)) || isRound(endDate)) ? `${calcPrice?.alternativeOneHalfRoundTripPriceFull}` : isOneWay(endDate) ? `${calcPrice?.priceOneWayFull}` : `${calcPrice?.priceRoundTripFull}`;
