@@ -2,30 +2,31 @@ const { Op } = require("sequelize");
 const validate = require("validate.js");
 const DiscountModel = require("../models/discount");
 const DiscountAttributesModel = require("../models/discountAttributes");
-const { isEmptyObject } = require("../helpers");
+const { isEmptyObject, subtractYears } = require("../helpers");
 const { mapDiscounts, filterByDateDiscounts } = require("./discountService");
 const constants = require("../helpers/constants");
-
 
 async function transformPassangersData(data, price, languageId){
 
     const passangersData = Object.entries(data || []);
 
     let discounts = await DiscountModel.findAll({
-        attributes: ["id", "coef", "inactivePeriod"],
+        attributes: ["id", "coef", "inactivePeriod", "group"],
+        where: {
+            group: {
+                [Op.not]: constants.BUS_FLIGHT
+            }
+        },
         order: [
             ["id", "ASC"],
         ],
         include: [
             {
                 model: DiscountAttributesModel,
-                attributes: ["group", "name"],
+                attributes: [/*"group",*/ "name"],
                 where: {
                     languageId: {
                         [Op.eq]: languageId
-                    },
-                    group: {
-                        [Op.not]: constants.BUS_FLIGHT
                     }
                 }
             }
@@ -83,19 +84,19 @@ async function transformPassangersData(data, price, languageId){
     return transformedData;
 }
 
-async function validatePassangersData(data, translations){
+async function validatePassangersData(data, translations, startDate){
     const dataToValidate = Object.values(data).reduce((acc, curr) => acc = {...acc, ...curr} , {});
-    const constraints = await createValidateConstraints(data, dataToValidate, translations);
+    const constraints = await createValidateConstraints(data, dataToValidate, translations, startDate);
     const errors = validate(dataToValidate, constraints) || {};
 
     if(!isEmptyObject(errors)) {
-        return {status: "error", data: errors}
+        return { status: "error", data: errors }
     }
 
-    return {status: "ok", data: data}
+    return { status: "ok", data: data }
 };
 
-async function createValidateConstraints(data, dataToValidate, translations){
+async function createValidateConstraints(data, dataToValidate, translations, startDate){
     const additionalPhoneRegex = new RegExp("^phone-additional-[0-9]+");
     const phoneRegex = new RegExp("^phone-[0-9]+");
     const nameRegex = new RegExp("^name-[0-9]+");
@@ -107,25 +108,15 @@ async function createValidateConstraints(data, dataToValidate, translations){
     const constraints = {};
 
     let discounts = await DiscountModel.findAll({
-        attributes: ["id"],
+        attributes: ["id", "coef", "group", "maxAge", "minAge"],
+        where: {
+            group: {
+                [Op.not]: constants.BUS_FLIGHT
+            }
+        },
         order: [
             ["id", "ASC"],
-        ],
-        include: [
-            {
-                model: DiscountAttributesModel,
-                attributes: ["group"],
-                where: {
-                    languageId: {
-                        [Op.eq]: 1
-                    },
-                    group: {
-                        [Op.not]: constants.BUS_FLIGHT
-                    }
-                }
-            }
-        ],
-
+        ]
     });
 
     discounts = discounts?.map(discount => discount?.toJSON());
@@ -143,16 +134,22 @@ async function createValidateConstraints(data, dataToValidate, translations){
         .concat(defaultDiscountId, bothDiscountIds);
 
         for(let key in data[passangerType]) {
-            
+            const index = key.replace(/\D+/g, "");
+            const currDiscount = discounts
+            .filter(
+                elem => elem[1].find(el => parseInt(el?.id) === parseInt(dataToValidate["discount-" + index]))
+                )?.[0]?.[1]
+            .find(el => parseInt(el?.id) === parseInt(dataToValidate["discount-" + index]));
+
             if(additionalPhoneRegex.test(key) && dataToValidate[key] !== "") {
                 constraints[key] = {
                     format: {
                         pattern: /^\+380([5-9][0-9]\d{7})$|^\+49(\d{10,11})$/,
-                        message: translations?.validationErrors?.["1"]
+                        message: `^${translations?.validationErrors?.["1"]}`
                     },
                     numericality: {
                         onlyInteger: true,
-                        notInteger: translations?.validationErrors?.["2"]
+                        notInteger: `^${translations?.validationErrors?.["2"]}`
                     }
                 };
             }
@@ -161,21 +158,21 @@ async function createValidateConstraints(data, dataToValidate, translations){
                 constraints[key] = {
                     presence: {
                         allowEmpty: false,
-                        message: translations?.validationErrors?.["3"]
+                        message: `^${translations?.validationErrors?.["3"]}`
                     },
                     format: {
                         pattern: /^\+380([5-9][0-9]\d{7})$|^\+49(\d{10,11})$/,
-                        message: translations?.validationErrors?.["1"]
+                        message: `^${translations?.validationErrors?.["1"]}`
                     },
                     numericality: {
                         onlyInteger: true,
-                        notInteger: translations?.validationErrors?.["2"]
+                        notInteger: `^${translations?.validationErrors?.["2"]}`
                     },
                     exclusion: {
                         within: Object.entries(dataToValidate)
                             .filter(([k, _]) => (phoneRegex.test(k) && Number(k.replace(/^\D+/gm, '')) < Number(key.replace(/^\D+/gm, ''))))
                             .map(el => el?.[1]),
-                        message: translations?.validationErrors?.["4"]
+                        message: `^${translations?.validationErrors?.["4"]}`
                     }
                 };
             }
@@ -184,15 +181,15 @@ async function createValidateConstraints(data, dataToValidate, translations){
                 constraints[key] = {
                     presence: {
                         allowEmpty: false,
-                        message: translations?.validationErrors?.["3"]
+                        message: `^${translations?.validationErrors?.["3"]}`
                     },
                     format: {
                         pattern: /^[\u0400-\u04FF-]+|[a-zA-ZäöüßÄÖÜẞ-]+$/,
-                        message: translations?.validationErrors?.["5"]
+                        message: `^${translations?.validationErrors?.["5"]}`
                     },
                     length: {
                         minimum: 3,
-                        tooShort: translations?.validationErrors?.["6"]
+                        tooShort: `^${translations?.validationErrors?.["6"]}`
                     }
                 };
             }
@@ -201,15 +198,15 @@ async function createValidateConstraints(data, dataToValidate, translations){
                 constraints[key] = {
                     presence: {
                         allowEmpty: false,
-                        message: translations?.validationErrors?.["3"]
+                        message: `^${translations?.validationErrors?.["3"]}`
                     },
                     format: {
                         pattern: /^[\u0400-\u04FF-]+|[a-zA-ZäöüßÄÖÜẞ-]+$/,
-                        message: translations?.validationErrors?.["5"]
+                        message: `^${translations?.validationErrors?.["5"]}`
                     },
                     length: {
                         minimum: 2,
-                        tooShort: translations?.validationErrors?.["6"]
+                        tooShort: `^${translations?.validationErrors?.["6"]}`
                     }
                 };
             }
@@ -218,10 +215,10 @@ async function createValidateConstraints(data, dataToValidate, translations){
                 constraints[key] = {
                     presence: {
                         allowEmpty: false,
-                        message: translations?.validationErrors?.["3"]
+                        message: `^${translations?.validationErrors?.["3"]}`
                     },
                     email: {
-                        message: translations?.validationErrors?.["7"]
+                        message: `^${translations?.validationErrors?.["7"]}`
                     }
                 };
             }
@@ -230,24 +227,26 @@ async function createValidateConstraints(data, dataToValidate, translations){
                 constraints[key] = {
                     numericality: {
                         onlyInteger: true,
-                        notInteger: translations?.validationErrors?.["8"]
+                        notInteger: `^${translations?.validationErrors?.["8"]}`
                     },
                     inclusion: {
                         within: discountIds,
-                        message: translations?.validationErrors?.["8"]
+                        message: `^${translations?.validationErrors?.["8"]}`
                     }
                 };
+
+                
             }
 
             if(cardDiscountRegex.test(key)){
                 constraints[key] = {
                     presence: {
                         allowEmpty: false,
-                        message: translations?.validationErrors?.["3"]
+                        message: `^${translations?.validationErrors?.["3"]}`
                     },
                     numericality: {
                         onlyInteger: true,
-                        message: translations?.validationErrors?.["10"]
+                        message: `^${translations?.validationErrors?.["10"]}`
                     }
                 };
             }
@@ -256,13 +255,23 @@ async function createValidateConstraints(data, dataToValidate, translations){
                 constraints[key] = {
                     presence: {
                         allowEmpty: false,
-                        message: translations?.validationErrors?.["3"]
+                        message: `^${translations?.validationErrors?.["3"]}`
                     },
                     datetime: {
                         dateOnly: true,
-                        message: translations?.validationErrors?.["9"]
+                        notValid: `^${translations?.validationErrors?.["9"]}`
                     }
                 };
+
+                if(currDiscount?.maxAge) {
+                    constraints[key].datetime.earliest = subtractYears(new Date(startDate), parseInt(currDiscount.maxAge));
+                    constraints[key].datetime.tooEarly = `^${translations?.validationErrors?.["11"]}`;
+                }
+          
+                if(currDiscount?.minAge){
+                    constraints[key].datetime.latest = subtractYears(new Date(startDate), parseInt(currDiscount.minAge));
+                    constraints[key].datetime.tooLate = `^${translations?.validationErrors?.["11"]}`;
+                }
             }
         }
     }

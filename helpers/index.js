@@ -85,6 +85,11 @@ function includeFunc(pug, pathToPug, options = {}){
     return pug.renderFile(pathToPug, options); //render the pug file
 }
 
+function subtractYears(date, years) {
+    date.setFullYear(date.getFullYear() - years);
+    return date;
+}
+
  module.exports = {
     isSpecialDate,
     isOneWay,
@@ -99,5 +104,6 @@ function includeFunc(pug, pathToPug, options = {}){
     encodeHTMLEntities,
     decodeHTMLEntities,
     base64Encode,
-    includeFunc
+    includeFunc,
+    subtractYears
  }

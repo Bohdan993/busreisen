@@ -94,21 +94,22 @@ router.get("/", validateDates, async (req, res, next) => {
         },
         {
           model: DiscountModel,
-          attributes: ["id", "coef", "busflightId"],
-          include: [
-            {
-              model: DiscountAttributesModel,
-              attributes: ["group"],
-              where: {
-                languageId: {
-                  [Op.eq]: 1,
-                },
-                group: {
-                  [Op.eq]: constants.BUS_FLIGHT,
-                },
-              },
-            },
-          ],
+          attributes: ["id", "coef", "busflightId", "group"],
+          // where: {
+          //   group: {
+          //     [Op.eq]: constants.BUS_FLIGHT,
+          //   },
+          // },
+          // include: [
+          //   {
+          //     model: DiscountAttributesModel,
+          //     where: {
+          //       languageId: {
+          //         [Op.eq]: 1,
+          //       }
+          //     },
+          //   },
+          // ],
         },
       ],
       order: [
@@ -408,8 +409,11 @@ router.get(
       }
 
 
-      const q = process.env.DB_DIALECT === "mysql" ? "SELECT `busflight`.`id`, `busflight`.`allSeats`, `busflight`.`freeSeats`, `busflight`.`routeId`, `busflight`.`dateOfDeparture`, `route`.`id` AS `route.id`, `route`.`routePath` AS `route.routePath`, `route`.`createdAt` AS `route.createdAt`, `route`.`updatedAt` AS `route.updatedAt`, `route->RouteAttributes`.`id` AS `route.RouteAttributes.id`, `route->RouteAttributes`.`name` AS `route.RouteAttributes.name`,`discount`.`id` AS `discount.id`, `discount`.`coef` AS `discount.coef`, `discount`.`busflightId` AS `discount.busflightId`, `discount->DiscountAttributes`.`languageId` AS `discount.DiscountAttributes.languageId`, `discount->DiscountAttributes`.`discountId` AS `discount.DiscountAttributes.discountId`, `discount->DiscountAttributes`.`group` AS `discount.DiscountAttributes.group` FROM `busflights` AS `busflight` INNER JOIN ( `routes` AS `route` INNER JOIN `RouteAttributes` AS `route->RouteAttributes` ON `route`.`id` = `route->RouteAttributes`.`routeId` AND `route->RouteAttributes`.`languageId` = :languageId ) ON `busflight`.`routeId` = `route`.`id` AND (JSON_CONTAINS(`routePath`, JSON_OBJECT('cityId', :originId), '$.onboarding') = 1 AND JSON_CONTAINS(`routePath`, JSON_OBJECT('cityId', :destinationId), '$.outboarding') = 1) LEFT OUTER JOIN ( `discounts` AS `discount` INNER JOIN `DiscountAttributes` AS `discount->DiscountAttributes` ON `discount`.`id` = `discount->DiscountAttributes`.`discountId` AND `discount->DiscountAttributes`.`languageId` = :languageId AND `discount->DiscountAttributes`.`group` = :group ) ON `busflight`.`id` = `discount`.`busflightId` WHERE `busflight`.`dateOfDeparture` > :dateOfDeparture ORDER BY `busflight`.`dateOfDeparture` ASC, `busflight`.`routeId` ASC LIMIT :limit" :
-      'SELECT "busflight"."id", "busflight"."allSeats", "busflight"."freeSeats", "busflight"."routeId", "busflight"."dateOfDeparture", "route"."id" AS "route.id", "route"."routePath" AS "route.routePath", "route"."createdAt" AS "route.createdAt", "route"."updatedAt" AS "route.updatedAt", "route->RouteAttributes"."id" AS "route.RouteAttributes.id", "route->RouteAttributes"."name" AS "route.RouteAttributes.name", "discount"."id" AS "discount.id", "discount"."coef" AS "discount.coef", "discount"."busflightId" AS "discount.busflightId", "discount->DiscountAttributes"."languageId" AS "discount.DiscountAttributes.languageId", "discount->DiscountAttributes"."discountId" AS "discount.DiscountAttributes.discountId", "discount->DiscountAttributes"."group" AS "discount.DiscountAttributes.group" FROM "busflights" AS "busflight" INNER JOIN ( "routes" AS "route" INNER JOIN "RouteAttributes" AS "route->RouteAttributes" ON "route"."id" = "route->RouteAttributes"."routeId" AND "route->RouteAttributes"."languageId" = :languageId ) ON "busflight"."routeId" = "route"."id" AND ("route"."routePath"::json -> \'onboarding\')::jsonb @> \'[{"cityId":' + parseInt(originId) + '}]\'::jsonb AND ("route"."routePath"::json -> \'outboarding\')::jsonb @> \'[{"cityId":' + parseInt(destinationId) + '}]\'::jsonb LEFT OUTER JOIN ( "discounts" AS "discount" INNER JOIN "DiscountAttributes" AS "discount->DiscountAttributes" ON "discount"."id" = "discount->DiscountAttributes"."discountId" AND "discount->DiscountAttributes"."languageId" = :languageId AND "discount->DiscountAttributes"."group" = :group ) ON "busflight"."id" = "discount"."busflightId" WHERE "busflight"."dateOfDeparture" > :dateOfDeparture ORDER BY "busflight"."dateOfDeparture" ASC, "busflight"."routeId" ASC LIMIT :limit'; 
+      // const q = process.env.DB_DIALECT === "mysql" ? "SELECT `busflight`.`id`, `busflight`.`allSeats`, `busflight`.`freeSeats`, `busflight`.`routeId`, `busflight`.`dateOfDeparture`, `route`.`id` AS `route.id`, `route`.`routePath` AS `route.routePath`, `route`.`createdAt` AS `route.createdAt`, `route`.`updatedAt` AS `route.updatedAt`, `route->RouteAttributes`.`id` AS `route.RouteAttributes.id`, `route->RouteAttributes`.`name` AS `route.RouteAttributes.name`,`discount`.`id` AS `discount.id`, `discount`.`coef` AS `discount.coef`, `discount`.`busflightId` AS `discount.busflightId`, `discount->DiscountAttributes`.`languageId` AS `discount.DiscountAttributes.languageId`, `discount->DiscountAttributes`.`discountId` AS `discount.DiscountAttributes.discountId`, `discount->DiscountAttributes`.`group` AS `discount.DiscountAttributes.group` FROM `busflights` AS `busflight` INNER JOIN ( `routes` AS `route` INNER JOIN `RouteAttributes` AS `route->RouteAttributes` ON `route`.`id` = `route->RouteAttributes`.`routeId` AND `route->RouteAttributes`.`languageId` = :languageId ) ON `busflight`.`routeId` = `route`.`id` AND (JSON_CONTAINS(`routePath`, JSON_OBJECT('cityId', :originId), '$.onboarding') = 1 AND JSON_CONTAINS(`routePath`, JSON_OBJECT('cityId', :destinationId), '$.outboarding') = 1) LEFT OUTER JOIN ( `discounts` AS `discount` INNER JOIN `DiscountAttributes` AS `discount->DiscountAttributes` ON `discount`.`id` = `discount->DiscountAttributes`.`discountId` AND `discount->DiscountAttributes`.`languageId` = :languageId AND `discount->DiscountAttributes`.`group` = :group ) ON `busflight`.`id` = `discount`.`busflightId` WHERE `busflight`.`dateOfDeparture` > :dateOfDeparture ORDER BY `busflight`.`dateOfDeparture` ASC, `busflight`.`routeId` ASC LIMIT :limit" :
+      // 'SELECT "busflight"."id", "busflight"."allSeats", "busflight"."freeSeats", "busflight"."routeId", "busflight"."dateOfDeparture", "route"."id" AS "route.id", "route"."routePath" AS "route.routePath", "route"."createdAt" AS "route.createdAt", "route"."updatedAt" AS "route.updatedAt", "route->RouteAttributes"."id" AS "route.RouteAttributes.id", "route->RouteAttributes"."name" AS "route.RouteAttributes.name", "discount"."id" AS "discount.id", "discount"."coef" AS "discount.coef", "discount"."busflightId" AS "discount.busflightId", "discount->DiscountAttributes"."languageId" AS "discount.DiscountAttributes.languageId", "discount->DiscountAttributes"."discountId" AS "discount.DiscountAttributes.discountId", "discount->DiscountAttributes"."group" AS "discount.DiscountAttributes.group" FROM "busflights" AS "busflight" INNER JOIN ( "routes" AS "route" INNER JOIN "RouteAttributes" AS "route->RouteAttributes" ON "route"."id" = "route->RouteAttributes"."routeId" AND "route->RouteAttributes"."languageId" = :languageId ) ON "busflight"."routeId" = "route"."id" AND ("route"."routePath"::json -> \'onboarding\')::jsonb @> \'[{"cityId":' + parseInt(originId) + '}]\'::jsonb AND ("route"."routePath"::json -> \'outboarding\')::jsonb @> \'[{"cityId":' + parseInt(destinationId) + '}]\'::jsonb LEFT OUTER JOIN ( "discounts" AS "discount" INNER JOIN "DiscountAttributes" AS "discount->DiscountAttributes" ON "discount"."id" = "discount->DiscountAttributes"."discountId" AND "discount->DiscountAttributes"."languageId" = :languageId AND "discount->DiscountAttributes"."group" = :group ) ON "busflight"."id" = "discount"."busflightId" WHERE "busflight"."dateOfDeparture" > :dateOfDeparture ORDER BY "busflight"."dateOfDeparture" ASC, "busflight"."routeId" ASC LIMIT :limit'; 
+
+      const q = process.env.DB_DIALECT === "mysql" ? "SELECT `busflight`.`id`, `busflight`.`allSeats`, `busflight`.`freeSeats`, `busflight`.`routeId`, `busflight`.`dateOfDeparture`, `route`.`id` AS `route.id`, `route`.`routePath` AS `route.routePath`, `route`.`createdAt` AS `route.createdAt`, `route`.`updatedAt` AS `route.updatedAt`, `route->RouteAttributes`.`id` AS `route.RouteAttributes.id`, `route->RouteAttributes`.`name` AS `route.RouteAttributes.name`,`discount`.`id` AS `discount.id`, `discount`.`coef` AS `discount.coef`, `discount`.`busflightId` AS `discount.busflightId`, `discount`.`group` AS `discount.group` FROM `busflights` AS `busflight` INNER JOIN ( `routes` AS `route` INNER JOIN `RouteAttributes` AS `route->RouteAttributes` ON `route`.`id` = `route->RouteAttributes`.`routeId` AND `route->RouteAttributes`.`languageId` = :languageId ) ON `busflight`.`routeId` = `route`.`id` AND (JSON_CONTAINS(`routePath`, JSON_OBJECT('cityId', :originId), '$.onboarding') = 1 AND JSON_CONTAINS(`routePath`, JSON_OBJECT('cityId', :destinationId), '$.outboarding') = 1) LEFT OUTER JOIN `discounts` AS `discount` ON `busflight`.`id` = `discount`.`busflightId` AND `discount`.`group` = :group WHERE `busflight`.`dateOfDeparture` > :dateOfDeparture ORDER BY `busflight`.`dateOfDeparture` ASC, `busflight`.`routeId` ASC LIMIT :limit" :
+      'SELECT "busflight"."id", "busflight"."allSeats", "busflight"."freeSeats", "busflight"."routeId", "busflight"."dateOfDeparture", "route"."id" AS "route.id", "route"."routePath" AS "route.routePath", "route"."createdAt" AS "route.createdAt", "route"."updatedAt" AS "route.updatedAt", "route->RouteAttributes"."id" AS "route.RouteAttributes.id", "route->RouteAttributes"."name" AS "route.RouteAttributes.name", "discount"."id" AS "discount.id", "discount"."coef" AS "discount.coef", "discount"."busflightId" AS "discount.busflightId", "discount"."group" AS "discount.group" FROM "busflights" AS "busflight" INNER JOIN ( "routes" AS "route" INNER JOIN "RouteAttributes" AS "route->RouteAttributes" ON "route"."id" = "route->RouteAttributes"."routeId" AND "route->RouteAttributes"."languageId" = :languageId ) ON "busflight"."routeId" = "route"."id" AND ("route"."routePath"::json -> \'onboarding\')::jsonb @> \'[{"cityId":' + parseInt(originId) + '}]\'::jsonb AND ("route"."routePath"::json -> \'outboarding\')::jsonb @> \'[{"cityId":' + parseInt(destinationId) + '}]\'::jsonb LEFT OUTER JOIN "discounts" AS "discount" ON "busflight"."id" = "discount"."busflightId" AND "discount"."group" = :group WHERE "busflight"."dateOfDeparture" > :dateOfDeparture ORDER BY "busflight"."dateOfDeparture" ASC, "busflight"."routeId" ASC LIMIT :limit';
 
       busFlights = await sequelize.query(
         q,
@@ -420,8 +424,8 @@ router.get(
             dateOfDeparture: isValidDate(new Date(startDate))
               ? startDate
               : null,
-            originId: parseInt(originId),
-            destinationId: parseInt(destinationId),
+            originId: parseInt(originId) || 0,
+            destinationId: parseInt(destinationId) || 0,
             limit: limit,
             languageId: lang?.id,
             group: constants.BUS_FLIGHT,
@@ -444,13 +448,13 @@ router.get(
             },
             {
               model: DiscountModel,
-              attributes: ["id", "coef", "busflightId"],
-              include: [
-                {
-                  model: DiscountAttributesModel,
-                  attributes: ["group"],
-                },
-              ],
+              attributes: ["id", "coef", "busflightId", "group"],
+              // include: [
+              //   {
+              //     model: DiscountAttributesModel,
+              //     attributes: ["group"],
+              //   },
+              // ],
             },
           ],
         })
@@ -732,7 +736,7 @@ router.post("/select", [checkIfSessionIsStarted], async (req, res, next) => {
     const { id, isMain = true, direction = constants.FORWARDS } = req?.body;
 
     let selectedBusFlight = null;
-    console.log("IS MAIN", isMain);
+
     if (isMain) {
       selectedBusFlight = req.session?.busFlights?.find((el) => {
         return String(el?.id) === String(id);
@@ -807,8 +811,6 @@ router.post("/select", [checkIfSessionIsStarted], async (req, res, next) => {
     if (!selectedBusFlight) {
       throw new Error();
     }
-
-    console.log("SEL BF", selectedBusFlight);
 
     req.session.selectedBusFlight = selectedBusFlight;
     req.session.startDate = selectedBusFlight.dates.departurePure;

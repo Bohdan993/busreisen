@@ -39,7 +39,12 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req,
         });
 
         discounts = await DiscountModel.findAll({
-            attributes: ["id", "coef", "inactivePeriod"],
+            attributes: ["id", "coef", "inactivePeriod", "group", "maxAge", "minAge"],
+            where: {
+                group: {
+                    [Op.not]: constants.BUS_FLIGHT
+                }
+            },
             include: [
                 {
                     model: LanguagesModel,
@@ -55,13 +60,10 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req,
                 },
                 {
                     model: DiscountAttributesModel,
-                    attributes: ["name", "group", "languageId"],
+                    attributes: ["name", /* "group",*/ "languageId"],
                     where: {
                         languageId: {
                             [Op.eq]: lang?.id
-                        },
-                        group: {
-                            [Op.not]: constants.BUS_FLIGHT
                         }
                     }
                 }
@@ -71,6 +73,8 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req,
             ]
 
         });
+
+        console.log("DISCOUNTR", discounts);
 
         discounts = discounts?.map(discount => discount?.toJSON());
         discounts = mapDiscounts(discounts);
@@ -117,6 +121,10 @@ router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected/*, c
             passangersData
         } = req?.body;
 
+        const {
+            startDate
+        } = req?.session;
+
         const lang = await LanguagesModel.findOne({
             where: {
               code: {
@@ -126,11 +134,10 @@ router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected/*, c
           });
       
         const passangerTranslations = loadLanguageFile("passangers-form.js", lang?.code);
-        const validData = await validatePassangersData(passangersData, passangerTranslations);
+        const validData = await validatePassangersData(passangersData, passangerTranslations, startDate);
 
         if(validData.status === "error") {
             throw APIError.ValidationError("validation error", validData.data);
-            // return res.status(422).json({status: "validation error", errors: validData.data});
         }
 
         const ticketPrice = req.session.selectedBusFlight.purePrice;

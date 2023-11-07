@@ -25,16 +25,17 @@ const translations = {
         "weekStart": 1
     },
     "validationErrors": {
-        "1": "Falsche Telefonnummer",
-        "2": "Darf nur Zahlen enthalten",
-        "3": "Dieses Feld ausfüllen",
-        "4": "Sie haben diese Telefonnummer bereits für den zweiten Passagier verwendet",
-        "5": "Darf nur Buchstaben enthalten",
-        "6": "Muss mindestens %{count} Buchstaben enthalten",
-        "7": "Falsche E-Mail",
-        "8": "Falscher Rabatt",
-        "9": "Falsches Datum",
-        "10": "Die Zahl darf nur aus Zahlen bestehen"
+        "1": "Falsche Telefonnummer.",
+        "2": "Darf nur Zahlen enthalten.",
+        "3": "Dieses Feld ausfüllen.",
+        "4": "Sie haben diese Telefonnummer bereits für den zweiten Passagier verwendet.",
+        "5": "Darf nur Buchstaben enthalten.",
+        "6": "Muss mindestens %{count} Buchstaben enthalten.",
+        "7": "Falsche E-Mail.",
+        "8": "Falscher Rabatt.",
+        "9": "Falsches Datum.",
+        "10": "Die Zahl darf nur aus Zahlen bestehen.",
+        "11": "Der ausgewählte Rabatt ist nicht altersgerecht. %%[add-field:discount] %%[remove-field:date-of-birth]"
     }
 }
 

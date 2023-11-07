@@ -252,18 +252,20 @@ app.use("/api/insert-values", async function(req, res, next) {
                 await Discount.create({
                     "id": discount?.id,
                     "coef": discount?.coef,
+                    "group": discount?.group,
                     "inactivePeriod": discount?.inactivePeriod,
+                    "maxAge": discount?.maxAge,
+                    "minAge": discount?.minAge, 
                     "busflightId": discount?.busflightId,
-                    "order": discount?.order
+                    "order": discount?.order, 
                 });
             }
 
             for(const discountAttribute of discountAttributes) {
                 await DiscountAttributes.create({
-                    name: discountAttribute?.name,
-                    discountId: discountAttribute?.discountId,
-                    languageId: discountAttribute?.languageId,
-                    group: discountAttribute?.group
+                    "name": discountAttribute?.name,
+                    "discountId": discountAttribute?.discountId,
+                    "languageId": discountAttribute?.languageId,
                 });
             }
         }
@@ -280,7 +282,6 @@ app.use("/api/test", async function(req, res, next) {
         const currenciesExchangeUrl = "https://api.privatbank.ua/p24api/pubinfo?exchange&json&coursid=11";
         const result = await fetch(currenciesExchangeUrl);
         const data = await result.json();
-        console.log(data);
         res.json({"status": "ok"});
     } catch(err) {
         console.log(err);

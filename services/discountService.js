@@ -3,7 +3,8 @@ const { transformDateToShortString } = require("../helpers");
 function mapDiscounts(discounts) {
     const uniq = {};
     discounts.forEach(discount => {
-        const key = discount?.DiscountAttributes?.[0]?.group;
+        // const key = discount?.DiscountAttributes?.[0]?.group;
+        const key = discount?.group;
         if(key && uniq[key]) {
             uniq[key].push(discount);
         } else {

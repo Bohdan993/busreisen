@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
 const LanguagesModel = require("./language");
 const DiscountsModel = require("./discount");
-const constants = require("../helpers/constants");
+
 
 const DiscountAttributes = sequelize.define("DiscountAttributes", {
     id: {
@@ -12,11 +12,9 @@ const DiscountAttributes = sequelize.define("DiscountAttributes", {
         allowNull: false
     },
     name: {type: DataTypes.STRING, allowNull: false},
-    group: { type: DataTypes.ENUM, values: [constants.ADULTS, constants.CHILDREN, constants.BOTH, constants.BUS_FLIGHT, constants.DISCOUNT_CARD], defaultValue: constants.ADULTS, allowNull: false},
     discountId: {
         type: DataTypes.INTEGER,         
         allowNull: false,
-        // primaryKey: true,
         references: {
             model: DiscountsModel, 
             key: "id",
@@ -25,7 +23,6 @@ const DiscountAttributes = sequelize.define("DiscountAttributes", {
     languageId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        // primaryKey: true,
         references: {
             model: LanguagesModel, 
             key: "id",

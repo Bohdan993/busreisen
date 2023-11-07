@@ -10,20 +10,6 @@ function filterBusFlightsWithFreeSeats({busFlights, numOfPassangers}){
     });
 }
 
-// function checkIfBusFlightsFromOneRouteRouteGroupHaveDiffIds(busFlights){
-//     const obj = {};
-//     busFlights.forEach(bf => {
-//         const groupId = bf?.route?.routePath?.routeGroupId;
-//         if(obj[groupId]) {
-//             obj[groupId].push(bf);
-//         } else {
-//             obj[groupId] = [bf];
-//         }
-//     });
-
-
-// }
-
 function filterBusFlights({ 
     busFlights, 
     originId,

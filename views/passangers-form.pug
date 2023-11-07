@@ -91,11 +91,11 @@ form#booking-passangers-form.booking-passangers-form
                           //- option(value="-1" disabled="" selected="true")= translations.discountText
                           option(value="0" selected="true")= translations.noDiscountText
                           each discount in adultsDiscounts
-                            option(value=`${discount.id}` data-type="adults" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                            option(value=`${discount.id}` data-type="adults" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.DiscountAttributes[0].name
                           each discount in bothDiscounts
-                            option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                            option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.DiscountAttributes[0].name
                           each discount in discountCards
-                            option(value=`${discount.id}` data-type="cards" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                            option(value=`${discount.id}` data-type="cards" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.DiscountAttributes[0].name
                       .input-error= translations.errorText
                       .select-dropdown
               - if(passangersInfo?.[i]?.[1]?.["card-discount-" + (i + 1)])
@@ -159,9 +159,9 @@ form#booking-passangers-form.booking-passangers-form
                           //- option(value="-1" disabled="" selected="true")= translations.discountText
                           option(value="0" selected="true")= translations.noDiscountText
                           each discount in childrenDiscounts
-                            option(value=`${discount.id}` data-type="children" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                            option(value=`${discount.id}` data-type="children" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.DiscountAttributes[0].name
                           each discount in bothDiscounts
-                            option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}`)= discount.DiscountAttributes[0].name
+                            option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.DiscountAttributes[0].name
                       .input-error= translations.errorText
                       .select-dropdown
         .booking-flow__passengers__info
