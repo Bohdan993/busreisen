@@ -1,3 +1,4 @@
+/*TESTING PURPOSES */
 const { Router } = require("express");
 const router = Router();
 const sequelize = require("../../database/models/index").sequelize;
