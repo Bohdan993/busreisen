@@ -12,6 +12,8 @@
 /build
 
 /assets/tickets
+/database/seeders
+
 # misc
 .DS_Store
 .env
