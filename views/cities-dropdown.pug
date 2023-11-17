@@ -3,8 +3,8 @@
     .locations-container
         each country in data
             .locations-container__group(id=`autocomplete-group-${country.country.id}`)
-                p.locations-container__group__title.title.title--3= country.country.countryattrs[0].name
+                p.locations-container__group__title.title.title--3= country.country.CountryAttributes[0].name
                 each city in country.cities
-                    div.autocomplete-option(aria-label=`${city.cityattrs[0].name}` role="option" id=`autocomplete-option-${city.id}` data-currency-symbol=`${city.currency.symbol}` data-currency-abbr=`${city.currency.abbr}`)
+                    div.autocomplete-option(aria-label=`${city.CityAttributes[0].name}` role="option" id=`autocomplete-option-${city.id}` data-currency-symbol=`${city.currency.symbol}` data-currency-abbr=`${city.currency.abbr}`)
                         label.locations-container__location
-                            strong.locations-container__location__name= city.cityattrs[0].name
+                            strong.locations-container__location__name= city.CityAttributes[0].name

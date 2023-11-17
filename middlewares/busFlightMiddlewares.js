@@ -1,8 +1,6 @@
 const { isSpecialDate, isValidDate, loadLanguageFile } = require("../helpers");
+const LanguagesModel = require("../models/language");
 const { Op } = require("sequelize");
-const { 
-    language: Language,
-  } = require("../database/models/index");
 const APIError = require("../exeptions/api-error");
 
 async function validateDates(req, res, next){
@@ -15,7 +13,7 @@ async function validateDates(req, res, next){
         } = req?.query;
         
     
-        const lang = await Language.findOne({
+        const lang = await LanguagesModel.findOne({
             where: {
                 code: {
                     [Op.eq]: languageCode

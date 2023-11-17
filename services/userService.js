@@ -1,15 +1,13 @@
 const {v4: uuidv4} = require("uuid");
+const UsersModel = require("../models/user");
 const { Op } = require("sequelize");
-const { 
-    user: User
-  } = require("../database/models/index");
 const { sendActivationMail } = require("./mailService");
 const { generateTokens, saveToken, removeToken, validateRefreshToken, findToken } = require("./tokenService");
 const AdminAPIError = require("../exeptions/admin/api-error");
 
 
 async function registration(email, password, name, deviceFingerprint) {
-    const candidate = await User.findOne({
+    const candidate = await UsersModel.findOne({
         where: {
             [Op.and] : [
                 {email: email},
@@ -27,7 +25,7 @@ async function registration(email, password, name, deviceFingerprint) {
 
     const hashedPassword = await bcrypt.hash(password, 5);
     const activationLink = uuidv4();
-    const user = await User.create({
+    const user = await UsersModel.create({
         name,
         password: hashedPassword, 
         email,
@@ -45,7 +43,7 @@ async function registration(email, password, name, deviceFingerprint) {
 }
 
 async function activation(activationLink){
-    const user = await User.findOne({
+    const user = await UsersModel.findOne({
         activationLink   
     });
 
@@ -58,7 +56,7 @@ async function activation(activationLink){
 }
 
 async function login(email, password, deviceFingerprint){
-    const candidate = await User.findOne({
+    const candidate = await UsersModel.findOne({
         where: {
             [Op.and] : [
                 {email: email},
@@ -107,7 +105,7 @@ async function refresh(refreshToken, deviceFingerprint){
         throw AdminAPIError.UnauthorizedError();
     }
 
-    const user = await User.findById(userData?.id);
+    const user = await UsersModel.findById(userData?.id);
     const userDataObj = {id: user?.id, name: user?.name, email: user?.email, isActivated: user?.isActivated, role: user?.role};
     const tokens = generateTokens(userDataObj);
 
