@@ -3,7 +3,7 @@ const translations = {
     "toText": "Куди",
     "destinationText": "Відправлення",
     "returnText": "Повернення",
-    "passangerText": "Пасажири",
+    "passengerText": "Пасажири",
     "confirmText":"Пошук",
     "adultTexts": ["дорослий", "дорослих", "дорослих"],
     "childTexts": ["дитина", "дитини", "дітей"],
