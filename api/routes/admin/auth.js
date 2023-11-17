@@ -3,7 +3,7 @@ const {
 } = require("express");
 const { registration, activation, login, logout, refresh } = require("../../../services/userService");
 const router = Router();
-const { body, validationResult } = require("express-validator");
+const {body, validationResult} = require("express-validator");
 const AdminAPIError = require("../../../exeptions/admin/api-error");
 
 

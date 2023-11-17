@@ -273,30 +273,30 @@ div.ticket-bus-container
     height: 20px;
     fill: #fff;
     }
-    .passengers {
+    .passangers {
       padding-top: 25px;
     }
-    .passenger {
+    .passanger {
       margin-bottom: 20px;
     }
-    .passenger-title {
+    .passanger-title {
       font-size: 12px;
       font-weight: 500;
       color: #1b3b7f;
       text-align: center;
     }
-    .passenger-title span {
+    .passanger-title span {
       font-size: 15px;
     }
-    .passenger-name, .passenger-last-name, .passenger-date-of-birth {
+    .passanger-name, .passanger-last-name, .passanger-date-of-birth {
       text-align: left;
     }
-    .passenger-name span, .passenger-last-name span, .passenger-date-of-birth span{
+    .passanger-name span, .passanger-last-name span, .passanger-date-of-birth span{
       display: block;
       padding-bottom: 5px;
       font-size: 12px;
     }
-    .passenger-name p, .passenger-last-name p, .passenger-date-of-birth p{
+    .passanger-name p, .passanger-last-name p, .passanger-date-of-birth p{
       display: block;
       font-size: 15px;
       font-weight: 700;
@@ -446,50 +446,50 @@ div.ticket-bus-container
             div
               p
                 = "** - " + translations.additionalText2 + "."
-      //- .passengers
-      //-   each passenger, ind in data.passengersInfo
-      //-     if passenger[0].includes(constants.ADULT)
-      //-       .passenger
-      //-         p.passenger-title
+      //- .passangers
+      //-   each passanger, ind in data.passangersInfo
+      //-     if passanger[0].includes(constants.ADULT)
+      //-       .passanger
+      //-         p.passanger-title
       //-           span
-      //-             = translations.passengerText + " - " + (ind + 1)
+      //-             = translations.passangerText + " - " + (ind + 1)
       //-           = " (" + translations.adultText + ")"
-      //-         .passenger-name
+      //-         .passanger-name
       //-           span
       //-             = translations.nameText  + ":"
       //-           p
-      //-             = passenger[1]["name-" + (ind + 1)]
-      //-         .passenger-last-name
+      //-             = passanger[1]["name-" + (ind + 1)]
+      //-         .passanger-last-name
       //-           span
       //-             = translations.lastNameText  + ":"
       //-           p
-      //-             = passenger[1]["last-name-" + (ind + 1)]
-      //-         .passenger-date-of-birth
+      //-             = passanger[1]["last-name-" + (ind + 1)]
+      //-         .passanger-date-of-birth
       //-           span
       //-             = translations.dateOfBirthText  + ":"
       //-           p
-      //-             = transformTimestampToDate(passenger[1]["date-of-birth-" + (ind + 1)])
-      //-     if passenger[0].includes(constants.CHILD)
-      //-       .passenger
-      //-         p.passenger-title
+      //-             = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
+      //-     if passanger[0].includes(constants.CHILD)
+      //-       .passanger
+      //-         p.passanger-title
       //-           span
-      //-             = translations.passengerText + " - " + (ind + 1)
+      //-             = translations.passangerText + " - " + (ind + 1)
       //-           = " (" + translations.childText + ")"
-      //-         .passenger-name
+      //-         .passanger-name
       //-           span
       //-             = translations.nameText  + ":"
       //-           p
-      //-             = passenger[1]["name-" + (ind + 1)]
-      //-         .passenger-last-name
+      //-             = passanger[1]["name-" + (ind + 1)]
+      //-         .passanger-last-name
       //-           span
       //-             = translations.lastNameText  + ":"
       //-           p
-      //-             = passenger[1]["last-name-" + (ind + 1)]
-      //-         .passenger-date-of-birth
+      //-             = passanger[1]["last-name-" + (ind + 1)]
+      //-         .passanger-date-of-birth
       //-           span
       //-             = translations.dateOfBirthText  + ":"
       //-           p
-      //-             = transformTimestampToDate(passenger[1]["date-of-birth-" + (ind + 1)])
+      //-             = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
       .image
         img(src=`${qr}` alt="QR code")
   .cta

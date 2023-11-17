@@ -22,10 +22,10 @@ router.get("/", [checkIfSessionIsStarted/*, checkIfSessionIsFinished*/], async (
             currency: {
                 symbol: currencySymbol
             },
-            passengersInfo, 
+            passangersInfo, 
         } = req?.session;
 
-        let price = await calculatePrice({data: passengersInfo}) || Math.round(parseInt(purePrice) * (parseInt(adults) + parseInt(children)));
+        let price = await calculatePrice({data: passangersInfo}) || Math.round(parseInt(purePrice) * (parseInt(adults) + parseInt(children)));
 
         const data = { 
             adults, 

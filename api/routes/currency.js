@@ -2,7 +2,7 @@ const {
     Router
 } = require("express");
 const router = Router();
-const Currency = require("../../database/models/currency");
+const Currency = require("../../models/currency");
 const { Op } = require("sequelize");
 
 
