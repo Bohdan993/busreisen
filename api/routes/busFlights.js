@@ -1,18 +1,20 @@
 const { Router } = require("express");
 const router = Router();
+const sequelize = require("../../database/models/index").sequelize;
 const { Op, QueryTypes } = require("sequelize");
-const CityModel = require("../../models/city");
-const CityAttributesModel = require("../../models/cityAttributes");
-const PlaceModel = require("../../models/place");
-const PlaceAttributesModel = require("../../models/placeAttributes");
-const LanguagesModel = require("../../models/language");
-const CurrencyModel = require("../../models/currency");
-const BusFlightPricesModel = require("../../models/busFlightPrices");
-const BusFlightModel = require("../../models/busFlight");
-const RouteModel = require("../../models/route");
-const RouteAttributesModel = require("../../models/routeAttributes");
-const DiscountModel = require("../../models/discount");
-const DiscountAttributesModel = require("../../models/discountAttributes");
+const { 
+  route: Route, 
+  busflight: BusFlight, 
+  busflightprices: BusFlightPrices,
+  currency: Currency,
+  language: Language,
+  placeattributes: PlaceAttributes,
+  place: Place,
+  cityattributes: CityAttributes,
+  city: City,
+  routeattributes: RouteAttributes,
+  discount: Discount
+} = require("../../database/models/index");
 const {
   isSpecialDate,
   loadLanguageFile,
@@ -29,7 +31,7 @@ const {
 const {
   checkIfSessionIsStarted, /*checkIfSessionIsFinished,*/
 } = require("../../middlewares/sessionMiddlewares");
-const sequelize = require("../../db");
+
 const constants = require("../../helpers/constants");
 const { customRoutesFilterMap } = require("../../extra");
 const APIError = require("../../exeptions/api-error");
@@ -53,7 +55,7 @@ router.get("/", validateDates, async (req, res, next) => {
       currencyAbbr = null,
     } = req?.query;
 
-    const lang = await LanguagesModel.findOne({
+    const lang = await Language.findOne({
       where: {
         code: {
           [Op.eq]: languageCode,
@@ -63,7 +65,7 @@ router.get("/", validateDates, async (req, res, next) => {
 
     const error404Translations = loadLanguageFile("404-error.js", lang?.code);
 
-    let currency = await CurrencyModel.findOne({
+    let currency = await Currency.findOne({
       attributes: ["id", "name", "abbr", "symbol"],
       where: {
         abbr: {
@@ -79,10 +81,11 @@ router.get("/", validateDates, async (req, res, next) => {
       where: {},
       include: [
         {
-          model: RouteModel,
+          model: Route,
           include: [
             {
-              model: RouteAttributesModel,
+              model: RouteAttributes,
+              as: "routeattrs",
               attributes: ["name"],
               where: {
                 languageId: {
@@ -93,7 +96,7 @@ router.get("/", validateDates, async (req, res, next) => {
           ]
         },
         {
-          model: DiscountModel,
+          model: Discount,
           attributes: ["id", "coef", "busflightId", "group"],
           // where: {
           //   group: {
@@ -131,7 +134,7 @@ router.get("/", validateDates, async (req, res, next) => {
       ];
     }
 
-    busFlights = await BusFlightModel.findAll(query);
+    busFlights = await BusFlight.findAll(query);
     busFlights = busFlights?.map((bf) => bf?.toJSON());
     
     if (!busFlights?.length) {
@@ -143,7 +146,7 @@ router.get("/", validateDates, async (req, res, next) => {
 
     const filteredBusFlightsWithFreeSeats = filterBusFlightsWithFreeSeats({
       busFlights,
-      numOfPassangers: parseInt(adults) + parseInt(children),
+      numOfPassengers: parseInt(adults) + parseInt(children),
     });
 
     if (!filteredBusFlightsWithFreeSeats.length) {
@@ -191,7 +194,8 @@ router.get("/", validateDates, async (req, res, next) => {
       },
       include: [
         {
-          model: CityAttributesModel,
+          model: CityAttributes,
+          as: "cityattrs",
           attributes: ["name", "cityId", "languageId"],
           where: {
             languageId: {
@@ -200,11 +204,12 @@ router.get("/", validateDates, async (req, res, next) => {
           },
         },
         {
-          model: PlaceModel,
+          model: Place,
           attributes: ["id"],
           include: [
             {
-              model: PlaceAttributesModel,
+              model: PlaceAttributes,
+              as: "placeattrs",
               attributes: ["name", "placeId", "languageId"],
               where: {
                 languageId: {
@@ -220,7 +225,7 @@ router.get("/", validateDates, async (req, res, next) => {
       ],
     };
 
-    cities = await CityModel.findAll(cityQuery);
+    cities = await City.findAll(cityQuery);
 
     if (!cities?.length || cities?.length !== 2) {
       throw APIError.NotFoundError("not found", "error-404", {
@@ -254,7 +259,7 @@ router.get("/", validateDates, async (req, res, next) => {
         }
     };
 
-    price = await BusFlightPricesModel.findAll(priceQuery);
+    price = await BusFlightPrices.findAll(priceQuery);
     price = price.map(p => p?.toJSON());
 
     const transformedBusFlights = transformBusFlights({
@@ -326,7 +331,7 @@ router.get(
         currencyAbbr = null
       } = req?.query;
 
-      const lang = await LanguagesModel.findOne({
+      const lang = await Language.findOne({
         where: {
           code: {
             [Op.eq]: languageCode,
@@ -338,7 +343,7 @@ router.get(
       let currency;
       
       if(!req.session?.selectedBusFlight?.isSelected) {
-        currency = await CurrencyModel.findOne({
+        currency = await Currency.findOne({
           attributes: ["id", "name", "abbr", "symbol"],
           where: {
             abbr: {
@@ -434,20 +439,21 @@ router.get(
       );
 
       busFlights = busFlights.map((bf) =>
-        BusFlightModel.build(bf, {
+        BusFlight.build(bf, {
           include: [
             {
-              model: RouteModel,
+              model: Route,
               attributes: ["id", "routePath"],
               include: [
                 {
-                  model: RouteAttributesModel,
+                  model: RouteAttributes,
+                  as: "routeattrs",
                   attributes: ["name"]
                 }
               ]
             },
             {
-              model: DiscountModel,
+              model: Discount,
               attributes: ["id", "coef", "busflightId", "group"],
               // include: [
               //   {
@@ -471,7 +477,7 @@ router.get(
 
       const filteredBusFlightsWithFreeSeats = filterBusFlightsWithFreeSeats({
         busFlights,
-        numOfPassangers: parseInt(adults) + parseInt(children),
+        numOfPassengers: parseInt(adults) + parseInt(children),
       });
 
       if (!filteredBusFlightsWithFreeSeats.length) {
@@ -519,7 +525,8 @@ router.get(
         },
         include: [
           {
-            model: CityAttributesModel,
+            model: CityAttributes,
+            as: "cityattrs",
             attributes: ["name", "cityId", "languageId"],
             where: {
               languageId: {
@@ -528,11 +535,12 @@ router.get(
             },
           },
           {
-            model: PlaceModel,
+            model: Place,
             attributes: ["id"],
             include: [
               {
-                model: PlaceAttributesModel,
+                model: PlaceAttributes,
+                as: "placeattrs",
                 attributes: ["name", "placeId", "languageId"],
                 where: {
                   languageId: {
@@ -548,7 +556,7 @@ router.get(
         ],
       };
 
-      cities = await CityModel.findAll(cityQuery);
+      cities = await City.findAll(cityQuery);
 
       if (!cities?.length || cities?.length !== 2) {
         throw APIError.NotFoundError("not found", "error-404", {
@@ -582,7 +590,7 @@ router.get(
         }
       };
 
-      price = await BusFlightPricesModel.findAll(priceQuery);
+      price = await BusFlightPrices.findAll(priceQuery);
       price = price.map(p => p?.toJSON());
 
       let transformedBusFlights = transformBusFlights({
@@ -622,15 +630,15 @@ router.get(
           return res.render("alternative-tickets", {
             isForwards: direction === constants.FORWARDS,
             cityFrom: cities?.filter((city) =>
-              city?.CityAttributes.find(
+              city?.cityattrs.find(
                 (el) => String(el?.cityId) === String(originId)
               )
-            )?.[0]?.CityAttributes?.[0]?.name,
+            )?.[0]?.cityattrs?.[0]?.name,
             cityTo: cities?.filter((city) =>
-              city?.CityAttributes.find(
+              city?.cityattrs.find(
                 (el) => String(el?.cityId) === String(destinationId)
               )
-            )?.[0]?.CityAttributes?.[0]?.name,
+            )?.[0]?.cityattrs?.[0]?.name,
             flightsData: transformedBusFlights,
             translations: loadLanguageFile("ticket-list.js", lang?.code),
           });
@@ -706,7 +714,7 @@ router.get("/available-dates", async (req, res, next) => {
       },
       include: [
         {
-          model: RouteModel
+          model: Route
         },
       ],
       order: [
@@ -715,7 +723,7 @@ router.get("/available-dates", async (req, res, next) => {
       ],
     };
 
-    busFlights = await BusFlightModel.findAll(query);
+    busFlights = await BusFlight.findAll(query);
     busFlights = busFlights?.map((bf) => bf?.toJSON());
 
     busFlights = filterBusFlightsAvailableDates(

@@ -18,11 +18,11 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req
 
         const {
             currency,
-            passangersInfo
+            passengersInfo
         } = req.session;
 
         const currenciesExchangeUrl = "https://api.privatbank.ua/p24api/pubinfo?exchange&json&coursid=11";
-        const price = await calculatePrice({data: passangersInfo});
+        const price = await calculatePrice({data: passengersInfo});
 
         if(String(currency?.abbr) !== "UAH") {
             const currenciesExchangeResponse = await fetch(currenciesExchangeUrl);
@@ -66,79 +66,6 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req
     }
     
 });
-
-// router.post("/liqpay-callback", checkCallbackSignature, async (req, res, next) => {
-//     try {
-
-//         const {
-//             data,
-//             signature
-//         } = req?.body;
-
-//         const decodedData = Buffer.from(data, "base64").toString("utf-8");
-//         const { currency: currencyAbbr, amount: price, info} = JSON.parse(decodedData);
-//         const { passangersInfo, cities, places, dates, email, languageCode} = JSON.parse(info);
-//         const passangersInfoData = Object.entries(passangersInfo);
-//         const pdfHash = crypto.createHash("sha256").update(signature).digest("hex");
-//         const pdfName = pdfHash + ".pdf";
-//         const pdfPath = path.resolve("assets", "tickets", pdfName);
-
-//         let ticket = await TicketsModel.findOne({
-//             where: {
-//                 signature: {
-//                     [Op.eq]: signature
-//                 }
-//             }
-//         });
-
-
-//         ticket = ticket?.toJSON();
-//         ticket.createdAt = ticket.createdAt.toISOString();
-
-//         const promise = new Promise((res, rej) => {
-//             fs.readFile(pdfPath, async function (err, fileData) {
-
-//                 try {
-//                     if (err) {
-
-//                         const html = await generateHTMLTicket({
-//                             languageCode,
-//                             cities,
-//                             signature,
-//                             price,
-//                             currencyAbbr,
-//                             passangersInfoData,
-//                             dates,
-//                             places,
-//                             ticket,
-//                             constants,
-//                             template: "full-ticket.pug",
-//                             transformTimestampToDate
-//                         });
-
-//                         const { pdfPath } = await generatePDFTicket(signature, html);
-//                         await sendFileMail(email, pdfPath, languageCode);
-//                         return res();
-                        
-//                     }
-                    
-//                     await sendFileMail(email, pdfPath, languageCode);
-//                     return res();
-//                 } catch(err) {
-//                     return rej(err);
-//                 }
-//             });
-//         });
-
-//         await promise;
-
-//         return res.json({status: "ok"});
-
-//     } catch (err) {
-//         return next(err);
-//     }
-    
-// });
 
 
 module.exports = router

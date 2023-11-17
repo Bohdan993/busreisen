@@ -30,7 +30,7 @@ const translations = {
     "totalSumText": "Общая сумма",
     "takeTicketErrorText": "Выберите билет, чтобы продолжить",
     "changeText": "Изменить",
-    "passangerTexts": ["пассажир", "пассажиры", "пассажиров"],
+    "passengerTexts": ["пассажир", "пассажиры", "пассажиров"],
     "ticketsTitle": "Ваш рейс",
     "alternativeTicketsTitle": "Ближайшие доступные рейсы",
     "discountText": "Скидка",

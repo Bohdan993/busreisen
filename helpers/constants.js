@@ -19,5 +19,4 @@ const constants = {
     MANAGER_ROLE: "manager",
     ADMIN_ROLE: "admin"
 }
-
 module.exports = constants;
