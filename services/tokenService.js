@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
-const TokensModel = require("../models/token");
+const { 
+    token: Token
+  } = require("../database/models/index");
 const { Op } = require("sequelize");
 
 function generateTokens(payload) {
@@ -18,7 +20,7 @@ function generateTokens(payload) {
 
 async function saveToken(userId, refreshToken, deviceFingerprint){
 
-    const tokenData = await TokensModel.findOne({
+    const tokenData = await Token.findOne({
         where: {
             [Op.and]: [
                 {userId: userId},
@@ -32,7 +34,7 @@ async function saveToken(userId, refreshToken, deviceFingerprint){
         return await tokenData.save();
     }
 
-    const token = await TokensModel.create({
+    const token = await Token.create({
         userId, 
         refreshToken, 
         deviceFingerprint
@@ -42,12 +44,12 @@ async function saveToken(userId, refreshToken, deviceFingerprint){
 }
 
 async function removeToken(refreshToken){
-    const tokenData = await TokensModel.deleteOne({refreshToken});
+    const tokenData = await Token.deleteOne({refreshToken});
     return tokenData;
 }
 
 async function findToken(refreshToken){
-    const tokenData = await TokensModel.findOne({refreshToken});
+    const tokenData = await Token.findOne({refreshToken});
     return tokenData;
 }
 

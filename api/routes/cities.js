@@ -2,19 +2,22 @@ const {
     Router
 } = require("express");
 const router = Router();
-const City = require("../../models/city");
-const LanguagesModel = require("../../models/language");
-const CountriesModel = require("../../models/country");
-const CountryAttributes = require("../../models/countryAttributes");
-const CityAttributesModel = require("../../models/cityAttributes");
-const CurrenciesModel = require("../../models/currency");
-const { Op } = require("sequelize");
 
+const {
+    country: Country,
+    countryattributes: CountryAttributes,
+    currency: Currency,
+    language: Language,
+    cityattributes: CityAttributes,
+    city: City
+  } = require("../../database/models/index");
+
+const { Op } = require("sequelize");
 
 function mapCities(cities){
     let uniq = {};
     cities.forEach(city => {
-        uniq[city?.country?.CountryAttributes?.[0]?.name] = city?.country;
+        uniq[city?.country?.countryattrs?.[0]?.name] = city?.country;
     });
     let arr = Object.values(uniq);
     let resultCities = arr.map(el => {
@@ -45,7 +48,7 @@ router.get("/", async (req, res, next) => {
             return res.json({status: "ok", data: cities});
         }
 
-        const lang = await LanguagesModel.findOne({
+        const lang = await Language.findOne({
             where: {
                 code: {
                     [Op.eq]: languageCode
@@ -57,7 +60,7 @@ router.get("/", async (req, res, next) => {
             attributes: ["id"],
             include: [
                 // {
-                //     model: LanguagesModel,
+                //     model: Language,
                 //     where: {
                 //         code: {
                 //             [Op.eq]: lang?.id
@@ -69,7 +72,7 @@ router.get("/", async (req, res, next) => {
                 //     }
                 // },
                 {
-                    model: CountriesModel,
+                    model: Country,
                     attributes: ["id"],
                     where: {
                         id: {
@@ -79,6 +82,7 @@ router.get("/", async (req, res, next) => {
                     include: [
                     {
                         model: CountryAttributes,
+                        as: "countryattrs",
                         attributes: ["name", "countryId", "languageId"],
                         where: {
                             languageId: {
@@ -88,7 +92,8 @@ router.get("/", async (req, res, next) => {
                     }]
                 },
                 {
-                    model: CityAttributesModel,
+                    model: CityAttributes,
+                    as: "cityattrs",
                     attributes: ["name", "cityId", "languageId"],
                     where: {
                         languageId: {
@@ -98,21 +103,21 @@ router.get("/", async (req, res, next) => {
 
                 },
                 {
-                    model: CurrenciesModel,
+                    model: Currency,
                     attributes: ["abbr", "symbol"]
                 }
             ],
             order: [
-                [{model: CountriesModel}, {model: CountryAttributes},  "name", "DESC"],
-                [{model: CityAttributesModel}, "name", "ASC"]
+                [{model: Country}, {model: CountryAttributes, as: "countryattrs"},  "name", "DESC"],
+                [{model: CityAttributes, as: "cityattrs"}, "name", "ASC"]
             ]
 
         });
 
         cities = cities?.map(city => city?.toJSON());
+        console.log("CITIES", cities);
         const resultCities = mapCities(cities);
 
-        
 
         if(mode?.toLowerCase() === "json") {
             return res.json({status: "ok", data: resultCities});

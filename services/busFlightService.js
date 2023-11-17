@@ -4,9 +4,9 @@ const constants = require("../helpers/constants");
 
 
 
-function filterBusFlightsWithFreeSeats({busFlights, numOfPassangers}){
+function filterBusFlightsWithFreeSeats({busFlights, numOfPassengers}){
     return busFlights.filter(bf => {
-        return parseInt(bf.freeSeats) >= parseInt(numOfPassangers);
+        return parseInt(bf.freeSeats) >= parseInt(numOfPassengers);
     });
 }
 
@@ -236,19 +236,19 @@ function transformBusFlights(
                     "cities": {
                         "from": {
                             "id": cityFrom?.id,
-                            "name": cityFrom?.CityAttributes?.[0]?.name
+                            "name": cityFrom?.cityattrs?.[0]?.name
                         },
                         "to": {
                             "id": cityTo?.id,
-                            "name": cityTo?.CityAttributes?.[0]?.name
+                            "name": cityTo?.cityattrs?.[0]?.name
                         }
                     },
                     "places": {
                         "from": {
                             "routeId": el?.route?.id,
-                            "routeName": el?.route?.RouteAttributes?.[0]?.name,
-                            "onBoardingPlace": onp?.PlaceAttributes?.[0]?.name,
-                            "outBoardingPlace": outp?.PlaceAttributes?.[0]?.name,
+                            "routeName": el?.route?.routeattrs?.[0]?.name,
+                            "onBoardingPlace": onp?.placeattrs?.[0]?.name,
+                            "outBoardingPlace": outp?.placeattrs?.[0]?.name,
                             "onBoardingTime": el?.route?.routePath?.onboarding?.find(el => parseInt(el?.placeId) === parseInt(onp?.id))?.time,
                             "outBoardingTime": el?.route?.routePath?.outboarding?.find(el => parseInt(el?.placeId) === parseInt(outp?.id))?.time,
                         },
@@ -276,9 +276,9 @@ function transformBusFlights(
                 } else {
                     if(!isSpecialDate(endDate)) {
                         resultObj.places.to.routeId = busFlights?.resultTo?.[ind]?.route.id;
-                        resultObj.places.to.routeName =  busFlights?.resultTo?.[ind]?.route?.RouteAttributes?.[0]?.name;
-                        resultObj.places.to.onBoardingPlace =  outp?.PlaceAttributes?.[0]?.name;
-                        resultObj.places.to.outBoardingPlace = onp?.PlaceAttributes?.[0]?.name;
+                        resultObj.places.to.routeName =  busFlights?.resultTo?.[ind]?.route?.routeattrs?.[0]?.name;
+                        resultObj.places.to.onBoardingPlace =  outp?.placeattrs?.[0]?.name;
+                        resultObj.places.to.outBoardingPlace = onp?.placeattrs?.[0]?.name;
                         resultObj.places.to.onBoardingTime =  busFlights?.resultTo?.[ind]?.route?.routePath?.onboarding?.find(el => parseInt(el?.placeId) === parseInt(outp?.id))?.time;
                         resultObj.places.to.outBoardingTime = busFlights?.resultTo?.[ind]?.route?.routePath?.outboarding?.find(el => parseInt(el?.placeId) === parseInt(onp?.id))?.time;
                     }
