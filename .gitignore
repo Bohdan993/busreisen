@@ -13,7 +13,6 @@
 
 /assets/tickets
 /database/seeders
-/database/seeders_temp
 
 # misc
 .DS_Store
