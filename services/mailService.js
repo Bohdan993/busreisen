@@ -17,12 +17,13 @@ function createMailer(){
     return transporter;
 }
 
-async function sendFileMail(to, file, languageCode){
+async function sendFileMail(to, file, subject, languageCode){
     const translations = loadLanguageFile("_mail.js", languageCode);
     const mailOptions = {
         from: "noreply@busreisen.com",
         to: [to, "busreisen@ukr.net"],
-        subject: translations?.subjectText,
+        // subject: translations?.subjectText,
+        subject,
         text: translations?.text,
         attachments: [{
           filename: "ticket.pdf",
@@ -50,7 +51,7 @@ async function sendActivationMail(to, link){
         text: "",
         html: `
             <div>
-                <h1>Для активації перейдіть по посиланню</h1>
+                <h1>Для активації перейдіть за посиланням</h1>
                 <a href="${link}">${link}</a>
             </div>
         `

@@ -1,6 +1,8 @@
 const translations = {
     "subjectText": "Ваш билет от Benz Express",
-    "text": "Проверьте Ваш билет во вложенном файле.",
+    "text": "Проверьте, пожалуйста, Ваш билет во вложенном PDF файле.",
+    "ticketText": "Билет"
+
 }
 
 

@@ -299,18 +299,29 @@ router.post("/send", [checkIfSessionIsStarted, checkCallbackSignature], async (r
         } = req?.body;
 
         const {
-            email
+            email,
+            selectedBusFlight
         } = req.session;
 
         const pdfHash = crypto.createHash("sha256").update(signature).digest("hex");
         const pdfName = pdfHash + ".pdf";
         const pdfPath = path.resolve("assets", "tickets", pdfName);
 
+        const cities = selectedBusFlight.cities
+        const dates = selectedBusFlight.dates;
+        const startDate = dates?.departure; 
+        const endDate = dates?.return;
+        const origin = cities?.from?.name;
+        const destination = cities?.to?.name;
+        const mailTranslations = loadLanguageFile("_mail.js", languageCode);
+        const subject = `${mailTranslations?.ticketText} ${origin}-${destination} ${startDate}${endDate ? '-' + endDate : ""}`;
+        
+
         const promise = new Promise((res, rej) => {
             fs.readFile(pdfPath, async function (err, fileData) {
                 try {
                     if (err) return next(err);
-                    await sendFileMail(email, pdfPath, languageCode);
+                    await sendFileMail(email, pdfPath, subject, languageCode);
                     return res();
                 } catch(err) {
                     return rej(err);
