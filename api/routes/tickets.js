@@ -6,9 +6,9 @@ const path = require("path");
 const fs = require("fs");
 const router = Router();
 const TicketsModel = require("../../models/ticket");
-const PassangersModel = require("../../models/passanger");
+const PassengersModel = require("../../models/passenger");
 const BusFlightsModel = require("../../models/busFlight");
-const PassangerTicketModel = require("../../models/passangerTicket");
+const PassengerTicketModel = require("../../models/passengerTicket");
 const { Op } = require("sequelize");
 const { isSpecialDate, transformTimestampToDate } = require("../../helpers");
 const { checkCallbackSignature } = require("../../middlewares/paymentMiddlewares");
@@ -41,16 +41,16 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
             destinationId,
             startDate,
             endDate,
-            passangersInfo
+            passengersInfo
         } = req.session;
 
         const decodedData = Buffer.from(data, "base64").toString("utf-8");
         
         const { currency: currencyAbbr, amount: price, info } = JSON.parse(decodedData);
-        const adultPassangerRegex = new RegExp("^adult-passanger-[0-9]+");
-        const childPassangerRegex = new RegExp("^child-passanger-[0-9]+");
-        const passangersInfoData = Object.entries(passangersInfo);
-        const children = passangersInfoData.filter(passangerArr => childPassangerRegex.test(passangerArr?.[0]));
+        const adultPassengerRegex = new RegExp("^adult-passenger-[0-9]+");
+        const childPassengerRegex = new RegExp("^child-passenger-[0-9]+");
+        const passengersInfoData = Object.entries(passengersInfo);
+        const children = passengersInfoData.filter(passengerArr => childPassengerRegex.test(passengerArr?.[0]));
         const { originalCurrency, originalPrice } = JSON.parse(info);
 
         let ticket = await TicketsModel.create({
@@ -97,65 +97,65 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
             }
         });
 
-        const getPassangerData = async () => {
-            const passangerData = await Promise.all(
-                passangersInfoData.map(async (passangerArr, ind) => {
-                    if(adultPassangerRegex.test(passangerArr[0])) {
-                        const passangerQuery = {where: {"phone": passangerArr[1]?.[`phone-${ind + 1}`]}}
+        const getPassengerData = async () => {
+            const passengerData = await Promise.all(
+                passengersInfoData.map(async (passengerArr, ind) => {
+                    if(adultPassengerRegex.test(passengerArr[0])) {
+                        const passengerQuery = {where: {"phone": passengerArr[1]?.[`phone-${ind + 1}`]}}
 
-                        // if(passangerArr[1]?.[`email-${ind + 1}`]) {
-                        //     passangerQuery.where = {
+                        // if(passengerArr[1]?.[`email-${ind + 1}`]) {
+                        //     passengerQuery.where = {
                         //         [Op.and]: [
-                        //             {"phone": passangerArr[1]?.[`phone-${ind + 1}`]}, 
-                        //             {"email": passangerArr[1]?.[`email-${ind + 1}`]}
+                        //             {"phone": passengerArr[1]?.[`phone-${ind + 1}`]}, 
+                        //             {"email": passengerArr[1]?.[`email-${ind + 1}`]}
                         //         ]
                         //     }
                         // }
 
-                        const candidate = await PassangersModel.findOne(passangerQuery);
+                        const candidate = await PassengersModel.findOne(passengerQuery);
                         if(candidate) {
                             // await candidate.update({ 
-                            //     "email": passangerArr[1]?.[`email-${ind + 1}`] || null,  
-                            //     "phone": passangerArr[1]?.[`phone-${ind + 1}`]
+                            //     "email": passengerArr[1]?.[`email-${ind + 1}`] || null,  
+                            //     "phone": passengerArr[1]?.[`phone-${ind + 1}`]
                             // });
                             // await candidate.save();
 
                             const dataObj = {
-                                passangerId: candidate?.id,
+                                passengerId: candidate?.id,
                                 ticketId: ticket?.id
                             }
 
-                            if(parseInt(passangerArr[1]?.[`discount-${ind + 1}`])) {
-                                dataObj["passangerDiscountId"] = passangerArr[1]?.[`discount-${ind + 1}`];
+                            if(parseInt(passengerArr[1]?.[`discount-${ind + 1}`])) {
+                                dataObj["passengerDiscountId"] = passengerArr[1]?.[`discount-${ind + 1}`];
                             }
 
-                            if(passangerArr[1]?.[`card-discount-${ind + 1}`]) {
-                                dataObj["discountCardNumber"] = passangerArr[1]?.[`card-discount-${ind + 1}`];
+                            if(passengerArr[1]?.[`card-discount-${ind + 1}`]) {
+                                dataObj["discountCardNumber"] = passengerArr[1]?.[`card-discount-${ind + 1}`];
                             }
 
                             return  dataObj;
 
                         } else {
-                            const passanger = await PassangersModel.create({
-                                "name": passangerArr[1]?.[`name-${ind + 1}`],
-                                "lastName": passangerArr[1]?.[`last-name-${ind + 1}`],
-                                "phone":  passangerArr[1]?.[`phone-${ind + 1}`],
-                                "additionalPhone": passangerArr[1]?.[`phone-additional-${ind + 1}`] || null,
-                                "dateOfBirth": passangerArr[1]?.[`date-of-birth-${ind + 1}`],
-                                "email": passangerArr[1]?.[`email-${ind + 1}`] || null,
+                            const passenger = await PassengersModel.create({
+                                "name": passengerArr[1]?.[`name-${ind + 1}`],
+                                "lastName": passengerArr[1]?.[`last-name-${ind + 1}`],
+                                "phone":  passengerArr[1]?.[`phone-${ind + 1}`],
+                                "additionalPhone": passengerArr[1]?.[`phone-additional-${ind + 1}`] || null,
+                                "dateOfBirth": passengerArr[1]?.[`date-of-birth-${ind + 1}`],
+                                "email": passengerArr[1]?.[`email-${ind + 1}`] || null,
                             });
 
                             const dataObj = {
-                                passangerId: passanger?.id,
+                                passengerId: passenger?.id,
                                 ticketId: ticket?.id
                             }
 
-                            if(parseInt(passangerArr[1]?.[`discount-${ind + 1}`])) {
-                                dataObj["passangerDiscountId"] = passangerArr[1]?.[`discount-${ind + 1}`];
+                            if(parseInt(passengerArr[1]?.[`discount-${ind + 1}`])) {
+                                dataObj["passengerDiscountId"] = passengerArr[1]?.[`discount-${ind + 1}`];
                             }
 
-                            if(passangerArr[1]?.[`card-discount-${ind + 1}`]) {
-                                dataObj["discountCardNumber"] = passangerArr[1]?.[`card-discount-${ind + 1}`];
+                            if(passengerArr[1]?.[`card-discount-${ind + 1}`]) {
+                                dataObj["discountCardNumber"] = passengerArr[1]?.[`card-discount-${ind + 1}`];
                             }
 
                             return dataObj;
@@ -165,15 +165,15 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
                     return null;
                 })
             );
-            return passangerData;
+            return passengerData;
         }
 
-        const passangerData = (await getPassangerData()).filter(Boolean);
+        const passengerData = (await getPassengerData()).filter(Boolean);
         
         ticket = ticket?.toJSON();
         ticket.createdAt = ticket.createdAt.toISOString();
 
-        await PassangerTicketModel.bulkCreate(passangerData);
+        await PassengerTicketModel.bulkCreate(passengerData);
 
         const html = await generateHTMLTicket({
             languageCode,
@@ -182,7 +182,7 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkCallba
             price: originalPrice,
             convertedPrice: price,
             currencyAbbr: originalCurrency,
-            passangersInfoData,
+            passengersInfoData,
             dates: selectedBusFlight.dates,
             places: selectedBusFlight.places,
             ticket,
@@ -221,13 +221,13 @@ router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], asyn
 
         const {
             selectedBusFlight,
-            passangersInfo
+            passengersInfo
         } = req.session;
 
         const decodedData = Buffer.from(data, "base64").toString("utf-8");
 
         const {currency: currencyAbbr, amount: price} = JSON.parse(decodedData);
-        const passangersInfoData = Object.entries(passangersInfo);
+        const passengersInfoData = Object.entries(passengersInfo);
 
         const html = await generateHTMLTicket({
             languageCode,
@@ -235,7 +235,7 @@ router.post("/generate", [checkIfSessionIsStarted, checkCallbackSignature], asyn
             signature,
             price,
             currencyAbbr,
-            passangersInfoData,
+            passengersInfoData,
             dates: selectedBusFlight.dates,
             places: selectedBusFlight.places
         });

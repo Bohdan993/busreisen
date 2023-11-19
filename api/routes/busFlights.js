@@ -143,7 +143,7 @@ router.get("/", validateDates, async (req, res, next) => {
 
     const filteredBusFlightsWithFreeSeats = filterBusFlightsWithFreeSeats({
       busFlights,
-      numOfPassangers: parseInt(adults) + parseInt(children),
+      numOfPassengers: parseInt(adults) + parseInt(children),
     });
 
     if (!filteredBusFlightsWithFreeSeats.length) {
@@ -471,7 +471,7 @@ router.get(
 
       const filteredBusFlightsWithFreeSeats = filterBusFlightsWithFreeSeats({
         busFlights,
-        numOfPassangers: parseInt(adults) + parseInt(children),
+        numOfPassengers: parseInt(adults) + parseInt(children),
       });
 
       if (!filteredBusFlightsWithFreeSeats.length) {

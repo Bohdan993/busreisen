@@ -6,9 +6,9 @@ const { isEmptyObject, subtractYears } = require("../helpers");
 const { mapDiscounts, filterByDateDiscounts } = require("./discountService");
 const constants = require("../helpers/constants");
 
-async function transformPassangersData(data, price, languageId){
+async function transformPassengersData(data, price, languageId){
 
-    const passangersData = Object.entries(data || []);
+    const passengersData = Object.entries(data || []);
 
     let discounts = await DiscountModel.findAll({
         attributes: ["id", "coef", "inactivePeriod", "group"],
@@ -38,13 +38,13 @@ async function transformPassangersData(data, price, languageId){
     discounts = filterByDateDiscounts(discounts);
 
     const discountRegex = new RegExp("^discount-[0-9]+");
-    const transformedData = passangersData
-                            .map(passangerMapper)
-                            .reduce(passangerReducer, {});
+    const transformedData = passengersData
+                            .map(passengerMapper)
+                            .reduce(passengerReducer, {});
 
-    function passangerMapper (el) {
+    function passengerMapper (el) {
             let discountId;
-            let currPassangerCount = el[0].replace(/\D+/, "");
+            let currPassengerCount = el[0].replace(/\D+/, "");
 
             for(let key in el[1]) {
                 if(discountRegex.test(key)) {
@@ -62,10 +62,10 @@ async function transformPassangersData(data, price, languageId){
             const calcPrice = Math.round(parseInt(price) * (1 - Number(discountCoef || 0)));
             const newObj = {
                 ...el[1],
-                [`full-ticket-price-${currPassangerCount}`]: parseInt(price),
-                [`discount-ticket-price-${currPassangerCount}`]: calcPrice,
-                [`discount-percantage-${currPassangerCount}`]: (discountCoef || 0) * 100,
-                [`discount-name-${currPassangerCount}`]: discountName
+                [`full-ticket-price-${currPassengerCount}`]: parseInt(price),
+                [`discount-ticket-price-${currPassengerCount}`]: calcPrice,
+                [`discount-percantage-${currPassengerCount}`]: (discountCoef || 0) * 100,
+                [`discount-name-${currPassengerCount}`]: discountName
             };
 
             return [el[0], {
@@ -73,7 +73,7 @@ async function transformPassangersData(data, price, languageId){
             }];
     }
 
-    function passangerReducer(acc, curr) {
+    function passengerReducer(acc, curr) {
         if(!acc[curr[0]] ) {
             acc[curr[0]] = curr[1];
         }
@@ -84,7 +84,7 @@ async function transformPassangersData(data, price, languageId){
     return transformedData;
 }
 
-async function validatePassangersData(data, translations, startDate){
+async function validatePassengersData(data, translations, startDate){
     const dataToValidate = Object.values(data).reduce((acc, curr) => acc = {...acc, ...curr} , {});
     const constraints = await createValidateConstraints(data, dataToValidate, translations, startDate);
     const errors = validate(dataToValidate, constraints) || {};
@@ -122,9 +122,9 @@ async function createValidateConstraints(data, dataToValidate, translations, sta
     discounts = discounts?.map(discount => discount?.toJSON());
     discounts = mapDiscounts(discounts);
 
-    for(let passangerType in data) {
-        //Get passanger type: adult or child
-        const type = passangerType.match(/.+?(?=-)/)[0];
+    for(let passengerType in data) {
+        //Get passenger type: adult or child
+        const type = passengerType.match(/.+?(?=-)/)[0];
         const defaultDiscountId = "0";
         const bothDiscountIds = discounts.filter(el => el[0] === constants.BOTH)[0]?.[1].map(el => String(el?.id));
         const discountCardsIds = discounts.filter(el => el[0] === constants.DISCOUNT_CARD)[0]?.[1].map(el => String(el?.id));
@@ -133,7 +133,7 @@ async function createValidateConstraints(data, dataToValidate, translations, sta
         discounts.filter(el => el[0] === constants.CHILDREN)[0]?.[1].map(el => String(el?.id))
         .concat(defaultDiscountId, bothDiscountIds);
 
-        for(let key in data[passangerType]) {
+        for(let key in data[passengerType]) {
             const index = key.replace(/\D+/g, "");
             const currDiscount = discounts
             .filter(
@@ -280,6 +280,6 @@ async function createValidateConstraints(data, dataToValidate, translations, sta
 };
 
 module.exports = {
-    validatePassangersData,
-    transformPassangersData
+    validatePassengersData,
+    transformPassengersData
 }

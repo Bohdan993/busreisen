@@ -12,12 +12,12 @@ async function calculatePrice(
         data
     } = {}
     ) {
-    const passangersData = Object.entries(data || []);
-    const calculatedPrice = passangersData.reduce(priceReducer, 0);
+    const passengersData = Object.entries(data || []);
+    const calculatedPrice = passengersData.reduce(priceReducer, 0);
 
     function priceReducer (acc, curr) {    
-        let currPassangerCount = curr?.[0].replace(/\D+/, "");
-        const calcPrice = parseInt(curr?.[1]?.[`discount-ticket-price-${currPassangerCount}`]) || 0;
+        let currPassengerCount = curr?.[0].replace(/\D+/, "");
+        const calcPrice = parseInt(curr?.[1]?.[`discount-ticket-price-${currPassengerCount}`]) || 0;
         return acc+= calcPrice;
     }
 

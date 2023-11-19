@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
 
-const Passanager = sequelize.define("passanger", {
+const Passanager = sequelize.define("passenger", {
     id: {type: DataTypes.INTEGER, primaryKey: true, unique: true, autoIncrement: true},
     name: {type: DataTypes.STRING(30), allowNull: false},
     lastName: {type: DataTypes.STRING(30), allowNull: false},

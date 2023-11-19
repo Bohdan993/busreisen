@@ -4,9 +4,9 @@ const constants = require("../helpers/constants");
 
 
 
-function filterBusFlightsWithFreeSeats({busFlights, numOfPassangers}){
+function filterBusFlightsWithFreeSeats({busFlights, numOfPassengers}){
     return busFlights.filter(bf => {
-        return parseInt(bf.freeSeats) >= parseInt(numOfPassangers);
+        return parseInt(bf.freeSeats) >= parseInt(numOfPassengers);
     });
 }
 

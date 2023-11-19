@@ -224,7 +224,7 @@ div.ticket-bus-container
       width: 20px;
       fill: #121212;
     }
-    .passangers {
+    .passengers {
       padding: 10px 0;
       border-bottom: 1px dashed #cdcdcd;
     }
@@ -240,16 +240,16 @@ div.ticket-bus-container
       color: #1b3b7f;
       text-align: center;
     }
-    .passanger-name span,
-    .passanger-last-name span,
-    .passanger-date-of-birth span {
+    .passenger-name span,
+    .passenger-last-name span,
+    .passenger-date-of-birth span {
       display: block;
       padding-bottom: 5px;
       font-size: 11px;
     }
-    .passanger-name p,
-    .passanger-last-name p,
-    .passanger-date-of-birth p {
+    .passenger-name p,
+    .passenger-last-name p,
+    .passenger-date-of-birth p {
       display: block;
       font-size: 14px;
       font-weight: 700;
@@ -464,7 +464,7 @@ div.ticket-bus-container
             div
               p
                 = "** - " + translations.additionalText2 + "."
-      .passangers
+      .passengers
         table.table
           thead
             tr
@@ -480,57 +480,57 @@ div.ticket-bus-container
               th(scope='col')
                 = translations.priceText + ", " + data.currencyAbbr
           tbody
-            each passanger, ind in data.passangersInfo
-              if passanger[0].includes(constants.ADULT)
-                tr.passanger
+            each passenger, ind in data.passengersInfo
+              if passenger[0].includes(constants.ADULT)
+                tr.passenger
                   th(scope='row')= (ind + 1)
-                  td.passanger-name
-                    = passanger[1]["name-" + (ind + 1)]
-                  td.passanger-last-name
-                    = passanger[1]["last-name-" + (ind + 1)]
-                  td.passanger-date-of-birth
-                    = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
+                  td.passenger-name
+                    = passenger[1]["name-" + (ind + 1)]
+                  td.passenger-last-name
+                    = passenger[1]["last-name-" + (ind + 1)]
+                  td.passenger-date-of-birth
+                    = transformTimestampToDate(passenger[1]["date-of-birth-" + (ind + 1)])
                   if data.ticket.hasDiscount
-                    td.passanger-discount(colspan="5")
+                    td.passenger-discount(colspan="5")
                       = translations.saleText + " - " + data.ticket.discountPercentage + "%."
                   else
-                    td.passanger-discount(colspan="5")
-                      = (passanger[1]["discount-name-" + (ind + 1)] || " - ") + (passanger[1]["card-discount-" + (ind + 1)] ? "\r\n" + translations.discountCardNumberText + "- (" + passanger[1]["card-discount-" + (ind + 1)] + ")." : "")
-                  td.passanger-price
-                    = passanger[1]["discount-ticket-price-" + (ind + 1)]
-                //- .passanger
-                //-   .passanger-name
+                    td.passenger-discount(colspan="5")
+                      = (passenger[1]["discount-name-" + (ind + 1)] || " - ") + (passenger[1]["card-discount-" + (ind + 1)] ? "\r\n" + translations.discountCardNumberText + "- (" + passenger[1]["card-discount-" + (ind + 1)] + ")." : "")
+                  td.passenger-price
+                    = passenger[1]["discount-ticket-price-" + (ind + 1)]
+                //- .passenger
+                //-   .passenger-name
                 //-     span
                 //-       = translations.nameText  + ":"
                 //-     p
-                //-       = passanger[1]["name-" + (ind + 1)]
-                //-   .passanger-last-name
+                //-       = passenger[1]["name-" + (ind + 1)]
+                //-   .passenger-last-name
                 //-     span
                 //-       = translations.lastNameText  + ":"
                 //-     p
-                //-       = passanger[1]["last-name-" + (ind + 1)]
-                //-   .passanger-date-of-birth
+                //-       = passenger[1]["last-name-" + (ind + 1)]
+                //-   .passenger-date-of-birth
                 //-     span
                 //-       = translations.dateOfBirthText  + ":"
                 //-     p
-                //-       = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
-              if passanger[0].includes(constants.CHILD)
-                tr.passanger
+                //-       = transformTimestampToDate(passenger[1]["date-of-birth-" + (ind + 1)])
+              if passenger[0].includes(constants.CHILD)
+                tr.passenger
                   th(scope='row')= (ind + 1)
-                  td.passanger-name
-                    = passanger[1]["name-" + (ind + 1)]
-                  td.passanger-last-name
-                    = passanger[1]["last-name-" + (ind + 1)]
-                  td.passanger-date-of-birth
-                    = transformTimestampToDate(passanger[1]["date-of-birth-" + (ind + 1)])
+                  td.passenger-name
+                    = passenger[1]["name-" + (ind + 1)]
+                  td.passenger-last-name
+                    = passenger[1]["last-name-" + (ind + 1)]
+                  td.passenger-date-of-birth
+                    = transformTimestampToDate(passenger[1]["date-of-birth-" + (ind + 1)])
                   if data.ticket.hasDiscount
-                    td.passanger-discount(colspan="5")
+                    td.passenger-discount(colspan="5")
                       = translations.saleText + " - " + data.ticket.discountPercentage + "%."
                   else
-                    td.passanger-discount(colspan="5")
-                      = passanger[1]["discount-name-" + (ind + 1)]
-                  td.passanger-price
-                    = passanger[1]["discount-ticket-price-" + (ind + 1)]
+                    td.passenger-discount(colspan="5")
+                      = passenger[1]["discount-name-" + (ind + 1)]
+                  td.passenger-price
+                    = passenger[1]["discount-ticket-price-" + (ind + 1)]
             tr
               th(colspan="9" style="text-align: left; font-weight: 700;padding-top: 10px;font-size:13px;color:#3256a4;")
                 = translations.inGeneralText

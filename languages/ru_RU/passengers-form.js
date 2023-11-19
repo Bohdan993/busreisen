@@ -1,5 +1,5 @@
 const translations = {
-    "passangerText": "Пасcажир",
+    "passengerText": "Пасcажир",
     "adultText": "Взрослый",
     "childText": "Ребенок",
     "errorText": "Заполните это поле",

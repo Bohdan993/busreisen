@@ -18,11 +18,11 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req
 
         const {
             currency,
-            passangersInfo
+            passengersInfo
         } = req.session;
 
         const currenciesExchangeUrl = "https://api.privatbank.ua/p24api/pubinfo?exchange&json&coursid=11";
-        const price = await calculatePrice({data: passangersInfo});
+        const price = await calculatePrice({data: passengersInfo});
 
         if(String(currency?.abbr) !== "UAH") {
             const currenciesExchangeResponse = await fetch(currenciesExchangeUrl);
@@ -77,8 +77,8 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req
 
 //         const decodedData = Buffer.from(data, "base64").toString("utf-8");
 //         const { currency: currencyAbbr, amount: price, info} = JSON.parse(decodedData);
-//         const { passangersInfo, cities, places, dates, email, languageCode} = JSON.parse(info);
-//         const passangersInfoData = Object.entries(passangersInfo);
+//         const { passengersInfo, cities, places, dates, email, languageCode} = JSON.parse(info);
+//         const passengersInfoData = Object.entries(passengersInfo);
 //         const pdfHash = crypto.createHash("sha256").update(signature).digest("hex");
 //         const pdfName = pdfHash + ".pdf";
 //         const pdfPath = path.resolve("assets", "tickets", pdfName);
@@ -107,7 +107,7 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req
 //                             signature,
 //                             price,
 //                             currencyAbbr,
-//                             passangersInfoData,
+//                             passengersInfoData,
 //                             dates,
 //                             places,
 //                             ticket,

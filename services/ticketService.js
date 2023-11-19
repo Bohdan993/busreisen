@@ -39,7 +39,7 @@ async function generateHTMLTicket(
         price,
         convertedPrice = 0,
         currencyAbbr,
-        passangersInfoData,
+        passengersInfoData,
         dates,
         places,
         ticket,
@@ -77,7 +77,7 @@ async function generateHTMLTicket(
                                 price,
                                 convertedPrice,
                                 currencyAbbr,
-                                passangersInfo: passangersInfoData, 
+                                passengersInfo: passengersInfoData, 
                                 startDate: dates?.departure, 
                                 endDate: dates?.return,
                                 origin: cities?.from?.name,
@@ -104,7 +104,7 @@ async function generateHTMLTicket(
 //         signature,
 //         price,
 //         currencyAbbr,
-//         passangersInfoData,
+//         passengersInfoData,
 //         dates,
 //         places
 //     } = {}

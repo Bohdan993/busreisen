@@ -15,6 +15,7 @@ router.get("/", async (req, res, next) => {
             objects = []
         } = req?.query;
 
+        console.log('Objects', objects);
         const p = path.resolve("languages", languageCode);
         const filesNames = [];
         const files = fs.readdirSync(p);

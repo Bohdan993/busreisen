@@ -3,7 +3,7 @@ const translations = {
     "toText": "Wo",
     "destinationText": "Versand",
     "returnText": "Return",
-    "passangerText": "Passagiere",
+    "passengerText": "Passagiere",
     "confirmText": "Suchen",
     "adultTexts": ["adult", "adults", "adults"],
     "childTexts": ["child", "child", "children"],

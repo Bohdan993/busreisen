@@ -8,7 +8,7 @@ const LanguagesModel = require("../../models/language");
 const { Op } = require("sequelize");
 const { loadLanguageFile, transformTimestampToDate } = require("../../helpers");
 const { mapDiscounts, filterByDateDiscounts } = require("../../services/discountService");
-const { validatePassangersData, transformPassangersData } = require("../../services/passangerService");
+const { validatePassengersData, transformPassengersData } = require("../../services/passengerService");
 const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
 const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
 const constants = require("../../helpers/constants");
@@ -81,15 +81,15 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req,
         discounts = filterByDateDiscounts(discounts);
 
         if(mode?.toLowerCase() === "html" || !mode) {
-            return res.render(type === "check" ? "info-check-form" : "passangers-form", 
+            return res.render(type === "check" ? "info-check-form" : "passengers-form", 
                 { 
                     adults, 
                     children, 
                     discounts,
                     constants, 
-                    translations: loadLanguageFile("passangers-form.js", lang?.code),
+                    translations: loadLanguageFile("passengers-form.js", lang?.code),
                     ticketPrice: req.session.selectedBusFlight.purePrice,
-                    passangersInfo: req.session?.passangersInfo ? Object.entries(req.session?.passangersInfo) : null,
+                    passengersInfo: req.session?.passengersInfo ? Object.entries(req.session?.passengersInfo) : null,
                     transformTimestampToDate,
                     showDiscounts: !req.session.selectedBusFlight.hasDiscount
                 }
@@ -118,7 +118,7 @@ router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected/*, c
         } = req?.query;
 
         const {
-            passangersData
+            passengersData
         } = req?.body;
 
         const {
@@ -133,18 +133,18 @@ router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected/*, c
             },
           });
       
-        const passangerTranslations = loadLanguageFile("passangers-form.js", lang?.code);
-        const validData = await validatePassangersData(passangersData, passangerTranslations, startDate);
+        const passengerTranslations = loadLanguageFile("passengers-form.js", lang?.code);
+        const validData = await validatePassengersData(passengersData, passengerTranslations, startDate);
 
         if(validData.status === "error") {
             throw APIError.ValidationError("validation error", validData.data);
         }
 
         const ticketPrice = req.session.selectedBusFlight.purePrice;
-        const transformedPassangersData = await transformPassangersData(validData.data, ticketPrice, lang?.id);
+        const transformedPassengersData = await transformPassengersData(validData.data, ticketPrice, lang?.id);
 
-        req.session.passangersInfo = transformedPassangersData;
-        req.session.email = Object.values(transformedPassangersData).find((_, ind) => ind === 0)?.["email-1"];
+        req.session.passengersInfo = transformedPassengersData;
+        req.session.email = Object.values(transformedPassengersData).find((_, ind) => ind === 0)?.["email-1"];
 
         req.session.save(function (err) {
             if (err) return next(err);

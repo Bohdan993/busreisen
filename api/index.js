@@ -25,7 +25,7 @@ const authRoute = require("./routes/admin/auth");
 const citiesRoute = require("./routes/cities");
 const currenciesRoute = require("./routes/currency");
 const busflightsRoute = require("./routes/busFlights");
-const passangersRoute = require("./routes/passangers");
+const passengersRoute = require("./routes/passengers");
 const translationsRoute = require("./routes/translations");
 const paymentRoute = require("./routes/payment");
 const ticketsRoute = require("./routes/tickets");
@@ -74,7 +74,7 @@ const discounts = require("../data/discounts");
 const DiscountAttributes = require("../models/discountAttributes");
 const discountAttributes = require("../data/discountAttributes");
 
-const PassangerTicket = require("../models/passangerTicket");
+const PassengerTicket = require("../models/passengerTicket");
 const { handleError } = require("../middlewares/errorMiddlewares");
 
 
@@ -134,14 +134,14 @@ app.use(session(sessionOptions));
 app.use("/api/cities", citiesRoute);
 app.use("/api/currencies", currenciesRoute);
 app.use("/api/bus-flights", busflightsRoute);
-app.use("/api/passangers", passangersRoute);
+app.use("/api/passengers", passengersRoute);
 app.use("/api/tickets", ticketsRoute);
 app.use("/api/translations", translationsRoute);
 app.use("/api/payment", paymentRoute);
 app.use("/api/current-data", sessionDataRoute);
 
 app.use("/api/admin/auth", authRoute);
-// app.use("/api/admin/passangers", authRoute);
+// app.use("/api/admin/passengers", authRoute);
 // app.use("/api/admin/bus-flights", authRoute);
 // app.use("/api/admin/tickets", authRoute);
 // app.use("/api/admin/users", authRoute);
