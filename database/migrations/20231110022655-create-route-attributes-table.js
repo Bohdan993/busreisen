@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('RouteAttributes', {
+    await queryInterface.createTable('routeattributes', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -17,7 +17,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Routes', // Make sure to use the actual table name for RoutesModel
+          model: 'routes', // Make sure to use the actual table name for RoutesModel
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -27,7 +27,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Languages', // Make sure to use the actual table name for LanguagesModel
+          model: 'languages', // Make sure to use the actual table name for LanguagesModel
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -50,6 +50,6 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     // Drop the table if migration needs to be rolled back
-    await queryInterface.dropTable('RouteAttributes');
+    await queryInterface.dropTable('routeattributes');
   },
 };

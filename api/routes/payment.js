@@ -7,9 +7,11 @@ const { strToSign, calculatePrice } = require("../../services/paymentService");
 const { loadLanguageFile} = require("../../helpers");
 const { checkIfSessionIsStarted} = require("../../middlewares/sessionMiddlewares");
 const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
+const { checkIfPassengersInfoExists } = require("../../middlewares/passengersMiddleware");
+
 const router = Router();
 
-router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req, res, next) => {
+router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPassengersInfoExists], async (req, res, next) => {
     try {
 
         const {

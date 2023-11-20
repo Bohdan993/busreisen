@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Tickets', {
+    await queryInterface.createTable('tickets', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -27,7 +27,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'BusFlights', // Make sure to use the actual table name for BusFlightModel
+          model: 'busflights', // Make sure to use the actual table name for BusFlightModel
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -37,7 +37,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
         references: {
-          model: 'BusFlights', // Make sure to use the actual table name for BusFlightModel
+          model: 'busflights', // Make sure to use the actual table name for BusFlightModel
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -94,7 +94,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Cities', // Make sure to use the actual table name for CitiesModel (assuming it's 'cities')
+          model: 'cities', // Make sure to use the actual table name for CitiesModel (assuming it's 'cities')
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -104,7 +104,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Cities', // Make sure to use the actual table name for CitiesModel (assuming it's 'cities')
+          model: 'cities', // Make sure to use the actual table name for CitiesModel (assuming it's 'cities')
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -131,6 +131,6 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     // Drop the table if migration needs to be rolled back
-    await queryInterface.dropTable('Tickets');
+    await queryInterface.dropTable('tickets');
   },
 };

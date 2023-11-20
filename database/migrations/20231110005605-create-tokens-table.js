@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Tokens', {
+    await queryInterface.createTable('tokens', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Users', // Make sure to use the actual table name for UsersModel
+          model: 'users', // Make sure to use the actual table name for UsersModel
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -44,6 +44,6 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     // Drop the table if migration needs to be rolled back
-    await queryInterface.dropTable('Tokens');
+    await queryInterface.dropTable('tokens');
   },
 };

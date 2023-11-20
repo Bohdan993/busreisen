@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('BusFlightPrices', {
+    await queryInterface.createTable('busflightprices', {
       priceOneWay: {
         type: Sequelize.INTEGER,
         allowNull: false,
@@ -16,7 +16,7 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
         references: {
-          model: 'Cities', // Make sure to use the actual table name for CitiesModel
+          model: 'cities', // Make sure to use the actual table name for CitiesModel
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -27,7 +27,7 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
         references: {
-          model: 'Cities', // Make sure to use the actual table name for CitiesModel
+          model: 'cities', // Make sure to use the actual table name for CitiesModel
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -38,7 +38,7 @@ module.exports = {
         allowNull: false,
         primaryKey: true,
         references: {
-          model: 'Currencies', // Make sure to use the actual table name for CurrenciesModel
+          model: 'currencies', // Make sure to use the actual table name for CurrenciesModel
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -61,6 +61,6 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     // Drop the table if migration needs to be rolled back
-    await queryInterface.dropTable('BusFlightPrices');
+    await queryInterface.dropTable('busflightprices');
   },
 };

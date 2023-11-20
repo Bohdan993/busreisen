@@ -13,10 +13,13 @@ const { mapDiscounts, filterByDateDiscounts } = require("../../services/discount
 const { validatePassengersData, transformPassengersData } = require("../../services/passengerService");
 const { checkIfSessionIsStarted } = require("../../middlewares/sessionMiddlewares");
 const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
+const { checkIfPassengersInfoExists } = require("../../middlewares/passengersMiddleware");
 const constants = require("../../helpers/constants");
 const APIError = require("../../exeptions/api-error");
 
-router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req, res, next) => {
+
+
+router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPassengersInfoExists], async (req, res, next) => {
 
     try {
         let discounts = [];

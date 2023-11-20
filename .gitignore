@@ -10,10 +10,9 @@
 
 # production
 /build
-
 /assets/tickets
 /database/seeders
-
+ecosystem.config.js
 # misc
 .DS_Store
 .env
