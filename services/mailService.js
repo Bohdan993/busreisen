@@ -4,9 +4,9 @@ const { loadLanguageFile } = require("../helpers");
 
 function createMailer(){
     const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
+        host: "smtp.gmail.com", //smtp.ukr.net
+        port: 587, //465
+        secure: false, //true
         auth: {
             user: process.env.MAIL_USER,
             pass: process.env.MAIL_PASS
@@ -20,7 +20,7 @@ function createMailer(){
 async function sendFileMail(to, file, subject, languageCode){
     const translations = loadLanguageFile("_mail.js", languageCode);
     const mailOptions = {
-        from: "noreply@busreisen.com",
+        from: "noreply@busreisen.com.ua",
         to: [to, "busreisen@ukr.net"],
         // subject: translations?.subjectText,
         subject,
