@@ -34,7 +34,7 @@ form#booking-passengers-form.booking-passengers-form
       .passenger-block-fields
         fieldset
           div
-            .input-group.is-horizontal(tabindex="0")
+            .input-box.is-horizontal(tabindex="0")
               div
                 div.input(id=`adult-input-name-${i + 1}` data-input=`name-${i + 1}`)
                   .input-container
@@ -49,7 +49,7 @@ form#booking-passengers-form.booking-passengers-form
                   .input-error= translations.errorText
         fieldset
           div
-            .input-group.is-horizontal(tabindex="0")
+            .input-box.is-horizontal(tabindex="0")
               div
                 div.input(id=`adult-input-phone-${i + 1}` data-input=`phone-${i + 1}`)
                   .input-container.input-phone-container
@@ -65,7 +65,7 @@ form#booking-passengers-form.booking-passengers-form
         if i === 0
           fieldset
             div
-              .input-group.is-horizontal(tabindex="0")
+              .input-box.is-horizontal(tabindex="0")
                 div
                   div.input(id=`adult-input-email-${i + 1}` data-input=`email-${i + 1}`)
                     .input-container
@@ -80,7 +80,7 @@ form#booking-passengers-form.booking-passengers-form
                     .input-error= translations.errorText 
         fieldset
           div
-            .input-group.is-horizontal(tabindex="0")
+            .input-box.is-horizontal(tabindex="0")
               if showDiscounts 
                 div
                   div.select(id=`adult-select-discount-${i + 1}` data-input=`discount-${i + 1}`)
@@ -127,7 +127,7 @@ form#booking-passengers-form.booking-passengers-form
       .passenger-block-fields
         fieldset
           div
-            .input-group.is-horizontal(tabindex="0")
+            .input-box.is-horizontal(tabindex="0")
               div
                 div.input(id=`child-input-name-${i + 1}` data-input=`name-${i + 1}`)
                   .input-container
@@ -142,7 +142,7 @@ form#booking-passengers-form.booking-passengers-form
                   .input-error= translations.errorText
         fieldset
           div
-            .input-group.is-horizontal(tabindex="0")
+            .input-box.is-horizontal(tabindex="0")
               div
                 div.input(id=`child-input-date-of-birth-${i + 1}` data-input=`date-of-birth-${i + 1}`)
                   .input-container

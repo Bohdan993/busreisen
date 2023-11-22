@@ -12,6 +12,7 @@ const {
     passengerticket: PassengerTicket,
     ticket: Ticket
   } = require("../../database/models/index");
+const { loadLanguageFile } = require("../../helpers/index");
 
 const { isSpecialDate, transformTimestampToDate } = require("../../helpers");
 const { checkCallbackSignature } = require("../../middlewares/paymentMiddlewares");
@@ -270,6 +271,7 @@ router.post("/generate-pdf", checkCallbackSignature, async (req, res, next) => {
 router.post("/send", [
     checkIfSessionIsStarted,
     checkIfBusFlightSelected,
+    checkIfPassengersInfoExists,
     checkCallbackSignature
     ], async (req, res, next) => {
         try {
@@ -284,7 +286,8 @@ router.post("/send", [
 
             const {
                 email,
-                selectedBusFlight
+                selectedBusFlight,
+                passengersInfo
             } = req.session;
 
             const pdfHash = crypto.createHash("sha256").update(signature).digest("hex");
@@ -298,14 +301,24 @@ router.post("/send", [
             const origin = cities?.from?.name;
             const destination = cities?.to?.name;
             const mailTranslations = loadLanguageFile("_mail.js", languageCode);
-            const subject = `${mailTranslations?.ticketText} ${origin}-${destination} ${startDate}${endDate ? '-' + endDate : ""}`;
-            
+            const subject = `${mailTranslations?.ticketText} ${origin}-${destination} (${startDate}${endDate ? " - " + endDate : ""})`;
+            const passengersInfoData = Object.entries(passengersInfo);
+            const firstPassenger = passengersInfoData[0];
+            const phone = firstPassenger[1]?.["phone-1"] || null
+
+
 
             const promise = new Promise((res, rej) => {
                 fs.readFile(pdfPath, async function (err, fileData) {
                     try {
                         if (err) return next(err);
-                        await sendFileMail(email, pdfPath, subject, languageCode);
+                        await sendFileMail({
+                            email,
+                            phone, 
+                            pdfPath, 
+                            subject, 
+                            languageCode
+                        });
                         return res();
                     } catch(err) {
                         return rej(err);

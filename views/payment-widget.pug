@@ -146,10 +146,11 @@ script.
   language: "#{language}",
   mode: "embed" // embed || popup
   }).on("liqpay.callback", async function(data){
+    console.log("LP DATA", data);
   $("#booking2 .booking-content .loading-area").show(0); 
   const btn = "<a href=\"#{linkToMain}\" class=\"base-button base-button--primary\" style=\" max-width:180px;margin:0 auto; margin-top: 35px;\"type=\"button\">#{translations.buttonText}</a>"
   $('#payment-container').append(btn);
-  if(data.status === "success") {
+  if(data.result === "ok") {
     try {
       $('#search-change-button').attr("disabled", true);
       await postTicketData(data?.data, data?.signature);

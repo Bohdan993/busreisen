@@ -2,6 +2,7 @@
   const separatorIndex = translations.phoneNums.indexOf("--separator--");
   const firstPartPhones = translations.phoneNums.slice(0, separatorIndex);
   const secondPartPhones = translations.phoneNums.slice(separatorIndex + 1);
+  const startTicketId = 100;
 
 div.ticket-bus-container
   style.
@@ -554,7 +555,7 @@ div.ticket-bus-container
               i.ico
               span
                 = translations.ticketNumberText
-              - let ticketId = data.ticket.id; while(String(ticketId).length < 6) ticketId = "0" + ticketId;
+              - let ticketId = Number(data.ticket.id) + startTicketId; while(String(ticketId).length < 6) ticketId = "0" + ticketId;
               p
                 = ticketId
             div
