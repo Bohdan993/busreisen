@@ -1,6 +1,6 @@
 const express = require("express");
-// const fs = require("fs");
-// const https = require("https");
+const fs = require("fs");
+const https = require("https");
 const RedisStore = require("connect-redis").default;
 const bodyParser = require("body-parser");
 // const cookieParser = require("cookie-parser");
@@ -15,11 +15,11 @@ const helmet = require("helmet");
 
 const app = express();
 
-// const keyCertPath = process.env.NODE_ENV === "development" ? path.resolve(__dirname, "../../localhost-key.pem") : null;
-// const certPath = process.env.NODE_ENV === "development" ? path.resolve(__dirname, "../../localhost.pem") : null;
-// const key = process.env.NODE_ENV === "development" ? fs.readFileSync(keyCertPath, "utf-8") : null;
-// const cert = process.env.NODE_ENV === "development" ? fs.readFileSync(certPath, "utf-8") : null;
-// const server = process.env.NODE_ENV === "development" ? https.createServer({key: key, cert: cert }, app) : null;
+const keyCertPath = process.env.NODE_ENV === "development" ? path.resolve(__dirname, "../../localhost-key.pem") : null;
+const certPath = process.env.NODE_ENV === "development" ? path.resolve(__dirname, "../../localhost.pem") : null;
+const key = process.env.NODE_ENV === "development" ? fs.readFileSync(keyCertPath, "utf-8") : null;
+const cert = process.env.NODE_ENV === "development" ? fs.readFileSync(certPath, "utf-8") : null;
+const server = process.env.NODE_ENV === "development" ? https.createServer({key: key, cert: cert }, app) : null;
 
 
 const authRoute = require("./routes/admin/auth");
@@ -36,7 +36,7 @@ const { handleError } = require("../middlewares/errorMiddlewares");
 const PORT = process.env.PORT || 5000;
 const redisClient = createClient();
 
-redisClient.connect().catch(err => console.error("Redis", err));
+// redisClient.connect().catch(err => console.error("Redis", err));
 const redisStore = new RedisStore({
     client: redisClient,
     prefix: "busreisen"
@@ -49,7 +49,7 @@ const corsOptions = {
 };
 const sessionOptions = {
     name: "busreisen-sess",
-    store: redisStore,
+    // store: redisStore,
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
@@ -109,15 +109,15 @@ app.use(handleError);
 
 
 async function start(){
-    // if(process.env.NODE_ENV === "development") {
-    //     server.listen(PORT, () => {
-    //         console.log(`Server running on port ${PORT}`);
-    //     });
-    // } else {
+    if(process.env.NODE_ENV === "development") {
+        server.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
+    } else {
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
     });
-    // }
+    }
 }
 
 
