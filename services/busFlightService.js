@@ -302,17 +302,30 @@ function transformBusFlights(
     return result;
 }
 
-function filterBusFlightsAvailableDates(busFlights, originId, destinationId, isStartDate){
+function filterBusFlightsAvailableDates(busFlights, originId, destinationId, isStartDate, direction){
     let result = [];
-    busFlights.forEach(busFlight => {
-        if(busFlight?.route?.routePath?.onboarding?.find(el => parseInt(el?.cityId) === parseInt(originId))) {
-            result.push(busFlight);
-        }
 
-        if(busFlight?.route?.routePath?.outboarding?.find(el => parseInt(el?.cityId) === parseInt(destinationId))) {
-            result.push(busFlight);
-        }
-    });
+    if(direction === constants.FORWARDS) {
+        busFlights.forEach(busFlight => {
+            if(
+                busFlight?.route?.routePath?.onboarding?.find(el => parseInt(el?.cityId) === parseInt(originId)) &&
+                busFlight?.route?.routePath?.outboarding?.find(el => parseInt(el?.cityId) === parseInt(destinationId))
+            ) {
+                result.push(busFlight);
+            }
+        });
+    }
+
+    if(direction === constants.BACKWARDS) {
+        busFlights.forEach(busFlight => {
+            if(
+                busFlight?.route?.routePath?.onboarding?.find(el => parseInt(el?.cityId) === parseInt(destinationId)) &&
+                busFlight?.route?.routePath?.outboarding?.find(el => parseInt(el?.cityId) === parseInt(originId))
+            ) {
+                result.push(busFlight);
+            }
+        });
+    }
 
     return isStartDate ? 
     Array.from(new Set(result.map(el => el?.dateOfDeparture))).slice(1) : 

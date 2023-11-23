@@ -115,7 +115,6 @@ router.get("/", async (req, res, next) => {
         });
 
         cities = cities?.map(city => city?.toJSON());
-        console.log("CITIES", cities);
         const resultCities = mapCities(cities);
 
 

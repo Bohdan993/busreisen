@@ -2,7 +2,6 @@ const APIError = require("../exeptions/api-error");
 const { loadLanguageFile } = require("../helpers");
 
 function checkIfSessionIsStarted(req, res, next) {
-    console.log("checkIfSessionIsStarted", req.session);
     try {
         const {
             languageCode = "uk_UA", 

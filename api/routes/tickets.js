@@ -12,6 +12,7 @@ const {
     passengerticket: PassengerTicket,
     ticket: Ticket
   } = require("../../database/models/index");
+const { loadLanguageFile } = require("../../helpers/index");
 
 const { isSpecialDate, transformTimestampToDate } = require("../../helpers");
 const { checkCallbackSignature } = require("../../middlewares/paymentMiddlewares");
@@ -298,7 +299,7 @@ router.post("/send", [
             const origin = cities?.from?.name;
             const destination = cities?.to?.name;
             const mailTranslations = loadLanguageFile("_mail.js", languageCode);
-            const subject = `${mailTranslations?.ticketText} ${origin}-${destination} ${startDate}${endDate ? '-' + endDate : ""}`;
+            const subject = `${mailTranslations?.ticketText} ${origin}-${destination} (${startDate}${endDate ? " - " + endDate : ""})`;
             
 
             const promise = new Promise((res, rej) => {
