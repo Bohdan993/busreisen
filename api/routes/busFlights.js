@@ -696,6 +696,7 @@ router.get("/available-dates", async (req, res, next) => {
       originId = null,
       destinationId = null,
       startDate = null,
+      direction = constants.FORWARDS
     } = req?.query;
 
     const startDateInstance = new Date(startDate);
@@ -731,7 +732,8 @@ router.get("/available-dates", async (req, res, next) => {
       busFlights,
       originId,
       destinationId,
-      isValidDate(startDateInstance)
+      isValidDate(startDateInstance),
+      direction
     );
 
     return res.json({ status: "ok", data: busFlights });

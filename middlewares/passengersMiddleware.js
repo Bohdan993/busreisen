@@ -1,20 +1,23 @@
+const APIError = require("../exeptions/api-error");
+const { loadLanguageFile } = require("../helpers");
+
 function checkIfPassengersInfoExists(req, res, next){
     try {
         const {
-            languageCode = "uk_UA", 
+            languageCode = "uk_UA",
+            type
         } = req.query;
 
         const error401Translations = loadLanguageFile("401-error.js", languageCode);
-        
-        if(req.path === "/api/passengers") {
-            if(req.query?.type === "check") {
+        if(req.baseUrl === "/api/passengers") {
+            if(type === "check") {
                 if(req.session?.passengersInfo) {
                     return next();
                 }
                 throw APIError.UnauthorizedError("unauthorized", "error-401", {translations: error401Translations, languageCode}); 
             }
 
-            if(req.query?.type === "standart") {
+            if(type === "standart") {
                 return next();
             }
         }

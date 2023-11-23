@@ -55,7 +55,7 @@ const sessionOptions = {
     resave: false,
     rolling: true,
     cookie: {
-        sameSite: false,
+        sameSite: "none",
         secure: true,
         maxAge: 15 * 60 * 1000,
         httpOnly: true,
