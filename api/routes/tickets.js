@@ -303,10 +303,14 @@ router.post("/send", [
             const mailTranslations = loadLanguageFile("_mail.js", languageCode);
             const subject = `${mailTranslations?.ticketText} ${origin}-${destination} (${startDate}${endDate ? " - " + endDate : ""})`;
             const passengersInfoData = Object.entries(passengersInfo);
-            const firstPassenger = passengersInfoData[0];
-            const phone = firstPassenger[1]?.["phone-1"] || null
+            const passangersData = passengersInfoData.map((passengerArr, ind) => {
+                const map = {
+                    [`passanger-${ind + 1}-phone`]: passengerArr[1]?.[`phone-${ind + 1}`] || null,
+                    [`passanger-${ind + 1}-additionalPhone`]: passengerArr[1]?.[`phone-additional-${ind + 1}`] || null,
+                };
 
-
+                return map;
+            });
 
             const promise = new Promise((res, rej) => {
                 fs.readFile(pdfPath, async function (err, fileData) {
@@ -314,7 +318,7 @@ router.post("/send", [
                         if (err) return next(err);
                         await sendFileMail({
                             email,
-                            phone, 
+                            passangersData, 
                             pdfPath, 
                             subject, 
                             languageCode

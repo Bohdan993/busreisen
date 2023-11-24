@@ -17,25 +17,36 @@ function createMailer(){
     return transporter;
 }
 
-function createAdminTicketLetter(title, phone, email, translations){
-    return (`
-        <html> 
-            <head> 
-                <title>${title}</title> 
-            </head> 
-            <body>
-            <table>
-                <tr><td><b>${translations?.passengerPhoneText}:</b></td><td>${phone}</td></tr>
-                <tr><td><b>${translations?.passengerEmailText}:</b></td><td>${email}</td></tr>
-            </table>
+function createAdminTicketLetter(title, passangersData, email, translations){
+    let output = `
+    <html> 
+        <head> 
+            <title>${title}</title> 
+        </head> 
+        <body>
+        <table>`;
+
+        for(let i = 0; i < passangersData.length; i++) {
+            if(i === 0) {
+                output += passangersData[i][`passanger-${i + 1}-phone`] ? `<tr><td><b>${translations?.passengerPhoneText + " №" + (i + 1)}:</b></td><td>${passangersData[i][`passanger-${i + 1}-phone`]}</td></tr>` : "";
+                output += passangersData[i][`passanger-${i + 1}-additionalPhone`] ? `<tr><td><b>${translations?.passengerAdditionalPhoneText + " №" + (i + 1)}:</b></td><td>${passangersData[i][`passanger-${i + 1}-additionalPhone`]}</td></tr>` : ""; 
+                output += `<tr><td><b>${translations?.passengerEmailText + " №" + (i + 1)}:</b></td><td>${email}</td></tr>`;  
+            } else {
+                output += passangersData[i][`passanger-${i + 1}-phone`] ? `<tr><td><b>${translations?.passengerPhoneText + " №" + (i + 1)}:</b></td><td>${passangersData[i][`passanger-${i + 1}-phone`]}</td></tr>` : "";
+                output += passangersData[i][`passanger-${i + 1}-additionalPhone`] ? `<tr><td><b>${translations?.passengerAdditionalPhoneText + " №" + (i + 1)}:</b></td><td>${passangersData[i][`passanger-${i + 1}-additionalPhone`]}</td></tr>` : ""; 
+            }    
+        }
+
+    output += `</table>
             </body> 
-        </html>
-    `);
+        </html>`;
+    
+    return output;
 } 
 
 async function sendFileMail({
     email,
-    phone, 
+    passangersData,
     pdfPath, 
     subject,
     languageCode
@@ -43,7 +54,7 @@ async function sendFileMail({
     const translations = loadLanguageFile("_mail.js", languageCode);
     const emailAdresses = [email, process.env.ADMIN_EMAIL];
 
-    const adminText = createAdminTicketLetter(subject, phone, email, translations);
+    const adminText = createAdminTicketLetter(subject, passangersData, email, translations);
 
     for(let i = 0; i < emailAdresses.length; i++) {
         const mailOptions = {

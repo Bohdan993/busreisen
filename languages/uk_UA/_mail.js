@@ -3,6 +3,7 @@ const translations = {
     "text": "Перевірте, будь ласка, Ваш квиток у вкладеному PDF файлі.",
     "ticketText": "Квиток",
     "passengerPhoneText": "Телефон пасажира",
+    "passengerAdditionalPhoneText": "Додатковий телефон пассажира",
     "passengerEmailText": "Email пасажира"
 
 }
