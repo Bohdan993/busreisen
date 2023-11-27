@@ -7,8 +7,18 @@ function checkCallbackSignature(req, res, next){
             signature
         } = req?.body;
 
-        const signatureStr = strToSign(process.env.LIQPAY_PRIVATE_KEY + data + process.env.LIQPAY_PRIVATE_KEY);
+        let signatureStr;
 
+        if(req.originalUrl.split("?")[0] === "/api/tickets/send") {
+            console.log(data?.data);
+            signatureStr = strToSign(process.env.LIQPAY_PRIVATE_KEY + data?.data + process.env.LIQPAY_PRIVATE_KEY);
+            if(signatureStr === signature) {
+                next();
+                return;
+            }
+        }
+
+        signatureStr = strToSign(process.env.LIQPAY_PRIVATE_KEY + data + process.env.LIQPAY_PRIVATE_KEY);
         if(signatureStr === signature) {
             next();
             return;

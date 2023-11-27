@@ -12,7 +12,7 @@ const {
     passengerticket: PassengerTicket,
     ticket: Ticket
   } = require("../../database/models/index");
-const { loadLanguageFile } = require("../../helpers/index");
+const { getTicketSubject } = require("../../helpers/index");
 
 const { isSpecialDate, transformTimestampToDate } = require("../../helpers");
 const { checkCallbackSignature } = require("../../middlewares/paymentMiddlewares");
@@ -281,6 +281,7 @@ router.post("/send", [
             }  = req?.query;
 
             const {
+                data,
                 signature
             } = req?.body;
 
@@ -293,15 +294,6 @@ router.post("/send", [
             const pdfHash = crypto.createHash("sha256").update(signature).digest("hex");
             const pdfName = pdfHash + ".pdf";
             const pdfPath = path.resolve("assets", "tickets", pdfName);
-
-            const cities = selectedBusFlight.cities
-            const dates = selectedBusFlight.dates;
-            const startDate = dates?.departure; 
-            const endDate = dates?.return;
-            const origin = cities?.from?.name;
-            const destination = cities?.to?.name;
-            const mailTranslations = loadLanguageFile("_mail.js", languageCode);
-            const subject = `${mailTranslations?.ticketText} ${origin}-${destination} (${startDate}${endDate ? " - " + endDate : ""})`;
             const passengersInfoData = Object.entries(passengersInfo);
             const passangersData = passengersInfoData.map((passengerArr, ind) => {
                 const map = {
@@ -320,8 +312,19 @@ router.post("/send", [
                             email,
                             passangersData, 
                             pdfPath, 
-                            subject, 
-                            languageCode
+                            subject: getTicketSubject(selectedBusFlight, languageCode), 
+                            languageCode,
+                            transactionId: data?.transaction_id,
+                            orderId: data?.order_id
+                        });
+                        console.log("INFO", {
+                            email,
+                            passangersData, 
+                            pdfPath, 
+                            subject: getTicketSubject(selectedBusFlight, languageCode), 
+                            languageCode,
+                            transactionId: data?.transaction_id,
+                            orderId: data?.order_id
                         });
                         return res();
                     } catch(err) {

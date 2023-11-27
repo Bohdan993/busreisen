@@ -4,7 +4,9 @@ const translations = {
     "ticketText": "Билет",
     "passengerPhoneText": "Телефон пассажира",
     "passengerAdditionalPhoneText": "Дополнительный телефон пассажира",
-    "passengerEmailText": "Email пассажира"
+    "passengerEmailText": "Email пассажира",
+    "transactionIdText": "ID транзакции",
+    "ordreIdText": "ID заказа"
 
 }
 

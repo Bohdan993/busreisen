@@ -4,7 +4,7 @@ const {
 const {v4: uuidv4} = require("uuid");
 const fetch = require("node-fetch");
 const { strToSign, calculatePrice } = require("../../services/paymentService");
-const { loadLanguageFile} = require("../../helpers");
+const { loadLanguageFile, getTicketSubject} = require("../../helpers");
 const { checkIfSessionIsStarted} = require("../../middlewares/sessionMiddlewares");
 const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
 const { checkIfPassengersInfoExists } = require("../../middlewares/passengersMiddleware");
@@ -20,7 +20,9 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPass
 
         const {
             currency,
-            passengersInfo
+            passengersInfo,
+            selectedBusFlight,
+            email
         } = req.session;
 
         const currenciesExchangeUrl = "https://api.privatbank.ua/p24api/pubinfo?exchange&json&coursid=11";
@@ -34,19 +36,25 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPass
         } else {
             ticketPrice = price;
         }
-
+        const passengersInfoData = Object.entries(passengersInfo);
+        const firstPassaneger = passengersInfoData[0][1];
+        const firstPassanegerPhoneNum = firstPassaneger[`phone-1`];
+        const firstPassanegerName = firstPassaneger[`name-1`];
+        const firstPassanegerLastName = firstPassaneger[`last-name-1`];
 
         const params =  {
             "public_key"     : process.env.LIQPAY_PUBLIC_KEY,
             "action"         : "pay",
             "amount"         : ticketPrice,
             "currency"       : "UAH",
-            "description"    : "Оплата за квиток",
+            "description"    : "Оплата за " +  getTicketSubject(selectedBusFlight, languageCode),
             "order_id"       : uuidv4(),
             "version"        : "3",
             "paytypes"       : "card, liqpay, qr",
             "language"       : languageCode === "de_DE" ? "en" : languageCode.split("_")[0],
-            "info"           : JSON.stringify({"originalCurrency": currency?.abbr, "originalPrice": price})
+            "info"           : JSON.stringify({"originalCurrency": currency?.abbr, "originalPrice": price}),
+            "sender_first_name": `(${firstPassanegerPhoneNum}) ${firstPassanegerName}`,
+            "sender_last_name": `(${email}) ${firstPassanegerLastName}`
         };
 
         const data = Buffer.from(JSON.stringify(params))

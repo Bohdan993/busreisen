@@ -17,7 +17,7 @@ function createMailer(){
     return transporter;
 }
 
-function createAdminTicketLetter(title, passangersData, email, translations){
+function createAdminTicketLetter({subject: title, passangersData, email, translations, orderId, transactionId}){
     let output = `
     <html> 
         <head> 
@@ -36,7 +36,10 @@ function createAdminTicketLetter(title, passangersData, email, translations){
                 output += passangersData[i][`passanger-${i + 1}-additionalPhone`] ? `<tr><td><b>${translations?.passengerAdditionalPhoneText + " №" + (i + 1)}:</b></td><td>${passangersData[i][`passanger-${i + 1}-additionalPhone`]}</td></tr>` : ""; 
             }    
         }
-
+    
+    
+    // output += `<tr><td><b>${translations?.transactionIdText}:</b></td><td>${transactionId}</td></tr>`;
+    output += `<tr><td><b>${translations?.ordreIdText}:</b></td><td>${orderId}</td></tr>`;
     output += `</table>
             </body> 
         </html>`;
@@ -49,18 +52,20 @@ async function sendFileMail({
     passangersData,
     pdfPath, 
     subject,
-    languageCode
+    languageCode,
+    transactionId,
+    orderId
 }){
     const translations = loadLanguageFile("_mail.js", languageCode);
     const emailAdresses = [email, process.env.ADMIN_EMAIL];
 
-    const adminText = createAdminTicketLetter(subject, passangersData, email, translations);
+    const adminText = createAdminTicketLetter({subject, passangersData, email, translations, transactionId, orderId});
 
     for(let i = 0; i < emailAdresses.length; i++) {
         const mailOptions = {
             from: process.env.MAIL_USER,
             to: emailAdresses[i],
-            subject,
+            subject: emailAdresses[i] === process.env.ADMIN_EMAIL ?  subject + ` | (${translations?.transactionIdText}:${transactionId})` : subject,
             attachments: [{
               filename: "ticket.pdf",
               path: pdfPath,

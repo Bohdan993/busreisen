@@ -32,7 +32,9 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPasse
 
         const {
             adults = 1, 
-            children = 0
+            children = 0,
+            selectedBusFlight,
+            passengersInfo
         } = req.session;
 
         const lang = await Language.findOne({
@@ -92,10 +94,10 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPasse
                     discounts,
                     constants, 
                     translations: loadLanguageFile("passengers-form.js", lang?.code),
-                    ticketPrice: req.session.selectedBusFlight.purePrice,
-                    passengersInfo: req.session?.passengersInfo ? Object.entries(req.session?.passengersInfo) : null,
+                    ticketPrice: selectedBusFlight.purePrice,
+                    passengersInfo: passengersInfo ? Object.entries(passengersInfo) : null,
                     transformTimestampToDate,
-                    showDiscounts: !req.session.selectedBusFlight.hasDiscount
+                    showDiscounts: !selectedBusFlight.hasDiscount
                 }
             );
         }
@@ -126,7 +128,8 @@ router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected/*, c
         } = req?.body;
 
         const {
-            startDate
+            startDate,
+            selectedBusFlight
         } = req?.session;
 
         const lang = await Language.findOne({
@@ -144,7 +147,7 @@ router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected/*, c
             throw APIError.ValidationError("validation error", validData.data);
         }
 
-        const ticketPrice = req.session.selectedBusFlight.purePrice;
+        const ticketPrice = selectedBusFlight.purePrice;
         const transformedPassengersData = await transformPassengersData(validData.data, ticketPrice, lang?.id);
 
         req.session.passengersInfo = transformedPassengersData;

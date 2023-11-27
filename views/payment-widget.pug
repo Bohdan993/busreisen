@@ -169,7 +169,7 @@ script.
       });
       $(document).on("click", "#generate-ticket-pdf", generateTicketPDF.bind(null, data?.data, data?.signature));
       $("#booking2 .booking-content .loading-area").fadeOut(100);
-      await sendTicketMail(data?.data, data?.signature);
+      await sendTicketMail(data, data?.signature);
       return;
     } catch(err) {
         const errObj = JSON.parse(err.message);

@@ -90,6 +90,19 @@ function subtractYears(date, years) {
     return date;
 }
 
+function getTicketSubject(selectedBusFlight, languageCode){
+    const cities = selectedBusFlight.cities
+    const dates = selectedBusFlight.dates;
+    const startDate = dates?.departure; 
+    const endDate = dates?.return;
+    const origin = cities?.from?.name;
+    const destination = cities?.to?.name;
+    const mailTranslations = loadLanguageFile("_mail.js", languageCode);
+    const subject = `${mailTranslations?.ticketText} ${origin}-${destination} (${startDate}${endDate ? " - " + endDate : ""})`;
+
+    return subject;
+}
+
  module.exports = {
     isSpecialDate,
     isOneWay,
@@ -105,5 +118,6 @@ function subtractYears(date, years) {
     decodeHTMLEntities,
     base64Encode,
     includeFunc,
-    subtractYears
+    subtractYears,
+    getTicketSubject
  }
