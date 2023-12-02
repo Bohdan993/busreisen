@@ -87,6 +87,7 @@ async function transformPassengersData(data, price, languageId){
 }
 
 async function validatePassengersData(data, translations, startDate){
+    console.log("DATA FOR VALIDATION:", data);
     const dataToValidate = Object.values(data).reduce((acc, curr) => acc = {...acc, ...curr} , {});
     const constraints = await createValidateConstraints(data, dataToValidate, translations, startDate);
     const errors = validate(dataToValidate, constraints) || {};

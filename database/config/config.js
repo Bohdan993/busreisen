@@ -8,7 +8,8 @@ const config = {
     "host": process.env.DB_HOST,
     "dialect": process.env.DB_DIALECT,
     // Use a different storage. Default: none
-    "seederStorage": "sequelize"
+    "seederStorage": "sequelize",
+    "logging": msg => console.log(msg, "(Date: " + new Date().toUTCString() + ")")
   },
   "test": {
     "username": process.env.DB_USER,
@@ -16,7 +17,8 @@ const config = {
     "database": process.env.DB_NAME,
     "host": process.env.DB_HOST,
     "dialect": process.env.DB_DIALECT,
-    "seederStorage": "sequelize"
+    "seederStorage": "sequelize",
+    "logging": msg => console.log(msg, "(Date: " + new Date().toUTCString() + ")")
   },
   "production": {
     "username": process.env.DB_USER,
@@ -24,7 +26,8 @@ const config = {
     "database": process.env.DB_NAME,
     "host": process.env.DB_HOST,
     "dialect": process.env.DB_DIALECT,
-    "seederStorage": "sequelize"
+    "seederStorage": "sequelize",
+    "logging": msg => console.log(msg, "(Date: " + new Date().toUTCString() + ")")
   }
 }
 

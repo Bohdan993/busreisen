@@ -10,10 +10,10 @@
   let adlts = parseInt(adults);
   let chldrn = parseInt(children);
   let passengersType = [constants.ADULTS, constants.CHILDREN, constants.BOTH, constants.DISCOUNT_CARD];
-  let adultsDiscounts = discounts.filter(el => el[0] === passengersType[0]).flat()[1];
-  let childrenDiscounts = discounts.filter(el => el[0] === passengersType[1]).flat()[1];
-  let bothDiscounts = discounts.filter(el => el[0] === passengersType[2]).flat()[1];
-  let discountCards = discounts.filter(el => el[0] === passengersType[3]).flat()[1];
+  let adultsDiscounts = discounts.filter(el => el[0] === passengersType[0])?.flat()?.[1];
+  let childrenDiscounts = discounts.filter(el => el[0] === passengersType[1])?.flat()?.[1];
+  let bothDiscounts = discounts.filter(el => el[0] === passengersType[2])?.flat()?.[1];
+  let discountCards = discounts.filter(el => el[0] === passengersType[3])?.flat()?.[1];
   let i = 0;
 
 div.info-check-form-container-inner
@@ -143,12 +143,15 @@ div.info-check-form-container-inner
                         .select-box
                           select(id=`adult-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passengersInfo ? passengersInfo[i][1]["discount-" + (i + 1)] : "0"}` disabled)
                             option(value="0" selected="true")= translations.noDiscountText
-                            each discount in adultsDiscounts
-                              option(value=`${discount.id}` data-type="adults" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
-                            each discount in bothDiscounts
-                              option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
-                            each discount in discountCards
-                              option(value=`${discount.id}` data-type="cards" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
+                            if adultsDiscounts
+                              each discount in adultsDiscounts
+                                option(value=`${discount.id}` data-type="adults" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
+                            if bothDiscounts
+                              each discount in bothDiscounts
+                                option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
+                            if discountCards
+                              each discount in discountCards
+                                option(value=`${discount.id}` data-type="cards" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
                         i.pencil-ico
                           svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
                             rect(fill="none" height="256" width="256")
@@ -247,10 +250,12 @@ div.info-check-form-container-inner
                         .select-box
                           select(id=`child-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passengersInfo ? passengersInfo[i][1]["discount-" + (i + 1)] : "0"}` disabled)
                             option(value="0" selected="true")= translations.noDiscountText
-                            each discount in childrenDiscounts
-                              option(value=`${discount.id}` data-type="children" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
-                            each discount in bothDiscounts
-                              option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
+                            if childrenDiscounts
+                              each discount in childrenDiscounts
+                                option(value=`${discount.id}` data-type="children" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
+                            if bothDiscounts 
+                              each discount in bothDiscounts
+                                option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
                         i.pencil-ico
                           svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 256 256")
                             rect(fill="none" height="256" width="256")
@@ -277,6 +282,8 @@ div.info-check-form-container-inner
     return result;
   });
 
+  console.log("DATA info-check", data);
+
 - if(data)
   script
     .
@@ -285,8 +292,8 @@ div.info-check-form-container-inner
         const promise = new Promise((res, rej) => {
           setTimeout(()=>{res("ok");}, 0);
         });
-    - for(let j = 0; j < data.length; j++)
-      - for(let k = 0; k < data[j].length; k++)
+    - for(let j = 0; j < data?.length; j++)
+      - for(let k = 0; k < data[j]?.length; k++)
         - if(additionalPhoneRegex.test(Object.keys(data[j][k])?.[0]) || phoneRegex.test(Object.keys(data[j][k])?.[0]))  
           . 
             promise.then(_ => {

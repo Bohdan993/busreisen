@@ -10,6 +10,7 @@ const translations = {
     "passengerText": "Passagier",
     "passengersText": "Passagiere",
     "destinationText": "An",
+    "departureText": "Abfahrt",
     "returnText": "Zurück",
     "onboardingText": "Einstiegsort",
     "outboardingText": "Ausschiffungsort",

@@ -12,7 +12,7 @@ script.
       });
       return result;
     } catch(err) {
-      console.error("[API Error]", `Error: ${err?.message}`);
+      console.error("[API Error]", err?.status);
       if(Swal.isVisible()) {
         Swal.close();
       }
@@ -43,7 +43,7 @@ script.
       });
       return result;
     } catch(err) {
-      console.error("[API Error]", `Error: ${err?.message}`);
+      console.error("[API Error]", err?.status);
       if(Swal.isVisible()) {
         Swal.close();
       }
@@ -75,7 +75,7 @@ script.
     bookingHelpersInstance.showLoadSpinner('#generate-ticket-pdf');
     const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets/generate-pdf";
     try {
-      const result = await fetch(`${url}?languageCode=${bookingHelpersInstance.state?.languageCode}`, {
+      const result = await bookingHelpersInstance.makeRequest(url, null, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -109,7 +109,7 @@ script.
   async function sendTicketMail(data, signature){
     const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets/send";
     try {
-      const result = await fetch(`${url}?languageCode=${bookingHelpersInstance.state?.languageCode}`, {
+      const result = await bookingHelpersInstance.makeRequest(url, null, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -119,7 +119,7 @@ script.
       });
       return result;
     } catch (err) {
-      console.error("[API Error]", `Error: ${err?.message}`);
+      console.error("[API Error]", err?.status);
       if(Swal.isVisible()) {
         Swal.close();
       }
@@ -137,6 +137,24 @@ script.
       return;
     }
   }
+  async function sendPaymentFailData(data, signature) {
+    const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets/payment-fail";
+    try {
+      const result = await bookingHelpersInstance.makeRequest(url, null, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({data, signature})
+      });
+      return result;
+    } catch(err) {
+      console.error("[API Error]", err?.status);
+      throw err;
+      return;
+    }
+  }
 script.
   window.LiqPayCheckoutCallback = function() {
   LiqPayCheckout.init({
@@ -146,7 +164,6 @@ script.
   language: "#{language}",
   mode: "embed" // embed || popup
   }).on("liqpay.callback", async function(data){
-    console.log("LP DATA", data);
   $("#booking2 .booking-content .loading-area").show(0); 
   const btn = "<a href=\"#{linkToMain}\" class=\"base-button base-button--primary\" style=\" max-width:180px;margin:0 auto; margin-top: 35px;\"type=\"button\">#{translations.buttonText}</a>"
   $('#payment-container').append(btn);
@@ -154,6 +171,7 @@ script.
     try {
       $('#search-change-button').attr("disabled", true);
       await postTicketData(data?.data, data?.signature);
+      await sendTicketMail(data, data?.signature);
       const ticket = await generateTicket(data?.data, data?.signature);
       Swal.fire({
         title: "!{translations.thanksText}",
@@ -169,7 +187,6 @@ script.
       });
       $(document).on("click", "#generate-ticket-pdf", generateTicketPDF.bind(null, data?.data, data?.signature));
       $("#booking2 .booking-content .loading-area").fadeOut(100);
-      await sendTicketMail(data, data?.signature);
       return;
     } catch(err) {
         const errObj = JSON.parse(err.message);
@@ -191,6 +208,7 @@ script.
     }
     return;
   } 
+  await sendPaymentFailData(data?.data, data?.signature);
   Swal.fire({
     icon: "error",
     title: "#{translations.oopsText}",

@@ -24,8 +24,6 @@ const { generatePDFTicket, generateHTMLTicket } = require("../../services/ticket
 const { sendFileMail } = require("../../services/mailService");
 const constants = require("../../helpers/constants");
 
-
-
 router.post("/", [
         checkIfSessionIsStarted, 
         checkIfBusFlightSelected, 
@@ -224,7 +222,7 @@ router.post("/generate", [
                 places: selectedBusFlight.places
             });
 
-            req.session.save(function (err) {
+            req.session.destroy(function (err) {
                 if (err) return next(err);
                 return res.send(html);
             });
@@ -232,40 +230,6 @@ router.post("/generate", [
         } catch (err) {
             return next(err);
         }
-});
-
-router.post("/generate-pdf", checkCallbackSignature, async (req, res, next) => {
-    try {
-        const {
-            signature
-        } = req?.body;
-
-        const pdfHash = crypto.createHash("sha256").update(signature).digest("hex");
-        const pdfName = pdfHash + ".pdf";
-        const pdfPath = path.resolve("assets", "tickets", pdfName);
-
-        const promise = new Promise((res, rej) => {
-            fs.readFile(pdfPath, async function (err, fileData) {
-                try {
-                    if (err) return next(err);
-                    return res({pdfPath, pdfName});
-                } catch(err) {
-                    return rej(err);
-                }
-            });
-        });
-
-        const {pdfPath: newPdfPath, pdfName: newPdfName} = await promise;
-
-        return res.download(newPdfPath, function (err) {
-            if (err) return next(err);
-            console.log("Sent downloaded:", newPdfName);
-        });
-
-    } catch (err) {
-        return next(err);
-    }
-    
 });
 
 router.post("/send", [
@@ -317,15 +281,6 @@ router.post("/send", [
                             transactionId: data?.transaction_id,
                             orderId: data?.order_id
                         });
-                        console.log("INFO", {
-                            email,
-                            passangersData, 
-                            pdfPath, 
-                            subject: getTicketSubject(selectedBusFlight, languageCode), 
-                            languageCode,
-                            transactionId: data?.transaction_id,
-                            orderId: data?.order_id
-                        });
                         return res();
                     } catch(err) {
                         return rej(err);
@@ -335,7 +290,7 @@ router.post("/send", [
 
             await promise;
 
-            req.session.destroy(function (err) {
+            req.session.save(function (err) {
                 if (err) return next(err);
                 return res.json({status: "ok"});
             });
@@ -344,6 +299,62 @@ router.post("/send", [
             return next(err);
         }
     
+});
+
+router.post("/generate-pdf", checkCallbackSignature, async (req, res, next) => {
+    try {
+        const {
+            signature
+        } = req?.body;
+
+        const pdfHash = crypto.createHash("sha256").update(signature).digest("hex");
+        const pdfName = pdfHash + ".pdf";
+        const pdfPath = path.resolve("assets", "tickets", pdfName);
+
+        const promise = new Promise((res, rej) => {
+            fs.readFile(pdfPath, async function (err, fileData) {
+                try {
+                    if (err) return next(err);
+                    return res({pdfPath, pdfName});
+                } catch(err) {
+                    return rej(err);
+                }
+            });
+        });
+
+        const {pdfPath: newPdfPath, pdfName: newPdfName} = await promise;
+
+        return res.download(newPdfPath, function (err) {
+            if (err) return next(err);
+            console.log("Sent downloaded:", newPdfName);
+        });
+
+    } catch (err) {
+        return next(err);
+    }
+    
+});
+
+router.post("/payment-fail", [checkIfSessionIsStarted, checkCallbackSignature], async (req, res, next) => {
+        try {
+
+            const {
+                data
+            } = req?.body;
+
+            const decodedData = Buffer.from(data, "base64").toString("utf-8");
+
+            console.log("Fail. Passangers data: ", JSON.parse(decodedData), "(Date: " + new Date().toUTCString() + ")");
+
+            req.session.destroy(function (err) {
+                if (err) return next(err);
+                return res.json({status: "ok"});
+            });
+
+        } catch (err) {
+            return next(err);
+        }
+
 });
 
 module.exports = router

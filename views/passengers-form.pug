@@ -9,10 +9,10 @@
   let adlts = parseInt(adults);
   let chldrn = parseInt(children);
   let passengersType = [constants.ADULTS, constants.CHILDREN, constants.BOTH, constants.DISCOUNT_CARD];
-  let adultsDiscounts = discounts.filter(el => el[0] === passengersType[0]).flat()[1];
-  let childrenDiscounts = discounts.filter(el => el[0] === passengersType[1]).flat()[1];
-  let bothDiscounts = discounts.filter(el => el[0] === passengersType[2]).flat()[1];
-  let discountCards = discounts.filter(el => el[0] === passengersType[3]).flat()[1];
+  let adultsDiscounts = discounts.filter(el => el[0] === passengersType[0])?.flat()?.[1];
+  let childrenDiscounts = discounts.filter(el => el[0] === passengersType[1])?.flat()?.[1];
+  let bothDiscounts = discounts.filter(el => el[0] === passengersType[2])?.flat()?.[1];
+  let discountCards = discounts.filter(el => el[0] === passengersType[3])?.flat()?.[1];
   let i = 0;
 
 form#booking-passengers-form.booking-passengers-form
@@ -90,12 +90,15 @@ form#booking-passengers-form.booking-passengers-form
                         select(id=`adult-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passengersInfo ? passengersInfo[i][1]["discount-" + (i + 1)] : "0"}`)
                           //- option(value="-1" disabled="" selected="true")= translations.discountText
                           option(value="0" selected="true")= translations.noDiscountText
-                          each discount in adultsDiscounts
-                            option(value=`${discount.id}` data-type="adults" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
-                          each discount in bothDiscounts
-                            option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
-                          each discount in discountCards
-                            option(value=`${discount.id}` data-type="cards" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
+                          if adultsDiscounts
+                            each discount in adultsDiscounts
+                              option(value=`${discount.id}` data-type="adults" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
+                          if bothDiscounts
+                            each discount in bothDiscounts
+                              option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
+                          if discountCards
+                            each discount in discountCards
+                              option(value=`${discount.id}` data-type="cards" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
                       .input-error= translations.errorText
                       .select-dropdown
               - if(passengersInfo?.[i]?.[1]?.["card-discount-" + (i + 1)])
@@ -158,10 +161,12 @@ form#booking-passengers-form.booking-passengers-form
                         select(id=`child-discount-${i + 1}` data-validate=`discount-${i + 1}` value=`${passengersInfo ? passengersInfo[i][1]["discount-" + (i + 1)] : "0"}`)
                           //- option(value="-1" disabled="" selected="true")= translations.discountText
                           option(value="0" selected="true")= translations.noDiscountText
-                          each discount in childrenDiscounts
-                            option(value=`${discount.id}` data-type="children" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
-                          each discount in bothDiscounts
-                            option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
+                          if childrenDiscounts
+                            each discount in childrenDiscounts
+                              option(value=`${discount.id}` data-type="children" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
+                          if bothDiscounts
+                            each discount in bothDiscounts
+                              option(value=`${discount.id}` data-type="both" data-coef=`${discount.coef}` data-maxAge=`${discount.maxAge}` data-minAge=`${discount.minAge}`)= discount.discountattrs[0].name
                       .input-error= translations.errorText
                       .select-dropdown
         .booking-flow__passengers__info
@@ -183,6 +188,7 @@ form#booking-passengers-form.booking-passengers-form
     }
     return result;
   });
+  console.log("DATA passengers", data);
 
 - if(data)
   script
@@ -192,8 +198,8 @@ form#booking-passengers-form.booking-passengers-form
         const promise = new Promise((res, rej) => {
           setTimeout(()=>{res("ok");}, 0);
         });
-    - for(let j = 0; j < data.length; j++)
-      - for(let k = 0; k < data[j].length; k++)
+    - for(let j = 0; j < data?.length; j++)
+      - for(let k = 0; k < data[j]?.length; k++)
         - if(additionalPhoneRegex.test(Object.keys(data[j][k])?.[0]) || phoneRegex.test(Object.keys(data[j][k])?.[0]))  
           . 
             promise.then(_ => {

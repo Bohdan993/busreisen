@@ -53,18 +53,18 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPasse
                 }
             },
             include: [
-                {
-                    model: Language,
-                    where: {
-                        id: {
-                            [Op.eq]: lang?.id
-                        }
-                    },
-                    attributes: ["name", "code"],
-                    through: {
-                        attributes: []
-                    }
-                },
+                // {
+                //     model: Language,
+                //     where: {
+                //         id: {
+                //             [Op.eq]: lang?.id
+                //         }
+                //     },
+                //     attributes: ["name", "code"],
+                //     through: {
+                //         attributes: []
+                //     }
+                // },
                 {
                     model: DiscountAttributes,
                     as: "discountattrs",
