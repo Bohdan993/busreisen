@@ -23,7 +23,7 @@ async function validateDates(req, res, next){
             }
         });
     
-        const isAlternativesRoute = req.originalUrl.includes("/alternatives");
+        const isAlternativesRoute = req.originalUrl.split("?")?.[0] === ("/api/bus-flights/alternatives");
         const error404Translations = isAlternativesRoute ? loadLanguageFile("_404-error-no-alternative-tickets.js", lang?.code) :  loadLanguageFile("404-error.js", lang?.code);
     
     
@@ -67,7 +67,11 @@ function checkIfBusFlightSelected(req, res, next){
         const {
             languageCode = "uk_UA", 
         } = req.query;
-    
+        
+        if(req.originalUrl.split("?")?.[0] === "/api/tickets") {
+            console.log("IS BUS FLIGHT SELECTED", req.session?.selectedBusFlight?.isSelected);
+        }
+
         if(req.session?.selectedBusFlight?.isSelected) {
             return next();
         }

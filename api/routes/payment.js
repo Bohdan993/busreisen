@@ -1,6 +1,8 @@
 const {
     Router
 } = require("express");
+const pug = require("pug");
+const path = require("path");
 const {v4: uuidv4} = require("uuid");
 const fetch = require("node-fetch");
 const { strToSign, calculatePrice } = require("../../services/paymentService");
@@ -8,6 +10,7 @@ const { loadLanguageFile, getTicketSubject} = require("../../helpers");
 const { checkIfSessionIsStarted} = require("../../middlewares/sessionMiddlewares");
 const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
 const { checkIfPassengersInfoExists } = require("../../middlewares/passengersMiddleware");
+const constants = require("../../helpers/constants");
 
 const router = Router();
 
@@ -60,22 +63,40 @@ router.post("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPass
         const data = Buffer.from(JSON.stringify(params))
                     .toString("base64");
         const signature = strToSign(process.env.LIQPAY_PRIVATE_KEY + data + process.env.LIQPAY_PRIVATE_KEY);
-        
-        return res.render("payment-widget", 
-            { 
+        req.session.flag = !req.session.flag;
+        return req.session.save(function (err) {
+            if (err) return next(err);
+
+            const template = path.resolve("views", "payment-widget.pug");
+            const html = pug.renderFile(template, { 
                 data, 
                 signature, 
                 translations: loadLanguageFile("payment-widget.js", languageCode),
                 language: languageCode === "de_DE" ? "en" : languageCode.split("_")[0],
                 linkToMain: languageCode === "ru_RU" ? "/" : languageCode === "uk_UA" ? "/ua" : languageCode.split("_")[0],
-            }
-        );
+            });
+
+            return res.json({
+                status: "ok",
+                data: html,
+                sessionExpiresTime: constants.SESSION_TIME
+            });
+            // return res.render("payment-widget", 
+            //     { 
+            //         data, 
+            //         signature, 
+            //         translations: loadLanguageFile("payment-widget.js", languageCode),
+            //         language: languageCode === "de_DE" ? "en" : languageCode.split("_")[0],
+            //         linkToMain: languageCode === "ru_RU" ? "/" : languageCode === "uk_UA" ? "/ua" : languageCode.split("_")[0],
+            //     }
+            // );
+        });
+        
 
     } catch (err) {
         return next(err);
     }
     
 });
-
 
 module.exports = router

@@ -15,6 +15,10 @@ class AdminAPIError extends Error {
     static BadRequest(message, errors = []){
         return new AdminAPIError(400, message, errors);
     }
+
+    static ValidationError(message, errors = []){
+        return new APIError(422, message, errors);
+    }
 }
 
 

@@ -2,7 +2,8 @@ const {
     Router
 } = require("express");
 const router = Router();
-
+const pug = require("pug");
+const path = require("path");
 const {
     country: Country,
     countryattributes: CountryAttributes,
@@ -123,7 +124,13 @@ router.get("/", async (req, res, next) => {
         }
         
         if(mode?.toLowerCase() === "html" || !mode) {
-            return res.render("cities-dropdown", { data: resultCities });
+            const template = path.resolve("views", "cities-dropdown.pug");
+            const html = pug.renderFile(template, { data: resultCities });
+            return res.json({
+                status: "ok",
+                data: html
+            });
+            // return res.render("cities-dropdown", { data: resultCities });
         }
 
     } catch (err) {

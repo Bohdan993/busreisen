@@ -2,12 +2,13 @@ const {
     Router
 } = require("express");
 const router = Router();
-const { checkIfSessionIsStarted/*, checkIfSessionIsFinished */} = require("../../middlewares/sessionMiddlewares");
-const { encodeHTMLEntities, decodeHTMLEntities, isOneWay } = require("../../helpers");
+const { checkIfSessionIsStarted} = require("../../middlewares/sessionMiddlewares");
+const { encodeHTMLEntities, decodeHTMLEntities} = require("../../helpers");
 const { calculatePrice } = require("../../services/paymentService");
+const { checkIfBusFlightSelected } = require("../../middlewares/busFlightMiddlewares");
+const constants = require("../../helpers/constants");
 
-
-router.get("/", [checkIfSessionIsStarted/*, checkIfSessionIsFinished*/], async (req, res, next) => {
+router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req, res, next) => {
     try {
 
         const {
@@ -42,26 +43,16 @@ router.get("/", [checkIfSessionIsStarted/*, checkIfSessionIsFinished*/], async (
                 data[key] = decodeHTMLEntities(data[key]);
             }
         }
-        
-        return res.json({status: "ok", data});
 
-    } catch (err) {
-        return next(err);
-    }
-    
-});
-
-router.post("/", [checkIfSessionIsStarted/*, checkIfSessionIsFinished*/], async (req, res, next) => {
-    try {
-
-        for(const key in req?.body) {
-            req.session[key] = encodeHTMLEntities(req.body[key]);
-        }
-
-        req.session.save(function (err) {
+        req.session.flag = !req.session.flag;
+        return req.session.save(function (err) {
             if (err) return next(err);
 
-            return res.json({status: "ok"});
+            return res.json({
+                status: "ok", 
+                data,
+                sessionExpiresTime: constants.SESSION_TIME
+            });
         });
 
     } catch (err) {
@@ -69,5 +60,36 @@ router.post("/", [checkIfSessionIsStarted/*, checkIfSessionIsFinished*/], async 
     }
     
 });
+
+router.post("/", [checkIfSessionIsStarted], async (req, res, next) => {
+    try {
+
+        for(const key in req?.body) {
+            req.session[key] = encodeHTMLEntities(req.body[key]);
+        }
+
+        return req.session.save(function (err) {
+            if (err) return next(err);
+
+            return res.json({
+                status: "ok",
+                sessionExpiresTime: constants.SESSION_TIME
+            });
+        });
+
+    } catch (err) {
+        return next(err);
+    }
+    
+});
+
+router.get("/is-started", [checkIfSessionIsStarted], async (req, res, next) => {
+    try {
+        return res.json({status: "ok", active: req?.session?.isStarted});
+
+    } catch (err) {
+        return next(err);
+    }
+})
 
 module.exports = router

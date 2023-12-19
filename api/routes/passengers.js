@@ -3,6 +3,8 @@ const {
 } = require("express");
 const router = Router();
 const { Op } = require("sequelize");
+const pug = require("pug");
+const path = require("path");
 const { 
     language: Language,
     discount: Discount,
@@ -53,18 +55,6 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPasse
                 }
             },
             include: [
-                // {
-                //     model: Language,
-                //     where: {
-                //         id: {
-                //             [Op.eq]: lang?.id
-                //         }
-                //     },
-                //     attributes: ["name", "code"],
-                //     through: {
-                //         attributes: []
-                //     }
-                // },
                 {
                     model: DiscountAttributes,
                     as: "discountattrs",
@@ -86,9 +76,24 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPasse
         discounts = mapDiscounts(discounts);
         discounts = filterByDateDiscounts(discounts);
 
-        if(mode?.toLowerCase() === "html" || !mode) {
-            return res.render(type === "check" ? "info-check-form" : "passengers-form", 
-                { 
+        req.session.busFlights = null;
+        req.session.alternativeBusFlightsFrom = null;
+        req.session.alternativeBusFlightsTo = null;
+        req.session.flag = !req.session.flag;
+
+        return req.session.save(function (err) {
+            if (err) return next(err);
+            if(mode?.toLowerCase() === "json") {
+                return res.json({
+                    status: "ok",
+                    data: { adults, children, discounts },
+                    sessionExpiresTime: constants.SESSION_TIME
+                });
+            }
+
+            if(mode?.toLowerCase() === "html" || !mode) {
+                const template = path.resolve("views", type === "check" ? "info-check-form.pug" : "passengers-form.pug");
+                const html = pug.renderFile(template, { 
                     adults, 
                     children, 
                     discounts,
@@ -98,16 +103,15 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPasse
                     passengersInfo: passengersInfo ? Object.entries(passengersInfo) : null,
                     transformTimestampToDate,
                     showDiscounts: !selectedBusFlight.hasDiscount
-                }
-            );
-        }
+                });
 
-        req.session.busFlights = null;
-        req.session.alternativeBusFlightsFrom = null;
-        req.session.alternativeBusFlightsTo = null;
-        req.session.save(function (err) {
-            if (err) return next(err);
-            return res.json({status: "ok", data: { adults, children, discounts }});
+                return res.json({
+                    status: "ok",
+                    data: html,
+                    sessionExpiresTime: constants.SESSION_TIME
+                });
+            }
+
         });
 
     } catch (err) {
@@ -116,7 +120,7 @@ router.get("/", [checkIfSessionIsStarted, checkIfBusFlightSelected, checkIfPasse
     
 });
 
-router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected/*, checkIfSessionIsFinished*/], async (req, res, next) => {
+router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected], async (req, res, next) => {
     try {
 
         const {
@@ -152,11 +156,14 @@ router.post("/validate", [checkIfSessionIsStarted, checkIfBusFlightSelected/*, c
 
         req.session.passengersInfo = transformedPassengersData;
         req.session.email = Object.values(transformedPassengersData).find((_, ind) => ind === 0)?.["email-1"];
-
-        req.session.save(function (err) {
+        req.session.flag = !req.session.flag;
+        return req.session.save(function (err) {
             if (err) return next(err);
 
-            return res.json({status: "ok"});
+            return res.json({
+                status: "ok",
+                sessionExpiresTime: constants.SESSION_TIME
+            });
         });
 
     } catch (err) {

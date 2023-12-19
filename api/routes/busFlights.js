@@ -3,6 +3,8 @@ const { Router } = require("express");
 const router = Router();
 const sequelize = require("../../database/models/index").sequelize;
 const { Op, QueryTypes } = require("sequelize");
+const pug = require("pug");
+const path = require("path");
 const { 
   route: Route, 
   busflight: BusFlight, 
@@ -74,6 +76,8 @@ router.get("/", validateDates, async (req, res, next) => {
         },
       },
     });
+
+    console.log(currencyAbbr);
 
     currency = currency?.toJSON();
 
@@ -275,7 +279,7 @@ router.get("/", validateDates, async (req, res, next) => {
       languageCode: lang?.code,
     });
 
-    req.session.regenerate(function (err) {
+    return req.session.regenerate(function (err) {
       if (err) next(err);
 
       req.session.busFlights = transformedBusFlights;
@@ -290,21 +294,39 @@ router.get("/", validateDates, async (req, res, next) => {
       req.session.selectedBusFlight.isSelected = true;
       req.session.isStarted = true;
 
-      req.session.save(function (err) {
+      return req.session.save(function (err) {
         if (err) return next(err);
         
         if (mode?.toLowerCase() === "json") {
-          return res.json({ status: "ok", data: transformedBusFlights });
+          return res.json({ 
+            status: "ok", 
+            data: transformedBusFlights,
+            // sessionExpiresDate: new Date(Date.now() + constants.SESSION_TIME)
+            sessionExpiresTime: constants.SESSION_TIME
+          });
         }
 
         if (mode?.toLowerCase() === "html" || !mode) {
-          return res.render("ticket-list", {
+          const template = path.resolve("views", "ticket-list.pug");
+          const html = pug.renderFile(template, {
             flightsData: transformedBusFlights,
             translations: loadLanguageFile("ticket-list.js", lang?.code),
           });
+
+          return res.json({
+            status: "ok",
+            data: html,
+            sessionExpiresTime: constants.SESSION_TIME
+          });
+          // return res.render("ticket-list", {
+          //   flightsData: transformedBusFlights,
+          //   translations: loadLanguageFile("ticket-list.js", lang?.code),
+          // });
         }
       });
+
     });
+
   } catch (err) {
     return next(err);
   }
@@ -624,11 +646,16 @@ router.get(
         if (err) return next(err);
 
         if (mode?.toLowerCase() === "json") {
-          return res.json({ status: "ok", data: transformedBusFlights });
+          return res.json({ 
+            status: "ok", 
+            data: transformedBusFlights,
+            sessionExpiresTime: constants.SESSION_TIME
+          });
         }
 
         if (mode?.toLowerCase() === "html" || !mode) {
-          return res.render("alternative-tickets", {
+          const template = path.resolve("views", "alternative-tickets.pug");
+          const html = pug.renderFile(template, {
             isForwards: direction === constants.FORWARDS,
             cityFrom: cities?.filter((city) =>
               city?.cityattrs.find(
@@ -643,6 +670,28 @@ router.get(
             flightsData: transformedBusFlights,
             translations: loadLanguageFile("ticket-list.js", lang?.code),
           });
+
+          return res.json({
+            status: "ok",
+            data: html,
+            sessionExpiresTime: constants.SESSION_TIME
+          });
+
+          // return res.render("alternative-tickets", {
+          //   isForwards: direction === constants.FORWARDS,
+          //   cityFrom: cities?.filter((city) =>
+          //     city?.cityattrs.find(
+          //       (el) => String(el?.cityId) === String(originId)
+          //     )
+          //   )?.[0]?.cityattrs?.[0]?.name,
+          //   cityTo: cities?.filter((city) =>
+          //     city?.cityattrs.find(
+          //       (el) => String(el?.cityId) === String(destinationId)
+          //     )
+          //   )?.[0]?.cityattrs?.[0]?.name,
+          //   flightsData: transformedBusFlights,
+          //   translations: loadLanguageFile("ticket-list.js", lang?.code),
+          // });
         }
       }
 
@@ -665,7 +714,8 @@ router.get(
           req.session.originId = originId;
           req.session.destinationId = destinationId;
           req.session.isStarted = true;
-          req.session.save(saveSessionCb);
+          req.session.flag = true;
+          return req.session.save(saveSessionCb);
 
         });
       }
@@ -827,12 +877,13 @@ router.post("/select", [checkIfSessionIsStarted], async (req, res, next) => {
     req.session.startDate = selectedBusFlight.dates.departurePure;
     req.session.endDate = selectedBusFlight.dates.returnPure;
 
-    // req.session.busFlights = null;
-
-    req.session.save(function (err) {
+    return req.session.save(function (err) {
       if (err) return next(err);
 
-      return res.json({ status: "ok" });
+      return res.json({ 
+        status: "ok",
+        sessionExpiresTime: constants.SESSION_TIME
+      });
     });
   } catch (err) {
     return next(err);

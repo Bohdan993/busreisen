@@ -6,6 +6,10 @@ function checkIfSessionIsStarted(req, res, next) {
         const {
             languageCode = "uk_UA", 
         } = req.query;
+
+        if(req.originalUrl.split("?")?.[0] === "/api/tickets") {
+            console.log("IS SESSION STARTED", req.session?.isStarted);
+        }
     
         if(req.session?.isStarted) {
             return next();

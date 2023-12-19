@@ -172,10 +172,13 @@ router.post("/", [
         await generatePDFTicket(signature, html);
 
         req.session.ticketCreated = true;
-        req.session.save(function (err) {
+        return req.session.save(function (err) {
             if (err) return next(err);
 
-            return res.json({status: "ok"});
+            return res.json({
+                status: "ok",
+                sessionExpiresTime: constants.SESSION_TIME
+            });
         });
 
         
@@ -204,7 +207,7 @@ router.post("/generate", [
             const {
                 selectedBusFlight,
                 passengersInfo
-            } = req.session;
+            } = req?.session;
 
             const decodedData = Buffer.from(data, "base64").toString("utf-8");
 
@@ -222,7 +225,7 @@ router.post("/generate", [
                 places: selectedBusFlight.places
             });
 
-            req.session.destroy(function (err) {
+            return req.session.destroy(function (err) {
                 if (err) return next(err);
                 return res.send(html);
             });
@@ -281,6 +284,7 @@ router.post("/send", [
                             transactionId: data?.transaction_id,
                             orderId: data?.order_id
                         });
+                        console.log("ORDER DATA", data);
                         return res();
                     } catch(err) {
                         return rej(err);
@@ -289,16 +293,18 @@ router.post("/send", [
             });
 
             await promise;
-
-            req.session.save(function (err) {
+            req.session.flag = !req.session.flag;
+            return req.session.save(function (err) {
                 if (err) return next(err);
-                return res.json({status: "ok"});
+                return res.json({
+                    status: "ok",
+                    sessionExpiresTime: constants.SESSION_TIME
+                });
             });
 
         } catch (err) {
             return next(err);
         }
-    
 });
 
 router.post("/generate-pdf", checkCallbackSignature, async (req, res, next) => {
@@ -339,14 +345,18 @@ router.post("/payment-fail", [checkIfSessionIsStarted, checkCallbackSignature], 
         try {
 
             const {
-                data
+                data,
+                error
             } = req?.body;
 
-            const decodedData = Buffer.from(data, "base64").toString("utf-8");
+            const decodedData = Buffer.from(data?.data, "base64").toString("utf-8");
 
-            console.log("Fail. Passangers data: ", JSON.parse(decodedData), "(Date: " + new Date().toUTCString() + ")");
+            console.log("Fail. Passangers data: ", JSON.parse(decodedData));
+            console.log("Fail. Payment data: ", data);
+            console.log("Erro msg:", error);
+            console.log("(Date: " + new Date().toUTCString() + ")");
 
-            req.session.destroy(function (err) {
+            return req.session.destroy(function (err) {
                 if (err) return next(err);
                 return res.json({status: "ok"});
             });

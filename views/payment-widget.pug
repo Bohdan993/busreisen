@@ -2,7 +2,7 @@ script.
   async function postTicketData(data, signature){
     const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets";
     try {
-      const result = await bookingHelpersInstance.makeRequest(url, null, {
+      const result = await bookingHelpersInstance.makeRequestWithSession(url, null, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -19,7 +19,7 @@ script.
       Swal.fire({
         icon: "error",
         title: "#{translations.oopsText}",
-        text: "#{translations.errorText1}",
+        text: "#{translations.errorText2}",
         showCloseButton: true,
         showConfirmButton: false,
         customClass: {
@@ -50,7 +50,7 @@ script.
       Swal.fire({
         icon: "error",
         title: "#{translations.oopsText}",
-        text: "#{translations.errorText1}",
+        text: "#{translations.errorText2}",
         showCloseButton: true,
         showConfirmButton: false,
         customClass: {
@@ -95,7 +95,7 @@ script.
       Swal.fire({
         icon: "error",
         title: "#{translations.oopsText}",
-        text: "#{translations.errorText1}",
+        text: "#{translations.errorText2}",
         showCloseButton: true,
         showConfirmButton: false,
         customClass: {
@@ -109,7 +109,7 @@ script.
   async function sendTicketMail(data, signature){
     const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets/send";
     try {
-      const result = await bookingHelpersInstance.makeRequest(url, null, {
+      const result = await bookingHelpersInstance.makeRequestWithSession(url, null, {
           method: "POST",
           credentials: "include",
           headers: {
@@ -126,7 +126,7 @@ script.
       Swal.fire({
         icon: "error",
         title: "#{translations.oopsText}",
-        text: "#{translations.errorText1}",
+        text: "#{translations.errorText2}",
         showCloseButton: true,
         showConfirmButton: false,
         customClass: {
@@ -137,16 +137,16 @@ script.
       return;
     }
   }
-  async function sendPaymentFailData(data, signature) {
+  async function sendPaymentFailData(data, signature, error) {
     const url = bookingHelpersInstance.getBaseApiUrl() + "/tickets/payment-fail";
     try {
-      const result = await bookingHelpersInstance.makeRequest(url, null, {
+      const result = await bookingHelpersInstance.makeRequestWithSession(url, null, {
           method: "POST",
           credentials: "include",
           headers: {
               "Content-Type": "application/json",
           },
-          body: JSON.stringify({data, signature})
+          body: JSON.stringify({data, signature, error})
       });
       return result;
     } catch(err) {
@@ -189,7 +189,8 @@ script.
       $("#booking2 .booking-content .loading-area").fadeOut(100);
       return;
     } catch(err) {
-        const errObj = JSON.parse(err.message);
+        await sendPaymentFailData(data?.data, data?.signature, "FAIL INSIDE CATCH: " + err);
+        const errObj = JSON.parse(err?.message);
         console.error("[API Error]", `Error: ${errObj?.status}`);
         if(Swal.isVisible()) {
           Swal.close();
@@ -197,7 +198,7 @@ script.
         Swal.fire({
           icon: "error",
           title: "#{translations.oopsText}",
-          text: "#{translations.errorText1}",
+          text: "#{translations.errorText2}",
           showCloseButton: true,
           showConfirmButton: false,
           customClass: {
@@ -208,7 +209,7 @@ script.
     }
     return;
   } 
-  await sendPaymentFailData(data?.data, data?.signature);
+  await sendPaymentFailData(data, data?.signature, "DATA RESULT IS NOT OK");
   Swal.fire({
     icon: "error",
     title: "#{translations.oopsText}",

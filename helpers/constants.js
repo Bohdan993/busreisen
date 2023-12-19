@@ -17,6 +17,7 @@ const constants = {
     TICKET_STATUS_USED: "used",
     USER_ROLE: "user",
     MANAGER_ROLE: "manager",
-    ADMIN_ROLE: "admin"
+    ADMIN_ROLE: "admin",
+    SESSION_TIME: 3 * 60 * 1000
 }
 module.exports = constants;

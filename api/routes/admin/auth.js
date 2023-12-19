@@ -8,6 +8,8 @@ const AdminAPIError = require("../../../exeptions/admin/api-error");
 
 
 router.post("/register", 
+    body("name")
+    .isLength({min: 2, max: 30}),
     body(
         "email"
     ).isEmail(), 
@@ -18,7 +20,7 @@ router.post("/register",
         try {
             const errors = validationResult(req);
             if(!errors.isEmpty()) {
-                return next(AdminAPIError.BadRequest("Помилка при валідації", errors.array()));
+                return next(AdminAPIError.ValidationError("Помилка при валідації", errors.array()));
             }
             const { email, password, name } = req?.body;
             const deviceFingerprint = req.fingerprint?.hash;
@@ -26,7 +28,7 @@ router.post("/register",
             res.cookie("refreshToken", registrationData?.refreshToken, {
                 maxAge: 30 * 24 * 60 * 60,
                 httpOnly: true,
-                // secure: true 
+                secure: true 
             });
             return res.json({status: "ok", data: registrationData});
         } catch (err) {
@@ -36,15 +38,26 @@ router.post("/register",
     }
 );
 
-router.post("/login", async (req, res, next) => {
+router.post("/login",
+    body(
+        "email"
+    ).isEmail(), 
+    body(
+        "password"
+    ).isLength({min: 6, max: 32}), 
+async (req, res, next) => {
     try {
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) {
+            return next(AdminAPIError.ValidationError("Помилка при валідації", errors.array()));
+        }
         const { email, password } = req.body;
         const deviceFingerprint = req.fingerprint?.hash;
         const userData = await login(email, password, deviceFingerprint);
         res.cookie("refreshToken", userData?.refreshToken, {
             maxAge: 30 * 24 * 60 * 60,
             httpOnly: true,
-            // secure: true 
+            secure: true 
         });
         return res.json({status: "ok", data: userData});
     } catch (err) {
@@ -69,7 +82,7 @@ router.get("/activate/:link", async (req, res, next) => {
     try {
         const activationLink = req.params.link;
         await activation(activationLink);
-        return res.redirect(process.env.ADMIN_URL);
+        return res.redirect(process.env.ADMIN_URL + "/login");
     } catch (err) {
         return next(err);
     }
@@ -85,7 +98,7 @@ router.get("/refresh", async (req, res, next) => {
         res.cookie("refreshToken", userData?.refreshToken, {
             maxAge: 30 * 24 * 60 * 60,
             httpOnly: true,
-            // secure: true 
+            secure: true 
         });
         return res.json({status: "ok", data: userData});
     } catch (err) {

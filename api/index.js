@@ -12,6 +12,7 @@ const path = require("path");
 const validate = require("validate.js");
 const compression = require('compression');
 const helmet = require("helmet");
+const constants = require("../helpers/constants");
 
 const app = express();
 
@@ -42,7 +43,7 @@ const redisStore = new RedisStore({
     prefix: "busreisen"
 });
 const corsOptions = {
-    origin: process.env.CORS_ORIGIN,
+    origin: [process.env.CORS_ORIGIN, process.env.CORS_ORIGIN_ADMIN],
     methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
     credentials: true,
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -53,11 +54,11 @@ const sessionOptions = {
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
-    rolling: true,
+    rolling: false,
     cookie: {
         sameSite: "none",
         secure: true,
-        maxAge: 15 * 60 * 1000,
+        maxAge: constants.SESSION_TIME,
         httpOnly: true,
     }
 };

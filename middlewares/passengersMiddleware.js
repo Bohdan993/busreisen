@@ -8,8 +8,12 @@ function checkIfPassengersInfoExists(req, res, next){
             type
         } = req.query;
 
+        if(req.originalUrl.split("?")?.[0] === "/api/tickets") {
+            console.log("IS PASSANGERS INFO EXISTS", req.session?.passengersInfo);
+        }
+
         const error401Translations = loadLanguageFile("401-error.js", languageCode);
-        if(req.baseUrl === "/api/passengers") {
+        if(req.originalUrl.split("?")?.[0] === "/api/passengers") {
             if(type === "check") {
                 if(req.session?.passengersInfo) {
                     return next();
